@@ -46,9 +46,9 @@ angular.module("parallaxModule", [])
 
 	var checkElements = function () {
 
-		console.log("scroll" + $(scroll)[0]);
-		console.log("space " + $(space)[0]);
-		console.log("parallax " + $(elem)[0]);
+		//console.log("scroll" + $(scroll)[0]);
+		//console.log("space " + $(space)[0]);
+		//console.log("parallax " + $(elem)[0]);
 
 		if ($(scroll)[0] && $(space)[0] && $(elem)[0]) {
 
@@ -60,7 +60,7 @@ angular.module("parallaxModule", [])
 
 	var getValues = function (params) {
 
-		console.log("space id " + params.space);
+		//console.log("space id " + params.space);
 
 		scroll = $("#" + params.scroll);
 		space = $("#space" + params.space);
