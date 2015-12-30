@@ -46,7 +46,7 @@ angular.module("parallaxModule", [])
 
 	var checkElements = function () {
 
-		if ($(scroll)[0] && $(space)]0] && $(elem)[0]) {
+		if ($(scroll)[0] && $(space)[0] && $(elem)[0]) {
 
 			return true;
 		}
