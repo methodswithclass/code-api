@@ -72,6 +72,8 @@ angular.module("parallaxModule", [])
 			return true;
 		}
 
+		console.log("no elements");
+
 		return false;
 	}
 
