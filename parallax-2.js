@@ -167,9 +167,10 @@ angular.module("parallaxModule", [])
 
 		setTimeout(function () {
 			reset();
-			$(inner).css({top:initial});
+			scroll();
+			//$(inner).css({top:initial});
 
-			console.log("done");
+			//console.log("done");
 
 			// setInterval(function () {
 
