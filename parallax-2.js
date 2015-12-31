@@ -28,9 +28,9 @@ angular.module("parallaxModule", [])
 
 		var fix = function (params) {
 
-			img = params.img;
-	    	space = params.space;
-	    	aspect;
+			var img = params.img;
+	    	var space = params.space;
+	    	var aspect;
 
 			var goodAspect = function (width, height) {
 
