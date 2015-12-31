@@ -131,6 +131,8 @@ angular.module("parallaxModule", [])
 				if ($scope.top) top = $scope.factor*offset/1200*total + initial;
 				else top = $scope.factor*(1-offset/1200)*total + initial;
 
+				console.log("top " + top);
+
 				$(inner).css({top:top});
 			}
 
