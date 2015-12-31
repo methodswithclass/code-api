@@ -214,6 +214,8 @@ angular.module("parallaxModule", [])
 
 	var link = function ($scope, element, attr) {
 
+		console.log($scope.src);
+
 		var inner = document.createElement("div");
 		$(inner).addClass("absolute height150 width top0 left0 z-minus-100");
 		$(element).append(inner);
