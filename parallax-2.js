@@ -149,7 +149,7 @@ angular.module("parallaxModule", [])
 			}
 			fix({img:$(img), space:$(element), first:true});
 			total = 0.9*Math.abs($(inner).height() - $(element).height());
-			initial = -$scope.position*total;
+			initial = $scope.position*total;
 		}
 
 		var scroll = function () {
@@ -157,9 +157,11 @@ angular.module("parallaxModule", [])
 				offset = $(element).offset().top - el.offset().top;
 
 				if ($scope.top) top = -$scope.factor*offset/1200*total + initial;
-				else top = $scope.factor*offset/1200*total + initial;
+				else top = $scope.factor*(1-offset/1200)*total + initial;
 
-				console.log("top: " + $scope.top + " factor: " + $scope.factor + " offset: " + offset + " total: " + total + " top: " + top);
+				//console.log("top: " + $scope.top + " factor: " + $scope.factor + " offset: " + offset + " total: " + total + " top: " + top);
+
+				console.log("bottom");
 
 				$(inner).css({top:top});
 			}
