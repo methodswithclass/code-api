@@ -131,6 +131,7 @@ angular.module("parallaxModule", [])
 		}
 		else {
 			inner = $(element).first();
+			console.log("inner id is: " + inner.id);
 		}
 
 		var total;
