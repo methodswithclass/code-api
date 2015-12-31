@@ -248,7 +248,7 @@ angular.module("parallaxModule", [])
 
 	return {
 		scope:{
-			src:"="
+			src:"@"
 		},
 		link:link
 	};
