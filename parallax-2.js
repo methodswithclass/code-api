@@ -128,7 +128,7 @@ angular.module("parallaxModule", [])
 			if (device.valid() && active) {
 				offset = $(element).offset().top - el.offset().top;
 
-				if ($scope.top) top = $scope.factor*offset/1200*total + initial;
+				if ($scope.top) top = -$scope.factor*offset/1200*total + initial;
 				else top = $scope.factor*(1-offset/1200)*total + initial;
 
 				console.log("top " + top);
