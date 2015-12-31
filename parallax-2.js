@@ -134,7 +134,7 @@ angular.module("parallaxModule", [])
 					console.log("percent: " + percent + "window height: " + $el.height());
 				}
 
-				top = -percent*total;
+				top = -total;
 				
 				//console.log("window top " + el.offset().top);
 
