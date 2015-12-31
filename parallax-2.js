@@ -135,7 +135,7 @@ angular.module("parallaxModule", [])
 
 				percent = $(element).offset().top/$el.height();
 
-				top = -percent*total - ;
+				top = -percent*total - shift;
 
 				$(inner).css({top:top});
 			}
