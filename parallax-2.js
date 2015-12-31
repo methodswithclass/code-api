@@ -140,7 +140,7 @@ angular.module("parallaxModule", [])
 
 		if (device.valid()) {
 			var scroll = function () {
-				$(inner).css({top:$(inner).position().top*params.factor});
+				$(inner).css({top:$(inner).position().top*$scope.factor});
 			}
 
 			setTimeout(function () {
