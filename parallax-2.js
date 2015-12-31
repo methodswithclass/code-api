@@ -124,7 +124,7 @@ angular.module("parallaxModule", [])
 			hasImg = true;
 
 			inner = document.createElement("div");
-			$(inner).addClass("relative height150 width z-minus-100");
+			$(inner).addClass("relative height150 width black-back border z-minus-100");
 			$(element).append(inner);
 
 
