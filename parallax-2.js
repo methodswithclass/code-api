@@ -165,6 +165,8 @@ angular.module("parallaxModule", [])
 		setTimeout(function () {
 			reset();
 			$(inner).css({top:initial});
+
+			console.log("done");
 		}, 300);
 
 		el.bind('scroll', scroll);
@@ -173,8 +175,6 @@ angular.module("parallaxModule", [])
 			reset();
 			scroll();
 		});
-
-		console.log("done");
 
 	}
 
