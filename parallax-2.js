@@ -153,7 +153,7 @@ angular.module("parallaxModule", [])
 		}
 
 		var scroll = function () {
-			if (false) {
+			if (device.valid()) {
 				offset = $(element).offset().top - el.offset().top;
 
 				if ($scope.top) top = -$scope.factor*offset/1200*total + initial;
