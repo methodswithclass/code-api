@@ -170,13 +170,19 @@ angular.module("parallaxModule", [])
 			$(inner).css({top:initial});
 
 			console.log("done");
+
+			setInterval(function () {
+
+				scroll();
+
+			}, 10);
+
 		}, 300);
 
-		el.bind('scroll', scroll);
+		//el.bind('scroll', scroll);
 
 		angular.element($window).bind('resize', function () {
 			reset();
-			scroll();
 		});
 
 	}
