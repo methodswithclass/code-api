@@ -133,27 +133,34 @@ angular.module("parallaxModule", [])
 			inner = $(element).first();
 		}
 
-		var top = -$scope.position*0.5*($(element).height() - $(inner).height());
+		var total;
+		var top;
+		var offset;
 
-		$(inner).css({top:top});
+		var reset = function () {
+			fix({img:$(img), space:$(element), first:true});
+			total = Math.abs($(inner).height() - $(element).height());
+			top = -$scope.position*total;
+		}
 
-
-		if (device.valid()) {
-			var scroll = function () {
-				$(inner).css({top:$(inner).position().top*$scope.factor});
+		var scroll = function () {
+			if (device.valid()) {
+				offset = $(element).offset().top;
+				$(inner).css({top:-$scope.factor*offset/1200*total});
 			}
+		}
 
-			setTimeout(function () {
-				fix({img:$(img), space:$(element), first:true});
-			}, 300);
+		setTimeout(function () {
+			reset();
+			$(inner).css({top:top});
+		}, 300);
 
-			el.bind('scroll', scroll);
+		el.bind('scroll', scroll);
 
-			angular.element($window).bind('resize', function () {
-				scroll();
-				fix({img:$(img), space:$(element), first:false});
-			});	
-		}	
+		angular.element($window).bind('resize', function () {
+			reset();
+			scroll();
+		});
 
 	}
 
