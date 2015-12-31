@@ -124,7 +124,7 @@ angular.module("parallaxModule", [])
 
 		var reset = function () {
 			fix({img:$(img), space:$(element), first:true});
-			total = $(mover).height()*($(mover).height()/($(element).height()/2));
+			total = $(mover).height()*$(element).height()/$el.height();
 		}
 
 		var scroll = function () {
