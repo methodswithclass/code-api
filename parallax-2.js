@@ -128,12 +128,6 @@ angular.module("parallaxModule", [])
 				//var min = $(element).height()/($el.height() + 2*$(element).height());
 
 				percent = $(element).offset().top/$el.height();
-				//percent = percent > 1+min ? 1 : percent;
-				//percent = percent < -1*min ? 0 : percent;
-
-				if (percent != 0 && percent != 1){
-					console.log("percent: " + percent + "window height: " + $el.height());
-				}
 
 				top = -percent*total;
 				
@@ -162,6 +156,7 @@ angular.module("parallaxModule", [])
 
 	return {
 		scope:{
+			name:"@",
 			src:"@",
 			inner:"@",
 			scroll:"@",
