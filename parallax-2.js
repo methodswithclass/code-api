@@ -156,7 +156,7 @@ angular.module("parallaxModule", [])
 				offset = $(element).offset().top;
 
 				if ($scope.top) top = $scope.factor*offset/1200*total;
-				else top = $scope.factor(1-offset/1200)*total;
+				else top = $scope.factor*(1-offset/1200)*total;
 
 				$(inner).css({top:top});
 			}
