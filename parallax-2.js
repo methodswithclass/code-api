@@ -124,7 +124,7 @@ angular.module("parallaxModule", [])
 
 		var reset = function () {
 			fix({img:$(img), space:$(element), first:true});
-			total = $(mover).height()*$(element).height()/$el.height();
+			total = $(mover).height()*$(mover).height()/$el.height();
 		}
 
 		var scroll = function () {
@@ -132,7 +132,7 @@ angular.module("parallaxModule", [])
 
 				percent = $(element).offset().top/$el.height();
 
-				top = -percent*total - $(mover).height()/2;
+				top = -percent*total;
 
 				$(inner).css({top:top});
 			}
