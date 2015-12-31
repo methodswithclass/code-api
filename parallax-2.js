@@ -215,12 +215,13 @@ angular.module("parallaxModule", [])
 	var link = function ($scope, element, attr) {
 
 		var inner = document.createElement("div");
-		$(inner).addClass("fixed height150 width top0 left0 z-minus-100");
+		$(inner).addClass("absolute height150 width top0 left0 z-minus-100");
 		$(element).append(inner);
 
 
 		var img = document.createElement("img");
-		$(img).addClass("fixed height80 width-auto hcenter");
+		$(img).addClass("absolute height80 width-auto hcenter");
+		img.src = $scope.src;
 		$(inner).append(img);
 
 		$scope.top = $(inner).position().top;
