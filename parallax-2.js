@@ -121,7 +121,7 @@ angular.module("parallaxModule", [])
 				mover = inner;
 			}
 
-			shift = ($(inner).height() - $(mover).height())/2*0.8;
+			shift = ($(inner).height() - $(mover).height())/4;
 		}
 
 		var reset = function () {
