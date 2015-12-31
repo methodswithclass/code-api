@@ -140,7 +140,7 @@ angular.module("parallaxModule", [])
 					console.log("percent " + percent);
 				}
 
-				$(inner).css({top:center - $(mover).height()/2});
+				$(inner).css({top:-(center - $(mover).height()/2)});
 			}
 
 			//console.log("version");
