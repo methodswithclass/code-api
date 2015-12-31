@@ -87,7 +87,7 @@ angular.module("parallaxModule", [])
 		var mover;
 		var total;
 		var top;
-		var center;
+		var shift;
 		var offset;
 		var active = false;
 
@@ -120,6 +120,9 @@ angular.module("parallaxModule", [])
 				console.log("parallax: no image, inner id is: " + inner.id);
 				mover = inner;
 			}
+
+			shift = ($(inner).height() - $(mover).height())/2;
+			shift = shift == 0 ? $(mover).height()*0.4 : shift;
 		}
 
 		var reset = function () {
@@ -132,7 +135,7 @@ angular.module("parallaxModule", [])
 
 				percent = $(element).offset().top/$el.height();
 
-				top = -percent*total;
+				top = -percent*total - ;
 
 				$(inner).css({top:top});
 			}
