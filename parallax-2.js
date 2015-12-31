@@ -76,21 +76,21 @@ angular.module("parallaxModule", [])
 		        var width = height*aspect;
 		        
 		        if (checkWidth(width) == "under") {
-		            console.log("width under " + name);
+		            //console.log("width under " + name);
 		            width = space.width();
 		            height = width/aspect;
 		            if (checkHeight(height) == "under") {
-		                console.log("height under " + name);
+		                //console.log("height under " + name);
 		                height = space.height()*1.2;
 		                width = height*aspect;
 		            }
 		        }
 		        else if (checkWidth(width) == "over") {
-		            console.log("width over " + name);
+		            //console.log("width over " + name);
 		            width = space.width()*1.2;
 		            height = width/aspect;
 		            if (checkHeight(height) == "under") {
-		                console.log("height under " + name);
+		                //console.log("height under " + name);
 		                height = space.height()*1.2;
 		                width = height*aspect;
 		            }
@@ -161,6 +161,8 @@ angular.module("parallaxModule", [])
 			reset();
 			scroll();
 		});
+
+		console.log("done");
 
 	}
 
