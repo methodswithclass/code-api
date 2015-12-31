@@ -84,8 +84,10 @@ angular.module("parallaxModule", [])
 	    var $el = $("#" + $scope.scroll);
 		var inner;
 		var img;
+		var mover;
 		var total;
 		var top;
+		var center;
 		var offset;
 		var active = false;
 
@@ -105,7 +107,9 @@ angular.module("parallaxModule", [])
 				img.src = $scope.src;
 				$(inner).append(img);
 
-				console.log("parallax: image");
+				mover = img;
+
+				//console.log("parallax: image");
 
 			}
 			else if ($scope.inner && !$scope.src) {
@@ -114,13 +118,13 @@ angular.module("parallaxModule", [])
 
 				inner = $(element).find("#" + $scope.inner)[0];
 				console.log("parallax: no image, inner id is: " + inner.id);
+				mover = inner;
 			}
 		}
 
 		var reset = function () {
 			fix({img:$(img), space:$(element), first:true});
-			total = (img ? $(img).height() : $(inner).height()) - $(element).height();
-			min = (img ? $(inner).height() - $(img).height() : 0);
+			total = $(mover).height();
 		}
 
 		var scroll = function () {
@@ -130,16 +134,16 @@ angular.module("parallaxModule", [])
 
 				percent = ($(element).offset().top + $(element).height()/2)/($el.height() - $(element).height());
 
-				top = -(percent*total + min);
+				center = percent*total;
 				
 				if ($scope.name == "nuplae") {
 					console.log("percent " + percent);
 				}
 
-				$(inner).css({top:top});
+				$(inner).css({top:center - $(mover).height()/2});
 			}
 
-			console.log("version");
+			//console.log("version");
 		}
 
 		setTimeout(function () {
