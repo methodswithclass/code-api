@@ -109,7 +109,7 @@ angular.module("parallaxModule", [])
 				console.log("parallax: image");
 
 			}
-			else if ($scope.inner && !scope.src) {
+			else if ($scope.inner && !$scope.src) {
 
 				active = true;
 
