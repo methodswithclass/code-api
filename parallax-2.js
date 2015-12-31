@@ -119,11 +119,12 @@ angular.module("parallaxModule", [])
 
 		var reset = function () {
 			fix({img:$(img), space:$(element), first:true});
-			total = Math.abs($(inner).height() - $(element).height());
+			total = Math.abs((img ? $(img).height() : $(inner).height()) - $(element).height());
 		}
 
 		var scroll = function () {
 			if (device.valid() && active) {
+				
 				var min = $(element).height()/($el.height() + 2*$(element).height());
 
 				percent = $(element).offset().top/($el.height() + 2*$(element).height());
@@ -134,7 +135,7 @@ angular.module("parallaxModule", [])
 					console.log("percent: " + percent + "window height: " + $el.height());
 				}
 
-				top = -total;
+				top = -percent*total;
 				
 				//console.log("window top " + el.offset().top);
 
