@@ -96,7 +96,7 @@ angular.module("parallaxModule", [])
 			inner = $(element).first();
 		}
 
-		var top = -position*0.5*($(element).height() - $(inner).height());
+		var top = -$scope.position*0.5*($(element).height() - $(inner).height());
 
 		$(inner).css({top:top});
 
