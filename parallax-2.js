@@ -28,6 +28,43 @@ angular.module("parallaxModule", [])
 
 		var fix = function (params) {
 
+			var goodAspect = function (width, height) {
+
+				if (Math.abs(width/height - aspect) < 0.01) {
+					return true;
+				}
+
+				return false;
+			}
+
+			var checkHeight = function (height) {
+
+		        if (height < space.height()) {
+
+		            return "under";
+		        }
+		        else if (height > space.height()*1.2) {
+
+		            return "over";
+		        }
+
+		        return "good";
+
+		    }
+
+		    var checkWidth = function (width) {
+
+		        if (width < space.width()) {
+		            return "under";
+		        }
+		        else if (width > space.width()*1.5) {
+
+		            return "over";
+		        }
+
+		        return "good";
+		    }
+
 	    	img = params.img;
 	    	space = params.space;
 
