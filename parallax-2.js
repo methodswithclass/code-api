@@ -131,7 +131,9 @@ angular.module("parallaxModule", [])
 
 				top = -percent*total;
 				
-				//console.log("window top " + el.offset().top);
+				if ($scope.name == "nuplae") {
+					console.log("percent " + percent);
+				}
 
 				$(inner).css({top:top});
 			}
