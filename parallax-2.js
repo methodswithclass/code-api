@@ -129,7 +129,7 @@ angular.module("parallaxModule", [])
 
 
 			img = document.createElement("img");
-			$(img).addClass("absolute height80 width-auto hcenter");
+			$(img).addClass("absolute height80 width-auto center");
 			img.src = $scope.src;
 			$(inner).append(img);
 
@@ -161,7 +161,7 @@ angular.module("parallaxModule", [])
 
 				//console.log("top: " + $scope.top + " factor: " + $scope.factor + " offset: " + offset + " total: " + total + " top: " + top);
 
-				console.log("initial");
+				console.log("center");
 
 				$(inner).css({top:top});
 			}
