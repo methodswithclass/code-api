@@ -228,7 +228,7 @@ angular.module("parallaxModule", [])
 
 		$scope.top = $(inner).position().top;
 
-		$scope.$watch("top", funciton (newValue, oldValue) {
+		$scope.$watch("top", function (newValue, oldValue) {
 
 			return newValue*0.8;
 
