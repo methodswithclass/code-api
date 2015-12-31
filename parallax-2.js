@@ -131,7 +131,7 @@ angular.module("parallaxModule", [])
 				percent = percent > 1+min ? 1 : percent;
 				percent = percent < -1*min ? 0 : percent;
 
-				if (percent > 0 || percent < 1){
+				if (percent != 0 && percent != 1){
 					console.log("percent: " + percent + "window height: " + $el.height());
 				}
 
