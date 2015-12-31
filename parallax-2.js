@@ -124,23 +124,17 @@ angular.module("parallaxModule", [])
 
 		var reset = function () {
 			fix({img:$(img), space:$(element), first:true});
-			total = $(mover).height() - $(element).height();
+			total = $(mover).height();
 		}
 
 		var scroll = function () {
 			if (device.valid() && active) {
 
-				//var min = $(element).height()/($el.height() + 2*$(element).height());
+				percent = $(element).offset().top/$el.height();
 
-				percent = ($(element).offset().top + $(element).height()/2)/($el.height());
+				top = -percent*total + $(mover).height()/2;
 
-				center = percent*total;
-				
-				if ($scope.name == "nuplae") {
-					console.log("percent " + percent);
-				}
-
-				$(inner).css({top:-(center - $(mover).height()/2)});
+				$(inner).css({top:top});
 			}
 
 			//console.log("version");
