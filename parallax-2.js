@@ -114,6 +114,7 @@ angular.module("parallaxModule", [])
 
 
 		var inner;
+		var $inner;
 		var img;
 		var hasImg;
 
@@ -142,7 +143,7 @@ angular.module("parallaxModule", [])
 
 		var reset = function () {
 			if (!hasImg) {
-				inner = $(element).first();
+				inner = $(element).find(".inner")[0];
 				console.log("inner id is: " + inner.id);
 			}
 			fix({img:$(img), space:$(element), first:true});
