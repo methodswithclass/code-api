@@ -132,7 +132,7 @@ angular.module("parallaxModule", [])
 
 				top = -percent*total;
 				
-				console.log("window top " + el.offset().top);
+				//console.log("window top " + el.offset().top);
 
 				$(inner).css({top:top});
 			}
