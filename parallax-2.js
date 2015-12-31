@@ -28,6 +28,10 @@ angular.module("parallaxModule", [])
 
 		var fix = function (params) {
 
+			img = params.img;
+	    	space = params.space;
+	    	aspect;
+
 			var goodAspect = function (width, height) {
 
 				if (Math.abs(width/height - aspect) < 0.01) {
@@ -65,9 +69,6 @@ angular.module("parallaxModule", [])
 		        return "good";
 		    }
 
-	    	img = params.img;
-	    	space = params.space;
-
 	    	if ($(img)[0]) {
 
 		    	if (params.first) aspect = img.width()/img.height();
@@ -98,7 +99,7 @@ angular.module("parallaxModule", [])
 		       
 		       	
 		       	if (checkWidth(width) && checkHeight(height)) {
-		       		console.log("image good");
+		       		//console.log("image good");
 		       		if (goodAspect(width, height)) {
 		       			//console.log("aspect is good " + name + " " + aspect);
 		       		}
