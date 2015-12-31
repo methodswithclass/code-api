@@ -121,13 +121,14 @@ angular.module("parallaxModule", [])
 				mover = inner;
 			}
 
-			shift = ($(inner).height() - $(mover).height());
+			//shift = ($(inner).height() - $(mover).height())/2;
 		}
 
 		var reset = function () {
-			fix({img:$(img), space:$(element), first:true});
+			if (img) fix({img:$(img), space:$(element), first:true});
+			mover = img;
 			total = $(mover).height()*$(mover).height()/($el.height()*0.8);
-			console.log("version");
+			console.log("version2");
 		}
 
 		var scroll = function () {
@@ -135,7 +136,7 @@ angular.module("parallaxModule", [])
 
 				percent = $(element).offset().top/$el.height();
 
-				top = -percent*total - shift;
+				top = -percent*total;
 
 				$(inner).css({top:top});
 			}
