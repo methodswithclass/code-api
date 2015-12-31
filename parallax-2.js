@@ -216,15 +216,25 @@ angular.module("parallaxModule", [])
 
 		console.log($scope.src);
 
-		var inner = document.createElement("div");
-		$(inner).addClass("absolute height150 width top0 left0 z-minus-100");
-		$(element).append(inner);
+		var inner;
+		var img;
+
+		if ($scope.src) {
+
+			inner = document.createElement("div");
+			$(inner).addClass("absolute height150 width top0 left0 z-minus-100");
+			$(element).append(inner);
 
 
-		var img = document.createElement("img");
-		$(img).addClass("absolute height80 width-auto hcenter");
-		img.src = $scope.src;
-		$(inner).append(img);
+			img = document.createElement("img");
+			$(img).addClass("absolute height80 width-auto hcenter");
+			img.src = $scope.src;
+			$(inner).append(img);
+
+		}
+		else {
+			inner = $(element).first();
+		}
 
 		$scope.top = $(inner).position().top;
 
@@ -238,7 +248,7 @@ angular.module("parallaxModule", [])
 
 	return {
 		scope:{
-			src:"@"
+			src:"="
 		},
 		link:link
 	};
