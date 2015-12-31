@@ -119,7 +119,8 @@ angular.module("parallaxModule", [])
 
 		var reset = function () {
 			fix({img:$(img), space:$(element), first:true});
-			total = Math.abs((img ? $(img).height() : $(inner).height()) - $(element).height());
+			total = (img ? $(img).height() : $(inner).height()) - $(element).height();
+			min = (img ? $(inner).height() - $(img).height() : 0);
 		}
 
 		var scroll = function () {
@@ -129,7 +130,7 @@ angular.module("parallaxModule", [])
 
 				percent = $(element).offset().top/$el.height();
 
-				top = -percent*total;
+				top = -(percent*total + min);
 				
 				if ($scope.name == "nuplae") {
 					console.log("percent " + percent);
