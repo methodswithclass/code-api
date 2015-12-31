@@ -24,8 +24,6 @@ angular.module("parallaxModule", [])
 
 	var link = function ($scope, element, attr) {
 
-		var el = $("#" + $scope.scroll);
-
 		var fix = function (params) {
 
 			var img = params.img;
@@ -83,6 +81,7 @@ angular.module("parallaxModule", [])
 	    }
 
 
+	    var $el = $("#" + $scope.scroll);
 		var inner;
 		var img;
 		var total;
@@ -121,16 +120,18 @@ angular.module("parallaxModule", [])
 		var reset = function () {
 			fix({img:$(img), space:$(element), first:true});
 			total = 0.9*Math.abs($(inner).height() - $(element).height());
-			initial = -$scope.position*total;
 		}
 
 		var scroll = function () {
 			if (device.valid() && active) {
-				offset = $(element).offset().top - el.offset().top;
+				var min = $(element).height()/($el.height() + 2*$(element).height());
 
-				if ($scope.top) top = -$scope.factor*offset/1200*total + initial;
-				else top = $scope.factor*(1-offset/1200)*total + initial;
+				percent = $(element).offset().top/($el.height() + 2*$(element).height());
+				percent = percent + min > 1 ? 1 : percent;
+				percent = percent - min < 0 ? 0 : percent;
 
+				top = -percent*total;
+				
 				console.log("window top " + el.offset().top);
 
 				$(inner).css({top:top});
@@ -150,7 +151,7 @@ angular.module("parallaxModule", [])
 			scroll();
 		});
 
-		el.bind('scroll', scroll);
+		$el.bind('scroll', scroll);
 
 	}
 
