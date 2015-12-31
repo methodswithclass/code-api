@@ -124,12 +124,12 @@ angular.module("parallaxModule", [])
 
 		var scroll = function () {
 			if (device.valid() && active) {
-				
-				var min = $(element).height()/($el.height() + 2*$(element).height());
 
-				percent = $(element).offset().top/($el.height() + 2*$(element).height());
-				percent = percent > 1+min ? 1 : percent;
-				percent = percent < -1*min ? 0 : percent;
+				//var min = $(element).height()/($el.height() + 2*$(element).height());
+
+				percent = $(element).offset().top/$el.height();
+				//percent = percent > 1+min ? 1 : percent;
+				//percent = percent < -1*min ? 0 : percent;
 
 				if (percent != 0 && percent != 1){
 					console.log("percent: " + percent + "window height: " + $el.height());
