@@ -148,7 +148,7 @@ angular.module("parallaxModule", [])
 				console.log("inner id is: " + inner.id);
 			}
 			fix({img:$(img), space:$(element), first:true});
-			total = Math.abs($(inner).height() - $(element).height());
+			total = 0.9*Math.abs($(inner).height() - $(element).height());
 			initial = -$scope.position*total;
 		}
 
@@ -157,7 +157,7 @@ angular.module("parallaxModule", [])
 				offset = $(element).offset().top;
 
 				if ($scope.top) top = -$scope.factor*offset/1200*total;
-				else top = $scope.factor*offset/1200*total;
+				else top = $scope.factor*(1-offset/1200)*total;
 
 				$(inner).css({top:top});
 			}
