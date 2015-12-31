@@ -236,12 +236,17 @@ angular.module("parallaxModule", [])
 			inner = $(element).first();
 		}
 
-		$scope.top = $(inner).position().top;
+		$scope.top = $(element).offset().top;
 
-		$scope.$watch("top", function (newValue, oldValue) {
+		//console.log($scope.top);
 
-			return newValue*0.8;
+		$scope.$watch(function ($scope) {
+			return $scope.top;
+		}, function (newValue, oldValue) {
 
+			console.log(newValue);
+
+			return $(inner).position().top*0.8;
 		});
 
 	}
