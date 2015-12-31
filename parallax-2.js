@@ -100,10 +100,10 @@ angular.module("parallaxModule", [])
 		       	if (checkWidth(width) && checkHeight(height)) {
 		       		console.log("image good");
 		       		if (goodAspect(width, height)) {
-		       			console.log("aspect is good " + name + " " + aspect);
+		       			//console.log("aspect is good " + name + " " + aspect);
 		       		}
 		       		else {
-			       		console.log("aspect is bad " + name + " " + aspect);
+			       		//console.log("aspect is bad " + name + " " + aspect);
 			       	}
 		       	}
 
