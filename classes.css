@@ -1343,5 +1343,10 @@ a.blue {
 	z-index:100;
 }
 
+.z-minus-100 {
+
+	z-index:-100;
+}
+
 
 
