@@ -127,7 +127,7 @@ angular.module("parallaxModule", [])
 		var reset = function () {
 			if (img) fix({img:$(img), space:$(element), first:true});
 			mover = img;
-			total = $(mover).height()*$(mover).height()/($el.height());
+			total = $(mover).height()*$(mover).height()/($el.height())*0.8;
 			console.log("version2");
 		}
 
