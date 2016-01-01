@@ -138,7 +138,7 @@ angular.module("parallaxModule", [])
 		var scroll = function () {
 			if (device.valid() && active) {
 
-				var o = $(element).offset().top;
+				var o = $(element).offset().top - $el.offset().top;
 				var sh = $(element).height();
 				var ph = $(inner).height();
 				var ih = img ? $(img).height() : ph*0.8;
