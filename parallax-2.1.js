@@ -154,13 +154,13 @@ angular.module("parallaxModule", [])
 			}
 			sh = $(element).height();
 			ph = $(inner).height();
-			h = $el.height();
 			ih = img ? $(img).height() : ph*0.8;
 			g = (ph-ih)/2;
+			h = $el.height();
 
 			eqs = linear({
 				x1:-1*sh,
-				y1:-1*g,
+				y1:sh-g,
 
 				x2:h-sh, 
 				y2:sh-ih-g
