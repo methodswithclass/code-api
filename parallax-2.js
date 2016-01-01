@@ -125,8 +125,10 @@ angular.module("parallaxModule", [])
 		}
 
 		var reset = function () {
-			if (img) fix({img:$(img), space:$(element), first:true});
-			mover = img;
+			if (img) {
+				fix({img:$(img), space:$(element), first:true});
+				mover = img;
+			}
 			total = $(mover).height()*$(mover).height()/1200*0.8;
 			console.log("version2");
 		}
@@ -161,13 +163,9 @@ angular.module("parallaxModule", [])
 
 	return {
 		scope:{
-			name:"@",
 			src:"@",
 			inner:"@",
-			scroll:"@",
-			top:"=",
-			position:"@",
-			factor:"@"
+			scroll:"@"
 		},
 		link:link
 	};
