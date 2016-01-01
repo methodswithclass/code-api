@@ -176,10 +176,10 @@ angular.module("parallaxModule", [])
 
 			eqs = linear({
 				x1:0,
-				y1:-1*g,
+				y1:-1*g*1.1,
 
 				x2:h-sh,
-				y2:sh-ih-g
+				y2:(sh-ih-g)*0.9
 			});
 			
 			
@@ -207,7 +207,7 @@ angular.module("parallaxModule", [])
 			setup();
 			reset();
 			scroll();
-		}, 300);
+		}, 500);
 
 		angular.element($window).bind('resize', function () {
 			reset();
