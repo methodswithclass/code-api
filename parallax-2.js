@@ -146,8 +146,8 @@ angular.module("parallaxModule", [])
 				percent = o/h;
 
 				if ($scope.top) top = -o*0.99;
-				//else top = -percent*total - shift;
-				else top = o/h*(sh-ih-g) - (1-o/h)*g;
+				//else top = -o/h*total - shift;
+				else top = -o*0.99;
 
 				$(inner).css({top:top});
 			}
