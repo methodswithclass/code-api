@@ -158,7 +158,10 @@ angular.module("parallaxModule", [])
 
 			//console.log("sh:" + sh + " ph:" + ph + " ih:" + ih + " g:" + g + " h:" + h);
 
-			if (ih < h && !$scope.top) {
+			if ($scope.top) {
+				eqs = {m:-0.99, b:-1*(ph-sh)/2}
+			}
+			else if (ih < h) {
 
 				eqs = linear({
 					x1:2,
