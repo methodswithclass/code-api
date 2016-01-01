@@ -148,7 +148,7 @@ angular.module("parallaxModule", [])
 				var m = h/(g-ih) + sh;
 				var b = m*g - sh;
 
-				top = o*m + b;
+				top = o/h*m + b;
 
 				console.log("top: " + top);
 
