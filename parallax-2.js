@@ -143,7 +143,7 @@ angular.module("parallaxModule", [])
 				var h = $el.height();
 				var g = (ph-ih)/2;
 
-				var m = (h+g)/h;
+				var m = (g-ih)/h;
 				var b = -1*g;
 
 				if ($scope.top) top = -o*0.99;
