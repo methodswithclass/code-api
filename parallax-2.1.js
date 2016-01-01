@@ -137,8 +137,8 @@ angular.module("parallaxModule", [])
 			ih = img ? $(img).height() : ph*0.8;
 			g = (ph-ih)/2;
 
-			m = (g-ih)/h*0.9;
-			b = -1*g*1.1;
+			m = (g-ih-ph)/(h+sh);
+			b = ph-g+m*sh;
 		}
 
 		var scroll = function () {
