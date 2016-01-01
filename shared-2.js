@@ -2,7 +2,7 @@
 //http://code.methodswithclass.com/whatdevice-1.js is a dependency
 
 
-angular.module('sharedModule', []).
+angular.module('sharedModule', [])
 
 
 .factory('global', ['$sce', function ($sce) {
