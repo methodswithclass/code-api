@@ -161,6 +161,8 @@ angular.module("parallaxModule", [])
 			g = (ph-ih)/2;
 			h = $el.height();
 
+			console.log("top of image: " + g);
+
 			eqs = linear({
 				x1:0,
 				y1:-1*g,
