@@ -136,10 +136,18 @@ angular.module("parallaxModule", [])
 		var scroll = function () {
 			if (device.valid() && active) {
 
-				percent = $(element).offset().top/$el.height();
+				var o = $(element).offset().top;
+				var sh = $(element).height();
+				var ph = $(inner).height();
+				var ih = img ? $(img).height() : ph*0.8;
+				var h = $el.height();
+				var g = (ph-ih)/2;
 
-				if ($scope.top) top = -$(element).offset().top*0.99;
-				else top = -percent*total - shift;
+				percent = o/h;
+
+				if ($scope.top) top = -o*0.99;
+				//else top = -percent*total - shift;
+				else top = -o/h*g + (1-(o+sh)/h)*(sh-ih);
 
 				$(inner).css({top:top});
 			}
