@@ -173,7 +173,7 @@ angular.module("parallaxModule", [])
 					y2:(sh-ih-g)
 				});
 			}
-			else
+			else {
 				eqs = {m:0.99, b:0};
 			}
 			
