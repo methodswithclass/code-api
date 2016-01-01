@@ -195,9 +195,12 @@ angular.module("parallaxModule", [])
 
 		setTimeout(function () {
 			setup();
+		}, 200);
+
+		setTimeout(function () {
 			reset();
 			scroll();
-		}, 500);
+		}, 500)
 
 		angular.element($window).bind('resize', function () {
 			reset();
