@@ -129,7 +129,7 @@ angular.module("parallaxModule", [])
 				fix({img:$(img), space:$(element), first:true});
 				mover = img;
 			}
-			total = $(mover).height()*$(mover).height()/1200*0.8;
+			total = $(mover).height()*$(mover).height()/1600*0.8;
 			console.log("version2");
 		}
 
