@@ -145,8 +145,8 @@ angular.module("parallaxModule", [])
 
 				o = $(element).offset().top - $el.offset().top;
 				
-				if (!ih) ih = img ? $(img).height()*0.9 : ph*0.8;
-				if (!g) g = (ph-ih)/2*1.1;
+				if (!ih) ih = img ? $(img).height() : ph*0.8;
+				if (!g) g = (ph-ih)/2;
 
 				if (!m) m = (g-ih)/h;
 				if (!b) b = -1*g;
