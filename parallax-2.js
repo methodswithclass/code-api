@@ -139,13 +139,16 @@ angular.module("parallaxModule", [])
 				var o = $(element).offset().top;
 				var sh = $(element).height();
 				var ph = $(inner).height();
-				var ih = img ? $(img).height()*0.9 : ph*0.8;
+				var ih = img ? $(img).height() : ph*0.8;
 				var h = $el.height();
 				var g = (ph-ih)/2;
 
+				var m = (sh-ih)/h + g;
+				var b = -g;
+
 				if ($scope.top) top = -o*0.99;
 				//else top = -o/h*total - shift;
-				else top = -o*0.9 - g;
+				else top = -o*m + b;
 
 				$(inner).css({top:top});
 			}
