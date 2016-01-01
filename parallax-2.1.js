@@ -89,18 +89,18 @@ angular.module("parallaxModule", [])
 			var m;
 			var b;
 
-			if (x2 != 0) { 
-				b = (y1 - y2*(x1/x2))/(1-x1/x2);
-				m = (y2-b)/x2;
-			}
-			else if (x1 != 0) {
-				b = y2;
-				m = (y1-y2)/x1;
-			}
-			else {
-				b = 0;
-				m = 0;
-			}
+			
+			m = (y1-y2)/(x1-x2)
+			b = y2 - m*x2;
+			
+			// else if (x1 != 0) {
+			// 	b = y2;
+			// 	m = (y1-y2)/x1;
+			// }
+			// else {
+			// 	b = 0;
+			// 	m = 0;
+			// }
 
 			console.log("get m:" + m + " b:" + b);
 
@@ -163,19 +163,19 @@ angular.module("parallaxModule", [])
 			g = (ph-ih)/2;
 			h = $el.height();
 
-			if (ih < h) {
+			//if (ih < h) {
 
 				eqs = linear({
 					x1:0,
-					y1:100,
+					y1:-1*g,
 
 					x2:h-sh,
-					y2:sh-ph-100
+					y2:sh-ih-g
 				});
-			}
-			else {
-				eqs = {m:0.99, b:0};
-			}
+			// }
+			// else {
+			// 	eqs = {m:0.99, b:0};
+			// }
 			
 			
 		}
