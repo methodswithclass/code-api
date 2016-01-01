@@ -138,7 +138,8 @@ angular.module("parallaxModule", [])
 
 				percent = $(element).offset().top/$el.height();
 
-				top = -percent*total - shift;
+				if ($scope.top) top = -percent*$(inner).height()*0.8;
+				else top = -percent*total - shift;
 
 				$(inner).css({top:top});
 			}
@@ -165,7 +166,8 @@ angular.module("parallaxModule", [])
 		scope:{
 			src:"@",
 			inner:"@",
-			scroll:"@"
+			scroll:"@",
+			top:"="
 		},
 		link:link
 	};
