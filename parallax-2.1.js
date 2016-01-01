@@ -161,7 +161,7 @@ angular.module("parallaxModule", [])
 
 			//console.log("sh:" + sh + " ph:" + ph + " ih:" + ih + " g:" + g + " h:" + h);
 
-			if (ih < h) {
+			//if (ih < h) {
 
 				eqs = linear({
 					x1:0,
@@ -170,10 +170,10 @@ angular.module("parallaxModule", [])
 					x2:h-sh,
 					y2:sh-ih-g
 				});
-			}
-			else {
-				eqs = {m:0.99, b:0};
-			}
+			// }
+			// else {
+			// 	eqs = {m:0.99, b:0};
+			// }
 			
 			
 		}
