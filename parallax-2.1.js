@@ -184,7 +184,7 @@ angular.module("parallaxModule", [])
 				o = $(element).offset().top - $el.offset().top;
 
 				if ($scope.top) top = -o*0.99;
-				else top = o*eqs.m - eqs.b;
+				else top = o*eqs.m + eqs.b;
 
 				if ($scope.name == "nuplae") {
 					//console.log("offset: " + o + " top: " + top);
