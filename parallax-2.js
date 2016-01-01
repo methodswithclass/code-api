@@ -143,13 +143,14 @@ angular.module("parallaxModule", [])
 				var h = $el.height();
 				var g = (ph-ih)/2;
 
-				var m = (sh-ih+g)/h;
-				var b = -1*g;
-
 				if ($scope.top) top = -o*0.99;
 				//else top = -o/h*total - shift;
-				else top = o*m + b;
+				else top = o*(sh-ih+g)/h - g;
 
+				if ($scope.src.search("gravity") != -1) {
+					console.log("top: " + top);
+				}
+				
 				$(inner).css({top:top});
 			}
 
