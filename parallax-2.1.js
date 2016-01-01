@@ -86,13 +86,8 @@ angular.module("parallaxModule", [])
 			var y2 = params.y2;
 			var x1 = params.x1;
 			var x2 = params.x2;
-			var frac;
 			var m;
 			var b;
-
-			// frac = (y1*x2 - y2*x1)/(x2-x1);
-			// m = y2/x2 - frac/x1;
-			// b = frac*(x2/x1);
 
 			if (x2 != 0) { 
 				b = (y1 - y2*(x1/x2))/(1-x1/x2);
@@ -103,10 +98,11 @@ angular.module("parallaxModule", [])
 				m = (y1-y2)/x1;
 			}
 			else {
-				console.log("eqs is zero");
 				b = 0;
 				m = 0;
 			}
+
+			console.log("get m:" + m + " b:" + b);
 
 			return {
 				m:m,
@@ -119,11 +115,7 @@ angular.module("parallaxModule", [])
 	    var $el = $("#" + $scope.scroll);
 		var inner;
 		var img;
-		var mover;
-		var total;
 		var top;
-		var shift;
-		var offset;
 		var active = false;
 
 		var o;
@@ -157,7 +149,8 @@ angular.module("parallaxModule", [])
 				inner = $(element).find("#" + $scope.inner)[0];
 			}
 
-			//shift = ($(inner).height() - $(mover).height())/2*1200/$el.height();
+			sh = $(element).height();
+			ph = $(inner).height();
 		}
 
 
@@ -166,20 +159,16 @@ angular.module("parallaxModule", [])
 			if (img) {
 				fix({img:$(img), space:$(element), first:true});
 			}
-			sh = $(element).height();
-			ph = $(inner).height();
 			ih = img ? $(img).height() : ph*0.8;
 			g = (ph-ih)/2;
 			h = $el.height();
-
-			console.log("top of image: " + g);
 
 			eqs = linear({
 				x1:0,
 				y1:-1*g*1.01,
 
 				x2:h-sh,
-				y2:(sh-ih-g)*0.95
+				y2:(sh-ph+g)*0.95
 			});
 			
 			
