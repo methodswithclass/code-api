@@ -134,22 +134,17 @@ angular.module("parallaxModule", [])
 			sh = $(element).height();
 			ph = $(inner).height();
 			h = $el.height();
-			ih = null;
-			g = null;
-			m = null;
-			b = null;
+			ih = img ? $(img).height() : ph*0.8;
+			g = (ph-ih)/2;
+
+			m = (g-ih)/h*0.9;
+			b = -1*g*1.1;
 		}
 
 		var scroll = function () {
 			if (device.valid() && active) {
 
 				o = $(element).offset().top - $el.offset().top;
-				
-				if (!ih) ih = img ? $(img).height() : ph*0.8;
-				if (!g) g = (ph-ih)/2;
-
-				if (!m) m = (g-ih)/h*0.9;
-				if (!b) b = -1*g*1.1;
 
 				if ($scope.top) top = -o*0.99;
 				else top = o*m + b;
