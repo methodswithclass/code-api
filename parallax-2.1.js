@@ -166,7 +166,7 @@ angular.module("parallaxModule", [])
 					y1:-1*g*1.01,
 
 					x2:h-sh,
-					y2:(sh-ih-g)*0.95
+					y2:(sh-ih-g)*0.99
 				});
 			}
 			else {
