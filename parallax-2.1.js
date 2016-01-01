@@ -165,10 +165,10 @@ angular.module("parallaxModule", [])
 
 			eqs = linear({
 				x1:0,
-				y1:-1*g*1.01,
+				y1:-1*g,
 
 				x2:h-sh,
-				y2:(sh-ph+g)*0.95
+				y2:(sh-ih-g)
 			});
 			
 			
