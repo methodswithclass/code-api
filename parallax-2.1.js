@@ -162,11 +162,11 @@ angular.module("parallaxModule", [])
 			if (ih < h) {
 
 				eqs = linear({
-					x1:0,
-					y1:-1*(g+5),
+					x1:-2,
+					y1:-1*g,
 
-					x2:h-sh,
-					y2:sh-ih-g+5
+					x2:h-sh+2,
+					y2:sh-ih-g
 				});
 			}
 			else {
