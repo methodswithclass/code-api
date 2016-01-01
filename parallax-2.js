@@ -147,10 +147,10 @@ angular.module("parallaxModule", [])
 				//else top = -o/h*total - shift;
 				else top = o*(sh-ih+g)/h - g;
 
-				if ($scope.src.search("gravity") != -1) {
+				if ($scope.src && $scope.src.search("gravity") != -1) {
 					console.log("top: " + top);
 				}
-				
+
 				$(inner).css({top:top});
 			}
 
