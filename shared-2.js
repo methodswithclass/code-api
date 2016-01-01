@@ -55,13 +55,17 @@ angular.module('sharedModule', [])
 		var y2 = params.y2;
 		var x1 = params.x1;
 		var x2 = params.x2;
-		var frac;
 		var m;
 		var b;
 
-		frac = (y1*x2 - y2*x1)/(x2-x1);
-		m = y2/x2 - frac/x1;
-		b = frac*(x2/x1);
+		if (x2 != x1) {
+			m = (y2-y1)/(x2-x1);
+			b = x1*m + y1;
+		}
+		else {
+			m = 0;
+			b = 0;
+		}
 
 		return {
 			m:m,

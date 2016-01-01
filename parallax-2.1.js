@@ -98,8 +98,6 @@ angular.module("parallaxModule", [])
 				b = 0;
 			}
 
-			console.log("get m:" + m + " b:" + b);
-
 			return {
 				m:m,
 				b:b
@@ -161,19 +159,21 @@ angular.module("parallaxModule", [])
 
 			//console.log("sh:" + sh + " ph:" + ph + " ih:" + ih + " g:" + g + " h:" + h);
 
-			//if (ih < h) {
+			if (ih < h) {
 
 				eqs = linear({
 					x1:0,
-					y1:-1*g,
+					y1:-1*g*1.01,
 
 					x2:h-sh,
-					y2:sh-ih-g
+					y2:(sh-ih-g)*0.95
 				});
-			// }
-			// else {
-			// 	eqs = {m:0.99, b:0};
-			// }
+			}
+			else {
+				eqs = {m:-0.99, b:-1*(ph-h)/2};
+			}
+
+			console.log("m:" + eqs.m + " b:" + eqs.b);
 			
 			
 		}
