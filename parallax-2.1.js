@@ -131,7 +131,6 @@ angular.module("parallaxModule", [])
 				$(inner).addClass("absolute height150 width black-back border-white z-minus-50");
 				$(element).append(inner);
 
-
 				img = document.createElement("img");
 				$(img).addClass("absolute height80 width-auto center");
 				img.src = $scope.src;
@@ -159,7 +158,7 @@ angular.module("parallaxModule", [])
 
 			//console.log("sh:" + sh + " ph:" + ph + " ih:" + ih + " g:" + g + " h:" + h);
 
-			if (ih < h) {
+			if (ih < h && !$scope.top) {
 
 				eqs = linear({
 					x1:2,
@@ -183,12 +182,7 @@ angular.module("parallaxModule", [])
 
 				o = $(element).offset().top - $el.offset().top;
 
-				if ($scope.top) top = -o*0.99;
-				else top = o*eqs.m + eqs.b;
-
-				if ($scope.name == "nuplae") {
-					//console.log("offset: " + o + " top: " + top);
-				}
+				top = o*eqs.m + eqs.b;
 
 				$(inner).css({top:top});
 			}
