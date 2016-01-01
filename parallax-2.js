@@ -149,7 +149,7 @@ angular.module("parallaxModule", [])
 
 				top = o*m;
 
-				console.log("m: " + m + " b: " + b + " top: " + top);
+				console.log("m: " + m + " top: " + top);
 
 				$(inner).css({top:top});
 			}
