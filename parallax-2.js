@@ -147,7 +147,7 @@ angular.module("parallaxModule", [])
 
 				top = (sh-ih)/(-sh-h)*(o-h) - g;
 
-				console.log("m: " + m + " top: " + top);
+				console.log("top: " + top);
 
 				$(inner).css({top:top});
 			}
