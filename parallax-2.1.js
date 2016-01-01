@@ -163,13 +163,19 @@ angular.module("parallaxModule", [])
 			g = (ph-ih)/2;
 			h = $el.height();
 
-			eqs = linear({
-				x1:0,
-				y1:-1*g,
+			if (ih < h) {
 
-				x2:h-sh,
-				y2:(sh-ih-g)
-			});
+				eqs = linear({
+					x1:0,
+					y1:-1*g,
+
+					x2:h-sh,
+					y2:(sh-ih-g)
+				});
+			}
+			else
+				eqs = {m:0.99, b:0};
+			}
 			
 			
 		}
@@ -183,7 +189,7 @@ angular.module("parallaxModule", [])
 				else top = o*eqs.m - eqs.b;
 
 				if ($scope.name == "nuplae") {
-					console.log("offset: " + o + " top: " + top);
+					//console.log("offset: " + o + " top: " + top);
 				}
 
 				$(inner).css({top:top});
