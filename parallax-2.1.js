@@ -162,11 +162,11 @@ angular.module("parallaxModule", [])
 			h = $el.height();
 
 			eqs = linear({
-				x1:-1*sh,
-				y1:sh-g,
+				x1:0,
+				y1:-1*g,
 
-				x2:h-sh, 
-				y2:sh-ih-g
+				x2:h, 
+				y2:sh-g
 			});
 			
 			

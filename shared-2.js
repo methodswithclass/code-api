@@ -74,7 +74,7 @@ angular.module('sharedModule', [])
     	isMobile:isMobile,
     	checkDevice:checkDevice,
     	isPortrait:isPortrait,
-    	linear,linear,
+    	linear:linear,
     	getOrientation:getOrientation,
     	renderHtml:function (htmlCode) {
 	        return $sce.trustAsHtml(htmlCode);
