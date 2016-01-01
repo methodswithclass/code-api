@@ -80,6 +80,27 @@ angular.module("parallaxModule", [])
 	        
 	    }
 
+	    var linear = function (params) {
+
+			var y1 = params.y1;
+			var y2 = params.y2;
+			var x1 = params.x1;
+			var x2 = params.x2;
+			var frac;
+			var m;
+			var b;
+
+			frac = (y1*x2 - y2*x1)/(x2-x1);
+			m = y2/x2 - frac/x1;
+			b = frac*(x2/x1);
+
+			return {
+				m:m,
+				b:b
+			}
+
+		}
+
 
 	    var $el = $("#" + $scope.scroll);
 		var inner;
@@ -97,8 +118,8 @@ angular.module("parallaxModule", [])
 		var ih;
 		var h;
 		var g;
-		var m;
-		var b;
+
+		var eqs;
 
 		var setup = function () {
 
@@ -137,8 +158,15 @@ angular.module("parallaxModule", [])
 			ih = img ? $(img).height() : ph*0.8;
 			g = (ph-ih)/2;
 
-			m = (ph-g+ih)/(h-sh);
-			b = m*h-ih;
+			eqs = linear({
+				x1:h,
+				y1:sh-ih-g,
+				
+				x2:-1*sh, 
+				y2:sh-g
+			});
+			
+			
 		}
 
 		var scroll = function () {
@@ -147,7 +175,7 @@ angular.module("parallaxModule", [])
 				o = $(element).offset().top - $el.offset().top;
 
 				if ($scope.top) top = -o*0.99;
-				else top = o*m + b;
+				else top = o*eqs.m + eqs.b;
 
 				$(inner).css({top:top});
 			}

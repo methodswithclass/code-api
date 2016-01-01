@@ -49,10 +49,32 @@ angular.module('sharedModule', []).
 		}
 	}
 
+	var linear = function (params) {
+
+		var y1 = params.y1;
+		var y2 = params.y2;
+		var x1 = params.x1;
+		var x2 = params.x2;
+		var frac;
+		var m;
+		var b;
+
+		frac = (y1*x2 - y2*x1)/(x2-x1);
+		m = y2/x2 - frac/x1;
+		b = frac*(x2/x1);
+
+		return {
+			m:m,
+			b:b
+		}
+
+	}
+
     return {
     	isMobile:isMobile,
     	checkDevice:checkDevice,
     	isPortrait:isPortrait,
+    	linear,linear,
     	getOrientation:getOrientation,
     	renderHtml:function (htmlCode) {
 	        return $sce.trustAsHtml(htmlCode);
