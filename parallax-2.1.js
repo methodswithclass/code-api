@@ -159,14 +159,16 @@ angular.module("parallaxModule", [])
 			g = (ph-ih)/2;
 			h = $el.height();
 
+			console.log("sh:" + sh + " ph:" + ph + " ih:" + ih + " g:" + g + " h:" + h);
+
 			//if (ih < h) {
 
 				eqs = linear({
 					x1:0,
-					y1:-1*g,
+					y1:g,
 
 					x2:h-sh,
-					y2:sh-ih
+					y2:sh-ih-g
 				});
 			// }
 			// else {
