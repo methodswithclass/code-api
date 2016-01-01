@@ -94,11 +94,11 @@ angular.module("parallaxModule", [])
 			// m = y2/x2 - frac/x1;
 			// b = frac*(x2/x1);
 
-			if (o2 != 0) { 
-				b = (y1 - y2*(x1/x2))/(1-o1/o2);
+			if (x2 != 0) { 
+				b = (y1 - y2*(x1/x2))/(1-x1/x2);
 				m = (y2-b)/x2;
 			}
-			else if (o1 != 0) {
+			else if (x1 != 0) {
 				b = y2;
 				m = (y1-y2)/x1;
 			}
