@@ -137,22 +137,10 @@ angular.module("parallaxModule", [])
 			if (device.valid() && active) {
 
 				var o = $(element).offset().top;
-				var sh = $(element).height();
-				var ph = $(inner).height();
-				var ih = img ? $(img).height() : ph*0.8;
 				var h = $el.height();
-				var g = (ph-ih)/2;
-
-				var m = (g-ih)/h;
-				var b = -1*g;
 
 				if ($scope.top) top = -o*0.99;
-				//else top = -o/h*total - shift;
-				else top = o*m + b;
-
-				if ($scope.src && $scope.src.search("gravity") != -1) {
-					console.log("top: " + top);
-				}
+				else top = -o/h*total - shift;
 
 				$(inner).css({top:top});
 			}

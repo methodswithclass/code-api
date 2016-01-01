@@ -91,6 +91,15 @@ angular.module("parallaxModule", [])
 		var offset;
 		var active = false;
 
+		var o;
+		var sh;
+		var ph;
+		var ih;
+		var h;
+		var g;
+		var m;
+		var b;
+
 		var setup = function () {
 
 			if ($scope.src && !$scope.inner) {
@@ -107,18 +116,10 @@ angular.module("parallaxModule", [])
 				img.src = $scope.src;
 				$(inner).append(img);
 
-				mover = img;
-
-				//console.log("parallax: image");
-
 			}
 			else if ($scope.inner && !$scope.src) {
-
 				active = true;
-
 				inner = $(element).find("#" + $scope.inner)[0];
-				console.log("parallax: no image, inner id is: " + inner.id);
-				mover = inner;
 			}
 
 			//shift = ($(inner).height() - $(mover).height())/2*1200/$el.height();
@@ -129,25 +130,29 @@ angular.module("parallaxModule", [])
 		var reset = function () {
 			if (img) {
 				fix({img:$(img), space:$(element), first:true});
-				mover = img;
 			}
-			//total = $(mover).height()*$(mover).height()/1200*0.8;
-			console.log("version2");
+			sh = $(element).height();
+			ph = $(inner).height();
+			h = $el.height();
+			ih = null;
+			g = null;
+			m = null;
+			b = null;
 		}
 
 		var scroll = function () {
 			if (device.valid() && active) {
 
-				var o = $(element).offset().top - $el.offset().top;
-				var sh = $(element).height();
-				var ph = $(inner).height();
-				var ih = img ? $(img).height() : ph*0.8;
-				var h = $el.height();
-				var g = (ph-ih)/2;
+				o = $(element).offset().top - $el.offset().top;
+				
+				if (!ih) ih = img ? $(img).height()*0.9 : ph*0.8;
+				if (!g) g = (ph-ih)/2*1.1;
 
-				top = (sh-ih)/(-sh-h)*(o-h) - g;
+				if (!m) m = (g-ih)/h;
+				if (!b) b = -1*g;
 
-				console.log("top: " + top);
+				if ($scope.top) top = -o*0.99;
+				else top = o*m + b;
 
 				$(inner).css({top:top});
 			}
@@ -174,7 +179,8 @@ angular.module("parallaxModule", [])
 		scope:{
 			src:"@",
 			inner:"@",
-			scroll:"@"
+			scroll:"@",
+			top:"="
 		},
 		link:link
 	};
