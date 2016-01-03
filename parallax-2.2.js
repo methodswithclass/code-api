@@ -150,11 +150,13 @@ angular.module("parallaxModule", [])
 					height:"80%", 
 					width:"auto", 
 					top:"50%", 
-					left:"50%", 
-					"maring-right":"-50%", 
-					"-ms-transform":"translate(-50%, -50%)",
-					"-webkit-transform":"translate(-50%, -50%)",
-					"transform":"translate(-50%, -50%)"
+					left:"50%",
+					"margin-right":"-50%"
+					transform: 'translate(-50%, -50%)',
+ 					MozTransform: 'translate(-50%, -50%)',
+ 					WebkitTransform: 'translate(-50%, -50%)',
+ 					msTransform: 'translate(-50%, -50%)'
+					
 				});
 
 			}
