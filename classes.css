@@ -1061,10 +1061,19 @@ a.blue {
 	height:80%;
 }
 
-
 .height90 {
 
 	height:90%;
+}
+
+.height95 {
+
+	height:95%;
+}
+
+.height99 {
+
+	height:99%;
 }
 
 .height120 {
@@ -1261,6 +1270,15 @@ a.blue {
 .width90 {
 
 	width:90%;
+}
+
+.width95 {
+
+	width:95%;
+}
+
+.width99 {
+	width:99%;
 }
 
 .width120 {
