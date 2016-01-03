@@ -137,7 +137,7 @@ angular.module("parallaxModule", [])
 					width:"100%", 
 					backgroundColor:"black", 
 					zIndex:-50, 
-					opacity:-0.99
+					opacity:0.99
 				});
 
 				img = document.createElement("img");
