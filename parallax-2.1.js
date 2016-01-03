@@ -128,13 +128,36 @@ angular.module("parallaxModule", [])
 				active = true;
 
 				inner = document.createElement("div");
-				$(inner).addClass("absolute height150 width black-back z-minus-50");
+				//$(inner).addClass("absolute height150 width black-back z-minus-50");
 				$(element).append(inner);
 
+				$(inner).css({
+					position:"absolute", 
+					height:"150%", 
+					width:"100%", 
+					backgroundColor:"black", 
+					zIndex:-50, 
+					opacity:0.99
+				});
+
 				img = document.createElement("img");
-				$(img).addClass("absolute height80 width-auto center");
+				//$(img).addClass("absolute height80 width-auto center");
 				img.src = $scope.src;
 				$(inner).append(img);
+
+				$(img).css({
+					position:"absolute", 
+					height:"80%", 
+					width:"auto", 
+					top:"50%", 
+					left:"50%",
+					"margin-right":"-50%",
+					transform: 'translate(-50%, -50%)',
+ 					MozTransform: 'translate(-50%, -50%)',
+ 					WebkitTransform: 'translate(-50%, -50%)',
+ 					msTransform: 'translate(-50%, -50%)'
+					
+				});
 
 			}
 			else if ($scope.inner && !$scope.src) {
