@@ -129,6 +129,8 @@ angular.module("parallaxModule", [])
 
 				inner = document.createElement("div");
 				//$(inner).addClass("absolute height150 width black-back z-minus-50");
+				$(element).append(inner);
+
 				$(inner).css({
 					position:"absolute", 
 					height:"150%", 
@@ -138,10 +140,11 @@ angular.module("parallaxModule", [])
 					opacity:-0.99
 				});
 
-				$(element).append(inner);
-
 				img = document.createElement("img");
 				//$(img).addClass("absolute height80 width-auto center");
+				img.src = $scope.src;
+				$(inner).append(img);
+
 				$(img).css({
 					position:"absolute", 
 					height:"80%", 
@@ -153,9 +156,6 @@ angular.module("parallaxModule", [])
 					"-webkit-transform":"translate(-50%, -50%)",
 					"transform":"translate(-50%, -50%)"
 				});
-
-				img.src = $scope.src;
-				$(inner).append(img);
 
 			}
 			else if ($scope.inner && !$scope.src) {
