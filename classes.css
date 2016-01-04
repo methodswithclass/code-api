@@ -225,6 +225,11 @@ a.blue {
 	margin-bottom:100px;
 }
 
+.margin-bottom-400 {
+
+	margin-bottom:400px;
+}
+
 .padding-5 {
 
 	padding:5px;
@@ -389,6 +394,11 @@ a.blue {
 	left:50%;
 }
 
+.left60 {
+
+	left:60%;
+}
+
 .left70 {
 
 	left:70%;
@@ -518,6 +528,11 @@ a.blue {
 	bottom:0;
 }
 
+.bottom10 {
+
+	bottom:10%;
+}
+
 .bottom15 {
 	bottom:15%;
 }
@@ -567,6 +582,16 @@ a.blue {
 	bottom:100px;
 }
 
+.bottom-300 {
+
+	bottom:300px;
+}
+
+.bottom-400 {
+
+	bottom:400px;
+}
+
 .bottom-minus10 {
 
 	bottom:-10%;
@@ -590,6 +615,10 @@ a.blue {
 .bottom-minus-300 {
 
 	bottom:-300px;
+}
+
+.bottom-minus-400 {
+	bottom:-400px;
 }
 
 .flip-h {
@@ -1189,6 +1218,11 @@ a.blue {
 .height-1200 {
 
 	height:1200px;
+}
+
+.height-2000 {
+
+	height:2000px;
 }
 
 .min-height100 {
