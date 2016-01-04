@@ -3,7 +3,24 @@ var past = "past";
 var current = "current";
 var development = "development";
 
-var app = angular.module("app", ['parallaxModule'])
+var app = angular.module("app", ['parallaxModule', 'stateModule'])
+
+
+.config(['$locationProvider', 'runtime.stateProvider', function ($locationProvider, runtimeProvider) {
+
+	$locationProvider.html5Mode(true);
+
+	var states = runtimeProvider.states;
+
+	for (var i = 0; i < states.length; i++) {
+	  runtimeProvider.addState(states[i]);
+	}
+}]).
+
+run(function (states) {
+
+	states.go("home");
+})
 
 
 .factory("data", function () {
@@ -70,8 +87,22 @@ var app = angular.module("app", ['parallaxModule'])
 	}
 	]
 
+	var getModuleByName = function (name) {
+
+		for (i in modules) {
+
+			if (name == modules[i].name) {
+
+				return modules[i];
+			}
+		}
+
+		return {name:"none"};
+	}
+
 	return {
-		modules:modules
+		modules:modules,
+		getModuleByName:getModuleByName
 	}
 
 })
@@ -84,38 +115,38 @@ var app = angular.module("app", ['parallaxModule'])
 
 }])
 
-.directive("footer", function () {
+// .directive("footer", function () {
 
-	return {
-		scope:false,
-		link:function ($scope, element, attr) {
+// 	return {
+// 		scope:false,
+// 		link:function ($scope, element, attr) {
 
-			var outer;
-			var footer;
-			var inner;
+// 			var outer;
+// 			var footer;
+// 			var inner;
 
-			var setHeight = function () {
+// 			var setHeight = function () {
 
-				outer = $("#footerouter");
-				footer = $(element);
-				inner = $("#footerinner");
+// 				outer = $("#footerouter");
+// 				footer = $(element);
+// 				inner = $("#footerinner");
 
-				footer.css({height:$(window).height()});
-				//inner.css({bottom:"10%"});
-			}
+// 				footer.css({height:$(window).height()});
+// 				//inner.css({bottom:"10%"});
+// 			}
 
-			setTimeout(function () {
+// 			setTimeout(function () {
 
-				setHeight();
-			}, 300);
+// 				setHeight();
+// 			}, 300);
 
-			$(window).on("resize", setHeight());
-		}
-	}
+// 			$(window).on("resize", setHeight());
+// 		}
+// 	}
 
-})
+// })
 
-.directive("link", function () {
+.directive("mainPage", function () {
 
 	return {
 		scope:false,
@@ -144,4 +175,20 @@ var app = angular.module("app", ['parallaxModule'])
 		}
 	}
 
+})
+
+.directive("open", function (states) {
+
+	return {
+
+		scope:false,
+		link:function ($scope, element, attr) {
+
+			$(element).on("click", function () {
+
+				states.go($scope.module.name);
+
+			})
+		}
+	}
 })
