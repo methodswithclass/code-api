@@ -19,7 +19,7 @@
 
 </head>
 
-<body ng-app="app" ng-controller="controller as main">
+<body ng-app="app">
 
 	<div class="absolute fill scrollY touch" id="body">
 
