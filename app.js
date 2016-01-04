@@ -28,7 +28,10 @@ run(function (states) {
 	var modules = [
 	{
 		name:"parallax",
-		description:"parallax scrolling angular module. Scrolls an image or DOM element at reduced rate compared to document scroll. Takes image source or child element id as input.",
+		description:{
+			s:"parallax scrolls an image or HTML element",
+			l:"angular module that scrolls an image or DOM element at reduced rate compared to document scroll. Takes image source or child element as input."
+		},
 		versions:[
 		{
 			number:"1",
@@ -49,7 +52,10 @@ run(function (states) {
 	},
 	{
 		name:"classes",
-		description:"all purpose css library. allows you to style any element anyway you want without making a special class for it.",
+		description:{
+			s:"the last css library you'll ever need",
+			l:"a flat css library that provides individual classes for each style point. this allows for an element to carry whatever classes it needs and reduces the burden on extensive singleton classes or heavy-duty css document engineering."
+		},
 		versions:[
 		{
 			number:"1",
@@ -60,7 +66,10 @@ run(function (states) {
 	},
 	{
 		name:"shared",
-		description:"contains several services for any angular project. includes a generic events service and a generic service to send and receive any kind of object or data within an angular app",
+		description:{
+			s:"general utility for a web app",
+			l:"contains several services for any angular project. an events service to call functions from other parts of an app, a service to send and receive generic kinds of objects or data to different parts of an app"
+		},
 		versions:[
 		{
 			number:"1",
@@ -76,7 +85,10 @@ run(function (states) {
 	},
 	{
 		name:"console",
-		description:"prints out console.log() entries to a visible area on screen. useful for mobile debugging. output is scrollable. contains angular directive and service.",
+		description:{
+			s:"debug on mobile",
+			l:"prints out the console to a visible area on screen. designed for mobile debugging. output is scrollable"
+		},
 		versions:[
 		{
 			number:"1",
@@ -188,7 +200,28 @@ run(function (states) {
 
 				states.go($scope.module.name);
 
+				$("#body").scrollTo(0);
+
 			})
 		}
 	}
+})
+
+.directive("home", function (states) {
+
+	return {
+
+		scope:false,
+		link:function ($scope, element, attr) {
+
+			$(element).on("click", function () {
+
+				states.go("home");
+
+				$("#body").scrollTo(0);
+
+			})
+		}
+	}
+
 })
