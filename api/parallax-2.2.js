@@ -176,7 +176,7 @@ angular.module("parallaxModule", [])
 			if (img) {
 				fix({img:$(img), space:$(element), first:true});
 			}
-			ih = img ? $(img).height()*factor : ph*0.8*factor;
+			ih = img ? $(img).height()/factor : ph*0.8/factor;
 			g = (ph-ih)/2;
 			h = $el.height();
 
