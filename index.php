@@ -49,44 +49,47 @@
 				<div ng-repeat="module in main.modules">
 
 					<div class="relative width height-800 black-back">
-						<div class="absolute width40 height80 center white-back lowered">
+						<div class="absolute width-800 height hcenter">
+							<div class="absolute width80 height80 center white-back lowered">
 
-							<div class="absolute width80 height80 center">
-								<div class="relative width padding-v-20 font-40">
-									{{module.name}}
-								</div>
+								<div class="absolute width80 height80 center">
+									<div class="relative width padding-v-20 font-40">
+										{{module.name}}
+									</div>
 
-								<div class="relative width padding-v-20 font-20">
-									{{module.description}}
-								</div>
+									<div class="relative width padding-v-20 font-20">
+										{{module.description}}
+									</div>
 
-								<div class="relative width padding-v-20 font-20">
+									<div class="relative width padding-v-20 font-20">
 
-									versions:
-								</div>
+										versions:
+									</div>
 
-								<div ng-repeat="version in module.versions">
+									<div ng-repeat="version in module.versions">
 
-									<div class="relative width margin-v-20 height-50">
+										<div class="relative width margin-v-20 height-50">
 
-										<div class="absolute width30 height font-20">
-											<div class="absolute center text-center">
-												{{version.number}}
-											</div>
-										</div>
-
-										<div class="absolute width30 height left30 font-20">
-											<div class="relative center text-center">
-												{{version.status}}
-											</div>
-										</div>
-
-										<div class="absolute width40 height left60 font-20">
-											<div class="absolute width height black-back white raised rounded10 pointer" download>
-												<div class="absolute center text-center ">
-													download
+											<div class="absolute width30 height font-20">
+												<div class="absolute center text-center">
+													{{version.number}}
 												</div>
 											</div>
+
+											<div class="absolute width30 height left30 font-20">
+												<div class="relative center text-center">
+													{{version.status}}
+												</div>
+											</div>
+
+											<div class="absolute width40 height left60 font-20">
+												<div class="absolute width height black-back white raised rounded10 pointer" download>
+													<div class="absolute center text-center ">
+														download
+													</div>
+												</div>
+											</div>
+
 										</div>
 
 									</div>
