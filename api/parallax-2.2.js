@@ -214,7 +214,7 @@ angular.module("parallaxModule", [])
 				$(inner).css({top:top});
 			}
 
-			console.log("version 1 factor: " + factor);
+			//console.log("version 1 factor: " + factor);
 		}
 
 		setTimeout(function () {
