@@ -1,6 +1,6 @@
 
-var past = "past";
-var current = "current";
+var depricated = "depricated";
+var production = "production";
 var development = "development";
 
 var app = angular.module("app", ['parallaxModule', 'stateModule'])

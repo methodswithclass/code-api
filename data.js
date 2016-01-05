@@ -9,19 +9,14 @@ app.factory("data", function () {
 		},
 		versions:[
 		{
-			number:"1",
-			src:"parallax-1.js",
-			status:past
-		},
-		{
 			number:"2",
 			src:"parallax-2.js",
-			status:past
+			status:depricated
 		},
 		{
 			number:"2.1",
 			src:"parallax-2.1.js",
-			status:current
+			status:production
 		}
 		]
 	},
@@ -35,7 +30,7 @@ app.factory("data", function () {
 		{
 			number:"1",
 			src:"classes.css",
-			status:current
+			status:production
 		}
 		]
 	},
@@ -49,12 +44,12 @@ app.factory("data", function () {
 		{
 			number:"1",
 			src:"shared-1.js",
-			status:past
+			status:production
 		},
 		{
 			number:"2",
 			src:"shared-2.js",
-			status:current
+			status:production
 		}
 		]
 	},
@@ -68,7 +63,7 @@ app.factory("data", function () {
 		{
 			number:"1",
 			src:"console-1.js",
-			status:current
+			status:production
 		}
 		]
 	}

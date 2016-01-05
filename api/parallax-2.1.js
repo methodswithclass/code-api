@@ -1,6 +1,28 @@
+/***********************************************************************************
+  
+		Parallax Module v2.1
 
+		AngularJS library with no other dependencies	
+
+		scrolls an image or DOM element at reduced rate compared to document scroll. 
+		Takes image source or child element as input.
+
+		contents:
+		parallax scrolling directive
+
+
+		Methods with Class, LLC, 2015
+
+
+***********************************************************************************/
+
+
+
+// import this module into your project
 angular.module("parallaxModule", [])
 
+
+// determines whether current device can use parallax scrolling. IE and mobile devices return false.
 .factory("device", function () {
 
 	var valid = function() {
@@ -20,10 +42,16 @@ angular.module("parallaxModule", [])
 
 })
 
+
+// add this directive to the element you want to add a parallax scrolling element too
 .directive('parallax', ['device', '$window', function (device, $window) {
 
+
+	// link function, see below for parameters
 	var link = function ($scope, element, attr) {
 
+
+		// adjusts the size of the image (defined in the directive 'src') to always be bigger than the parent
 		var fix = function (params) {
 
 			var img = params.img;
@@ -80,6 +108,7 @@ angular.module("parallaxModule", [])
 	        
 	    }
 
+	    // generally solves a system of two linear equations 
 	    var linear = function (params) {
 
 			var y1 = params.y1;
@@ -121,6 +150,7 @@ angular.module("parallaxModule", [])
 
 		var eqs;
 
+		// if src is defined, add the image to the parent div dynamically, called when loaded
 		var setup = function () {
 
 			if ($scope.src && !$scope.inner) {
@@ -128,9 +158,9 @@ angular.module("parallaxModule", [])
 				active = true;
 
 				inner = document.createElement("div");
-				//$(inner).addClass("absolute height150 width black-back z-minus-50");
 				$(element).append(inner);
 
+				// container div is always 150% taller than parent to allow enough room to parallax scroll
 				$(inner).css({
 					position:"absolute", 
 					height:"150%", 
@@ -141,10 +171,11 @@ angular.module("parallaxModule", [])
 				});
 
 				img = document.createElement("img");
-				//$(img).addClass("absolute height80 width-auto center");
 				img.src = $scope.src;
 				$(inner).append(img);
 
+
+				// image is centered with in container, this is what is adjusted by fix()
 				$(img).css({
 					position:"absolute", 
 					height:"80%", 
@@ -171,6 +202,7 @@ angular.module("parallaxModule", [])
 
 
 
+		// get parallax scroll parameters, solve linear equation for current values, called when loaded and anytime the window is resized
 		var reset = function () {
 			if (img) {
 				fix({img:$(img), space:$(element), first:true});
@@ -203,7 +235,9 @@ angular.module("parallaxModule", [])
 			
 		}
 
+		// changes height of parallax scrolling element based on element offset compared to top of scrolling element
 		var scroll = function () {
+			// if device is desktop and a parallax scrolling element is defined
 			if (device.valid() && active) {
 
 				o = $(element).offset().top - $el.offset().top;
@@ -216,31 +250,35 @@ angular.module("parallaxModule", [])
 			//console.log("version");
 		}
 
+		// initiate parallax elements when loaded
 		setTimeout(function () {
 			setup();
 		}, 200);
 
+		// determine parallax values and run the top setting function once when loaded so that scrolling doesn't cause jump
 		setTimeout(function () {
 			reset();
 			scroll();
 		}, 500)
 
+		// determine values and run the top setting function when the window is resized
 		angular.element($window).bind('resize', function () {
 			reset();
 			scroll();
 		});
 
+		// bind the top setting function for parallax to the scrolling event
 		$el.bind('scroll', scroll);
 
 	}
 
 	return {
 		scope:{
-			name:"@",
-			src:"@",
-			inner:"@",
-			scroll:"@",
-			top:"="
+			name:"@", //identifier. optional. for debugging
+			src:"@", //image source. optional. required if inner is not defined, can't be both
+			inner:"@", // child element id. optional. required if src is not defined, can't be both
+			scroll:"@", // overflow:scroll element id. required. nothing will work unless this module can detect scrolling and the top of the document is different than the top of the window
+			top:"=" // boolean. optional. if a parallax scrolling element has a zero offset when loaded, it may be desired to have this behavior
 		},
 		link:link
 	};

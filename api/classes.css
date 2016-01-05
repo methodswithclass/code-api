@@ -1,5 +1,22 @@
 
 
+/************************************************************************************
+  
+		classes.css
+
+		CSS library
+
+		a flat css library that provides individual classes for each style point. 
+		this allows for an element to carry whatever classes it needs 
+		and reduces the burden on extensive singleton classes 
+		or heavy-duty css document engineering.
+
+		Methods with Class, LLC, 2015
+
+
+***********************************************************************************/
+
+
 /* ***************  GENERAL ***************  */
 
 

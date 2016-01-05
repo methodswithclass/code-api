@@ -1,3 +1,23 @@
+/***********************************************************************************
+ 
+		Console Module v1
+
+		AngularJS library with no other dependencies	
+
+		prints out the console to a visible area on screen. designed for mobile debugging. output is scrollable
+
+		contents:
+		console service
+		console directive
+		
+
+		Methods with Class, LLC, 2015
+
+
+***********************************************************************************/
+
+
+// load this module into your project
 var consoleModule = angular.module("consoleModule", [])
 
 
@@ -111,10 +131,13 @@ var consoleModule = angular.module("consoleModule", [])
 
 })
 
+
+// add this directive to your html
 .directive("console", function () {
 
 	var link = function ($scope, element, attr) {
 
+		// the attribute is required for it to show on screen
 		var vis = attr.vis;
 
 		if (vis == "show") {
