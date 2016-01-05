@@ -1,6 +1,6 @@
 /***********************************************************************************
   
-		Shared Module v2
+		Shared Module v2.1
 
 		AngularJS library with no other dependencies	
 
@@ -9,9 +9,8 @@
 		contents:
 		device checking
 		linear equation general solution
-		events callback module
-		send module
-
+		call functions setup in one place of an application from another
+		send data around within an application
 		
 
 		Methods with Class, LLC, 2015
@@ -514,14 +513,14 @@ angular.module('sharedModule', [])
 		return false;
 	}
 
-	// setup a send operation
-	var setup = function () {
+	// an operation to send data back to a receiver
+	var back = function (name) {
 
 
 		// setup a named key/value object to receive data at a later time
-		this.receiver = function (params) {
+		this.setup = function (params) {
 
-			var name = params.name;
+			//var name = params.name;
 
 			var bin;
 
@@ -542,10 +541,30 @@ angular.module('sharedModule', [])
 			names[names.length] = name;
 		}
 
-		// directly save data in named array to retrieve at a later time
-		this.save = function (params) {
+		// save data to the key/value pair object setup before
+		this.add = function (params) {
 
-			var name = params.name;
+			//var name = params.name;
+			var id = params.id;
+
+			var bin = receivers[name];
+
+			for (i in bin) {
+
+				bin[i][id] = params.data;
+			}
+
+		}
+
+	}
+
+	// save data to be retrieved later
+	var save = function (name) {
+
+		// add data to an array to be retrieved later
+		this.add = function (data) {
+
+			//var name = params.name;
 
 			var bin;
 
@@ -559,38 +578,19 @@ angular.module('sharedModule', [])
 
 			//console.log("receive " + name + " bin size: " + bin.length);
 
-			bin[bin.length] = params.data;
+			bin[bin.length] = data;
 
 			saved[name] = bin; //reassign bin to receiver
 
 			savedNames[savedNames.length] = name;
 
 		}
+		
 
-	}
+		// retrieve the array of data
+		this.get = function () {
 
-	// finish send operation
-	var retrieve = function () {
-
-		// save data to the key/value pair object setup before
-		this.accum = function (params) {
-
-			var name = params.name;
-			var id = params.id;
-
-			var bin = receivers[name];
-
-			for (i in bin) {
-
-				bin[i][id] = params.data;
-			}
-
-		}
-
-		// retrieve the array of data that you have been saving to
-		this.get = function (params) {
-
-			var name = params.name;
+			//var name = params.name;
 
 			var bin = saved[name];
 
@@ -607,9 +607,8 @@ angular.module('sharedModule', [])
 	
 
 	return {
-
-		setup:new setup(),
-		retrieve:new retrieve()
+		back:back,
+		save:save
 	}
 
 })
