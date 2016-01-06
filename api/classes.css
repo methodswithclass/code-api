@@ -805,6 +805,12 @@ a.blue {
 	border-top-right-radius:20px;
 }
 
+.rounded-top-50 {
+
+	border-top-left-radius:50px;
+	border-top-right-radius:50px;
+}
+
 .border {
 	border:1px solid black;	
 }
