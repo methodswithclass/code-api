@@ -1463,6 +1463,11 @@ a.blue {
 	width:800px;
 }
 
+.width-1200 {
+
+	width:1200px;
+}
+
 .min-width100 {
 
 	min-width:100%;
