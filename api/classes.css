@@ -885,6 +885,11 @@ a.blue {
 }
 
 .raised {
+	box-shadow: 0px 0px 10px 0 #424242;	
+	z-index:100;
+}
+
+.shadow {
 	box-shadow: 5px 5px 10px 0 #424242;	
 	z-index:100;
 }
@@ -1509,6 +1514,11 @@ a.blue {
 .width-1200 {
 
 	width:1200px;
+}
+
+.width-2000 {
+
+	width:2000px;
 }
 
 .min-width100 {
