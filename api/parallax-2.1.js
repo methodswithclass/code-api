@@ -153,6 +153,8 @@ angular.module("parallaxModule", [])
 		// if src is defined, add the image to the parent div dynamically, called when loaded
 		var setup = function () {
 
+			$(element).css({"overflow":"hidden"});
+
 			if ($scope.src && !$scope.inner) {
 
 				active = true;
