@@ -140,6 +140,7 @@ angular.module("parallaxModule", [])
 		var img;
 		var top;
 		var active = false;
+		var factor = $scope.factor ? $scope.factor : 1;
 
 		var o;
 		var sh;
@@ -153,7 +154,10 @@ angular.module("parallaxModule", [])
 		// if src is defined, add the image to the parent div dynamically, called when loaded
 		var setup = function () {
 
-			$(element).css({"overflow":"hidden"});
+			$(element).css({
+				overflow:"hidden", 
+				"background-color":"black"
+			});
 
 			if ($scope.src && !$scope.inner) {
 
@@ -244,12 +248,12 @@ angular.module("parallaxModule", [])
 
 				o = $(element).offset().top - $el.offset().top;
 
-				top = o*eqs.m + eqs.b;
+				top = o*eqs.m*factor + eqs.b;
 
 				$(inner).css({top:top});
 			}
 
-			//console.log("version");
+			console.log("version 1 factor: " + factor);
 		}
 
 		// initiate parallax elements when loaded
@@ -280,7 +284,8 @@ angular.module("parallaxModule", [])
 			src:"@", //image source. optional. required if inner is not defined, can't be both
 			inner:"@", // child element id. optional. required if src is not defined, can't be both
 			scroll:"@", // overflow:scroll element id. required. nothing will work unless this module can detect scrolling and the top of the document is different than the top of the window
-			top:"=" // boolean. optional. if a parallax scrolling element has a zero offset when loaded, it may be desired to have this behavior
+			top:"=", // boolean. optional. if a parallax scrolling element has a zero offset when loaded, it may be desired to have this behavior
+			factor:"="
 		},
 		link:link
 	};
