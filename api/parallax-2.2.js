@@ -126,7 +126,7 @@ angular.module("parallaxModule", [])
 
 			$(element).css({
 				overflow:"hidden", 
-				backgroundColor:"black"
+				"background-color":"black"
 			});
 
 			if ($scope.src && !$scope.inner) {
