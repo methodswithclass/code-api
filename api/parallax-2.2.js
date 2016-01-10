@@ -149,6 +149,8 @@ angular.module("parallaxModule", [])
 		var h;
 		var g;
 
+		var mid;
+
 		var eqs;
 
 		// if src is defined, add the image to the parent div dynamically, called when loaded
@@ -247,24 +249,29 @@ angular.module("parallaxModule", [])
 
 				o = $(element).offset().top - $el.offset().top;
 
-				top = o*eqs.m*factor + eqs.b;
 
-				$(inner).css({top:top});
+				if (eqs) {
+					top = o*eqs.m*factor + eqs.b;
+					$(inner).css({top:top});
+				}
 			}
 
 			console.log("version 1 factor: " + factor);
 		}
 
-		// initiate parallax elements when loaded,
-		// determine parallax values,
-		// and run scroll() once when loaded so that scrolling doesn't cause jump
+		// run setup() to initiate parallax elements when loaded
 		setTimeout(function () {
 			setup();
-			reset();
-			scroll();
 		}, 200);
 
-		// determine values and run the top setting function when the window is resized
+		// run reset() to reset image size according to window size and re-calculate parallax parameters,
+		// and run scroll() once on load to keep image from jumping when scrolling starts
+		setTimeout(function () {
+			reset();
+			scroll();
+		}, 500);
+
+		// resize event: reset everything and run the parallax function
 		angular.element($window).bind('resize', function () {
 			reset();
 			scroll();

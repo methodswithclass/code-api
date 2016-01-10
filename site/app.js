@@ -1,8 +1,3 @@
-
-var depricated = "depricated";
-var production = "production";
-var development = "development";
-
 var app = angular.module("app", ['parallaxModule', 'stateModule'])
 
 

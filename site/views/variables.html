@@ -1,0 +1,39 @@
+<div class="relative width">
+
+	<div class="relative width {{data.name.size}}">
+		{{data.name.text}}
+	</div>
+
+	<div ng-repeat="variable in data.items">
+		<div class="relative width font-20">
+			
+			<div class="relative width border-bottom-white padding-v-20">
+				<div class="absolute width20 vcenter green3 font-25 font-typewriter">
+					{{variable.name}}
+				</div>
+				<div class="absolute width20 left20 vcenter {{variable.type.color}}">
+					{{variable.type.value}}
+				</div>
+				<div class="absolute width20 left40 vcenter {{variable.required.color}}">
+					{{variable.required.value}}
+				</div>
+			</div>
+			<div class="absolute width40 top-50">
+				<div class="absolute width50 left50">
+					<div ng-repeat="valid in variable.valid">
+
+						<div class="relative width">
+							{{valid.value}}
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<div class="relative width60 left40">
+				<p data="variable.d"></p>
+			</div>
+
+		</div>
+	</div>
+
+</div>

@@ -1,4 +1,59 @@
-app.directive("mainPage", function () {
+
+app.directive("doc", ['data', function (data) {
+
+	return {
+		restrict:"E",
+		scope:false,
+		replace:true,
+		templateUrl:"site/views/doc.html",
+		link:function ($scope, element, attr) {
+
+		}
+	}
+
+}])
+
+
+.directive("block", function () {
+
+	return {
+		resrict:"E",
+		scope:{
+			type:"@",
+			data:"="
+		},
+		replace:true,
+		template:"<div ng-include='getContentUrl()'></div>",
+		link:function ($scope, element, attr) {
+
+			$scope.getContentUrl = function () {
+
+				return "site/views/" + $scope.type + ".html";
+			}
+
+		}
+	}
+
+})
+
+.directive("p", function () {
+
+	return {
+
+		restrict:"E",
+		scope:{
+			data:"="
+		},
+		replace:true,
+		templateUrl:"site/views/paragraph.html",
+		link:function ($scope, element, attr) {
+
+			
+		}
+	}
+})
+
+.directive("mainPage", function () {
 
 	return {
 		scope:false,

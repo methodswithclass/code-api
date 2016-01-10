@@ -1,0 +1,29 @@
+<div class="relative width">
+
+	<div class="relative width font-30">
+		{{data.name}}
+	</div>
+
+	<div ng-repeat="function in data.items">
+
+		<div class="relative width80 hcenter">
+
+			<div class="relative width padding-top-50 border-bottom-white purple font-25 font-typewriter">
+				{{function.name}}
+			</div>
+
+			<div class="relative width padding-v-20">
+				<p data="function.d"></p>
+			</div>
+
+			<div class="relative width80 hcenter">
+				<block type="variables" data="function.input"></block>
+
+				<block type="variables" data="function.output"></block>
+			</div>
+
+		</div>
+
+	</div>
+
+</div>

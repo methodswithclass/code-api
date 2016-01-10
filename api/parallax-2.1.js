@@ -255,16 +255,14 @@ angular.module("parallaxModule", [])
 			console.log("version 1 factor: " + factor);
 		}
 
-		// initiate parallax elements when loaded
+		// initiate parallax elements when loaded,
+		// determine parallax values,
+		// and run scroll() once when loaded so that scrolling doesn't cause jump
 		setTimeout(function () {
 			setup();
-		}, 200);
-
-		// determine parallax values and run the top setting function once when loaded so that scrolling doesn't cause jump
-		setTimeout(function () {
 			reset();
 			scroll();
-		}, 500)
+		}, 200);
 
 		// determine values and run the top setting function when the window is resized
 		angular.element($window).bind('resize', function () {
