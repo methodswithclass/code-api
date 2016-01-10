@@ -260,6 +260,10 @@ angular.module("parallaxModule", [])
 		// and run scroll() once when loaded so that scrolling doesn't cause jump
 		setTimeout(function () {
 			setup();
+		}, 200);
+
+		setTimeout(function () {
+
 			reset();
 			scroll();
 		}, 500);
