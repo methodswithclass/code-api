@@ -56,7 +56,7 @@ var vartypes = {
 	},
 	object:{
 		value:"object",
-		color:"blue",
+		color:"green4",
 		back:"blue-back"
 	}
 };

@@ -262,7 +262,7 @@ angular.module("parallaxModule", [])
 			setup();
 			reset();
 			scroll();
-		}, 200);
+		}, 500);
 
 		// determine values and run the top setting function when the window is resized
 		angular.element($window).bind('resize', function () {
