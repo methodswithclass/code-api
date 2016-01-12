@@ -607,8 +607,8 @@ angular.module('sharedModule', [])
 	
 
 	return {
-		back:back,
-		save:save
+		back:new back(),
+		save:new save()
 	}
 
 })
