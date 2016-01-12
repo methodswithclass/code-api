@@ -514,13 +514,13 @@ angular.module('sharedModule', [])
 	}
 
 	// an operation to send data back to a receiver
-	var back = function (name) {
+	var back = function () {
 
 
 		// setup a named key/value object to receive data at a later time
 		this.setup = function (params) {
 
-			//var name = params.name;
+			var name = params.name;
 
 			var bin;
 
@@ -544,7 +544,7 @@ angular.module('sharedModule', [])
 		// save data to the key/value pair object setup before
 		this.add = function (params) {
 
-			//var name = params.name;
+			var name = params.name;
 			var id = params.id;
 
 			var bin = receivers[name];
@@ -559,12 +559,12 @@ angular.module('sharedModule', [])
 	}
 
 	// save data to be retrieved later
-	var save = function (name) {
+	var save = function () {
 
 		// add data to an array to be retrieved later
 		this.add = function (data) {
 
-			//var name = params.name;
+			var name = params.name;
 
 			var bin;
 
@@ -590,7 +590,7 @@ angular.module('sharedModule', [])
 		// retrieve the array of data
 		this.get = function () {
 
-			//var name = params.name;
+			var name = params.name;
 
 			var bin = saved[name];
 
