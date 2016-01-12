@@ -977,7 +977,9 @@ a.blue {
 }
 
 
-
+.hidden {
+	visibility:hidden;
+}
 
 /* ***************  COLORS ***************  */
 
