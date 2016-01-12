@@ -562,7 +562,7 @@ angular.module('sharedModule', [])
 	var save = function () {
 
 		// add data to an array to be retrieved later
-		this.add = function (data) {
+		this.add = function (params) {
 
 			var name = params.name;
 
@@ -578,7 +578,7 @@ angular.module('sharedModule', [])
 
 			//console.log("receive " + name + " bin size: " + bin.length);
 
-			bin[bin.length] = data;
+			bin[bin.length] = params.data;
 
 			saved[name] = bin; //reassign bin to receiver
 
@@ -588,7 +588,7 @@ angular.module('sharedModule', [])
 		
 
 		// retrieve the array of data
-		this.get = function () {
+		this.get = function (params) {
 
 			var name = params.name;
 
