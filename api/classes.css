@@ -1080,6 +1080,11 @@ a.blue {
 
 .blue-back {
 
+	background-color:blue;
+}
+
+.blue2-back {
+
 	background-color:#003;
 }
 
