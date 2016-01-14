@@ -1711,6 +1711,11 @@ a.blue {
 	min-width:1200px;
 }
 
+.min-width-1300 {
+
+	min-width:1300px;
+}
+
 .min-width-1600 {
 
 	min-width:1600px;
