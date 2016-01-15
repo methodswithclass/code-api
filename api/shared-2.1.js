@@ -160,6 +160,10 @@ angular.module('sharedModule', [])
 		return sum/array.length;
 	}
 
+	var value = function (value, index, array) {
+		return value;
+	}
+
 	var round = function (number, order) {
 
 		var value = Math.round(number/order)*order;
@@ -183,6 +187,7 @@ angular.module('sharedModule', [])
     	linear:linear,
     	truncate:truncate,
     	average:average,
+    	value:value,
     	round:round,
     	resolve:resolve,
     	getOrientation:getOrientation,
