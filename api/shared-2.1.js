@@ -141,11 +141,50 @@ angular.module('sharedModule', [])
 
 	}
 
+	var truncate = function (number, decimal) {
+	
+		var value = Math.floor(number*Math.pow(10, decimal))/Math.pow(10, decimal);
+		
+		return value;
+	}
+
+	var average = function (array, callback) {
+
+		var sum = 0;
+
+		for (i in array) {
+
+			sum += callback(array[i], i, array);
+		}
+
+		return sum/array.length;
+	}
+
+	var round = function (number, order) {
+
+		var value = Math.round(number/order)*order;
+
+		return value;
+	}
+
+	var resolveDigit = function (digit) {
+		if (digit < 10) {
+			return "0" + digit;	
+		}
+		else {
+			return "" + digit;	
+		}
+	}
+
     return {
     	isMobile:isMobile,
     	checkDevice:checkDevice,
     	isPortrait:isPortrait,
     	linear:linear,
+    	truncate:truncate,
+    	average:average,
+    	round:round,
+    	resolve:resolve,
     	getOrientation:getOrientation,
     	renderHtml:function (htmlCode) {
 	        return $sce.trustAsHtml(htmlCode);
