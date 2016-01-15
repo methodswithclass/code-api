@@ -171,13 +171,24 @@ angular.module('sharedModule', [])
 		return value;
 	}
 
-	var resolveDigit = function (digit) {
-		if (digit < 10) {
-			return "0" + digit;	
+	var log = function(x, num) {
+ 		return Math.log(x) / Math.log(num);
+	};
+
+	var leadingzeros = function (number, zeros) {
+		if (!zeros) zeros = 1;
+
+		var digits = Math.floor(log(number*10, 10));
+		var total = Math.floor(log(zeros, 10)) - digits;
+		var leading = "";
+		var i = 0;
+		for (var i = 0; i <= total; i++) {
+			leading += "0";
 		}
-		else {
-			return "" + digit;	
-		}
+
+		console.log(leading + digit);
+
+		return leading + digit;
 	}
 
     return {
@@ -189,7 +200,7 @@ angular.module('sharedModule', [])
     	average:average,
     	value:value,
     	round:round,
-    	resolve:resolve,
+    	leadingzeros:leadingzeros,
     	getOrientation:getOrientation,
     	renderHtml:function (htmlCode) {
 	        return $sce.trustAsHtml(htmlCode);
