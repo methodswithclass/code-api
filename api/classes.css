@@ -435,8 +435,18 @@ a.blue {
 	left:-20px;
 }
 
+.left-minus-50 {
+
+	left:-50px;
+}
+
 .left-minus-100 {
 	left:100px;
+}
+
+.left-minus-200 {
+
+	left:-200px;
 }
 
 .left0 {
