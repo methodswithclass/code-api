@@ -926,6 +926,11 @@ a.blue {
 	border-top-right-radius:50px;
 }
 
+.nooutline {
+	outline:none;
+	border:none;
+}
+
 .border {
 	border:1px solid black;	
 }
