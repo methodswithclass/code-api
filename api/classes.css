@@ -34,6 +34,11 @@
 	margin:0;
 }
 
+.nolink {
+
+	text-decoration: none;
+}
+
 .console {
 
 	position:absolute;
@@ -560,6 +565,21 @@
 .top70 {
 
 	top:70%;
+}
+
+.top100 {
+
+	top:100%;
+}
+
+.top110 {
+
+	top:110%;
+}
+
+.top120 {
+
+	top:120%;
 }
 
 .top-10 {
