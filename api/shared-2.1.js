@@ -712,7 +712,7 @@ angular.module('sharedModule', [])
 
 			subs.push(callback);
 
-			notify();
+			//notify();
 		}
 
 		self.setState = function (state) {
