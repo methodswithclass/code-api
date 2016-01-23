@@ -720,7 +720,7 @@ angular.module('sharedModule', [])
 
 		var sub = new s();
 
-		if (resolve(input.name)) subs[name] = sub;
+		if (r(input.name)) subs[name] = sub;
 
 		return sub;
 	}
@@ -738,7 +738,7 @@ angular.module('sharedModule', [])
 	return {
 
 		observable:observable,
-		observe:observe,
+		observer:observer,
 		get:get
 	}
 })
