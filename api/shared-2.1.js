@@ -686,14 +686,19 @@ angular.module('sharedModule', [])
 		return false;
 	}
 
-	var s = function (state) {
+	var s = function (input) {
 
 
 		var self = this;
 		var o = [];
-		self.state = state || null;
+		self.name = input.name || "";
+		self.state = input.state || null;
+
+		console.log("observable:", self.name)
 
 		var notify = function () {
+
+			console.log(self.name, "notify");
 
 			for (i in o) {
 				o[i] = self.state;
@@ -702,12 +707,16 @@ angular.module('sharedModule', [])
 
 		self.observer = function (_o) {
 
+			console.log(self.name, "observer", _o);
+
 			o.push(_o);
 
 			notify();
 		}
 
 		self.setState = function (state) {
+
+			console.log(self.name, "set state", self.state);
 
 			self.state = state;
 
@@ -718,7 +727,7 @@ angular.module('sharedModule', [])
 
 	var observable = function (input) {
 
-		var sub = new s();
+		var sub = new s(input);
 
 		if (r(input.name)) subs[name] = sub;
 
