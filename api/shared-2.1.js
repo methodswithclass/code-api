@@ -717,7 +717,7 @@ angular.module('sharedModule', [])
 
 		self.setState = function (state) {
 
-			console.log(self.name, "set state", self.state);
+			console.log(self.name, "set state", state);
 
 			self.state = state;
 
