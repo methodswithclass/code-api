@@ -668,6 +668,81 @@ angular.module('sharedModule', [])
 
 })
 
+.factory("react", function () {
+
+	var subs = {};
+	var names = [];
+
+	var r = function (name) {
+
+		for (i in names) {
+
+			if (name == names[i]) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	var s = function (state) {
+
+
+		var self = this;
+		var o = [];
+		self.state = state || null;
+
+		var notify = function () {
+
+			for (i in o) {
+				o[i] = self.state;
+			}
+		}
+
+		self.observer = function (_o) {
+
+			o.push(_o);
+
+			notify();
+		}
+
+		self.setState = function (state) {
+
+			self.state = state;
+
+			notify();
+		}
+
+	}
+
+	var observable = function (input) {
+
+		var sub = new s();
+
+		if (resolve(input.name)) subs[name] = sub;
+
+		return sub;
+	}
+
+	var observer = function (input) {
+
+		if (r(input.name)) subs[input.name].observer(input.o);
+	}
+
+	var get = function (name) {
+
+		if (r(name)) return subs[name];
+	}
+
+	return {
+
+		observable:observable,
+		observe:observe,
+		get:get
+	}
+})
+
 .directive('onTap', function () {
 	return function (scope, element, attrs) {
 		return $(element).hammer({
