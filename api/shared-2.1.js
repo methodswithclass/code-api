@@ -670,7 +670,7 @@ angular.module('sharedModule', [])
 
 .factory("react", function () {
 
-	var subs = {};
+	var saves = {};
 	var names = [];
 
 	var r = function (name) {
@@ -686,30 +686,31 @@ angular.module('sharedModule', [])
 		return false;
 	}
 
-	var s = function (input) {
+	var obs = function (input) {
 
 
 		var self = this;
 		var o = [];
 		self.name = input.name || "";
 		self.state = input.state || null;
+		var subs = [];
 
-		console.log("observable:", self.name)
+		console.log(self.name, "observable")
 
 		var notify = function () {
 
 			console.log(self.name, "notify");
 
-			for (i in o) {
-				o[i] = self.state;
+			for (i in subs) {
+				subs[i](self.state);
 			}
 		}
 
-		self.observer = function (_o) {
+		self.subscribe = function (callback) {
 
-			console.log(self.name, "observer", _o);
+			console.log(self.name, "subscribe");
 
-			o.push(_o);
+			subs.push(callback);
 
 			notify();
 		}
@@ -727,28 +728,42 @@ angular.module('sharedModule', [])
 
 	var observable = function (input) {
 
-		var sub = new s(input);
-
-		if (r(input.name)) subs[name] = sub;
-
-		return sub;
+		if (!r(input.name)) {
+			saves[input.name] = new obs(input);
+			names[names.length] = input.name;
+		}
+		else {
+			saves[input.name].setState(input.state);
+		}
 	}
 
-	var observer = function (input) {
+	var subscribe = function (input) {
 
-		if (r(input.name)) subs[input.name].observer(input.o);
+		if (r(input.name)) {
+			saves[input.name].subscribe(input.callback);
+		}
+		else {
+			saves[input.name] = new obs(input);
+			saves[input.name].subscribe(input.callback);
+			names[names.length] = input.name;
+		}
+
 	}
 
-	var get = function (name) {
+	var push = function (input) {
 
-		if (r(name)) return subs[name];
+		if (r(input.name)) {
+			saves[input.name].setState(input.state);
+		}
+		else {
+			console.log("no name at push (" + input.name + ")");
+		}
 	}
 
 	return {
-
 		observable:observable,
-		observer:observer,
-		get:get
+		subscribe:subscribe,
+		push:push
 	}
 })
 
