@@ -699,7 +699,7 @@ angular.module('sharedModule', [])
 
 		var notify = function () {
 
-			console.log(self.name, "notify");
+			//console.log(self.name, "notify");
 
 			for (i in subs) {
 				subs[i](self.state);
@@ -708,7 +708,7 @@ angular.module('sharedModule', [])
 
 		self.subscribe = function (callback) {
 
-			console.log(self.name, "subscribe");
+			//console.log(self.name, "subscribe");
 
 			subs.push(callback);
 
@@ -717,7 +717,7 @@ angular.module('sharedModule', [])
 
 		self.setState = function (state) {
 
-			console.log(self.name, "set state", state);
+			//console.log(self.name, "set state", state);
 
 			self.state = state;
 
