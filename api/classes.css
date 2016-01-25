@@ -1426,6 +1426,11 @@
 	height:20%;
 }
 
+.height25 {
+
+	height:25%;
+}
+
 .height30 {
 
 	height:30%;
@@ -1496,6 +1501,16 @@
 	height:500%;
 }
 
+.height-1 {
+
+	height:1px;
+}
+
+.height-2 {
+
+	height:2px;
+}
+
 .height-10 {
 
 	height:10px;
@@ -1504,11 +1519,6 @@
 .height-20 {
 
 	height:20px;
-}
-
-.height25 {
-
-	height:25%;
 }
 
 .height-30 {
@@ -1743,6 +1753,16 @@
 .width200 {
 
 	width:200%;
+}
+
+.width-1 {
+
+	width:1px;
+}
+
+.width-2 {
+
+	width:2px;
 }
 
 .width-5 {
