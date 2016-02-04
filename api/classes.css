@@ -1318,6 +1318,18 @@
     text-align:center;
 }
 
+.cell-top {
+
+	vertical-align:top;
+	text-align:top;
+}
+
+.cell-bottom {
+
+	vertical-align:bottom;
+	text-align:bottom;
+}
+
 .golden {
 
 	top: 30%;
