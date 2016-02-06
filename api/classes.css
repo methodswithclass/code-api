@@ -1028,6 +1028,18 @@
 	border-top-right-radius:50px;
 }
 
+.rounded-bottom-20 {
+
+	border-bottom-left-radius:20px;
+	border-bottom-right-radius:20px;
+}
+
+.rounded-bottom-50 {
+
+	border-bottom-left-radius:50px;
+	border-bottom-right-radius:50px;
+}
+
 .nooutline {
 	outline:none;
 	border:none;
