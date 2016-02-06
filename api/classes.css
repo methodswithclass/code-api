@@ -1092,6 +1092,10 @@
 	box-shadow: 0 0 10px 0 #424242;
 }
 
+.raised-dark {
+	box-shadow: 0 0 10px 0 #252525;
+}
+
 .shadow {
 	box-shadow: 5px 5px 10px 0 #424242;
 }
