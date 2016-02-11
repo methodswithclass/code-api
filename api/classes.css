@@ -1190,6 +1190,11 @@
 	color:#333;
 }
 
+.gray2 {
+
+	color:#909090;
+}
+
 .blue {
 
 	color:blue;
@@ -1281,6 +1286,11 @@
 .gray-back {
 
 	background-color:#333;
+}
+
+.gray2-back {
+
+	background-color:#909090;
 }
 
 .blue-back {
