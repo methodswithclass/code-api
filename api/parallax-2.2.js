@@ -141,13 +141,11 @@ angular.module("parallaxModule", [])
 		var active = false;
 		var factor = $scope.factor;
 
-		console.log("factor is", factor);
-
-		if (!factor) {
+		if (factor === undefined) {
 			factor = 1;
 		}
 
-		
+		console.log("factor is", factor);
 
 		var o;
 		var sh;
