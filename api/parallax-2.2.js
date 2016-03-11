@@ -134,16 +134,18 @@ angular.module("parallaxModule", [])
 
 		}
 
-		console.log("factor is", $scope.factor);
-
 	    var $el = $("#" + $scope.scroll);
 		var inner;
 		var img;
 		var top;
 		var active = false;
-		var factor = $scope.factor ? parseInt($scope.factor) : 1;
+		var factor = $scope.factor;
 
+		if (!factor) {
+			factor = 1;
+		}
 
+		console.log("factor is", factor);
 
 		var o;
 		var sh;
