@@ -140,7 +140,7 @@ angular.module("parallaxModule", [])
 		var img;
 		var top;
 		var active = false;
-		var factor = $scope.factor ? $scope.factor : 1;
+		var factor = $scope.factor ? parseInt($scope.factor) : 1;
 
 		var o;
 		var sh;
