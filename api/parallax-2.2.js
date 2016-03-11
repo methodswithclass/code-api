@@ -134,6 +134,7 @@ angular.module("parallaxModule", [])
 
 		}
 
+		console.log("factor is", $scope.factor);
 
 	    var $el = $("#" + $scope.scroll);
 		var inner;
@@ -142,7 +143,7 @@ angular.module("parallaxModule", [])
 		var active = false;
 		var factor = $scope.factor ? parseInt($scope.factor) : 1;
 
-		console.log("factor is", factor);
+
 
 		var o;
 		var sh;
