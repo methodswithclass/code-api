@@ -142,6 +142,8 @@ angular.module("parallaxModule", [])
 		var active = false;
 		var factor = $scope.factor ? parseInt($scope.factor) : 1;
 
+		console.log("factor is", factor);
+
 		var o;
 		var sh;
 		var ph;
