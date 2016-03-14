@@ -1719,7 +1719,7 @@
 
 .height-130 {
 
-	height:166px;
+	height:130px;
 }
 
 .height-150 {
@@ -1869,6 +1869,11 @@
 .width70 {
 
 	width:70%;
+}
+
+.width75 {
+
+	width:75%;
 }
 
 .width80 {
