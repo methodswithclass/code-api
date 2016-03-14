@@ -1077,6 +1077,11 @@
 	border-left:1px solid black;
 }
 
+.border-left-white {
+
+	border-left:1px solid white;
+}
+
 .border-right {
 
 	border-right:1px solid black;
