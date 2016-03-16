@@ -779,3 +779,15 @@ angular.module('sharedModule', [])
 	};
 })
 
+.directive('onHover', function () {
+	return function (scope, element, attrs) {
+		return $(element).hammer({
+			 	prevent_default: false,
+			 	drag_vertical: false
+			})
+			 .bind("hover", function (ev) {
+			   return scope.$apply(attrs['onHover']);
+			 });
+	};
+})
+
