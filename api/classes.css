@@ -833,6 +833,11 @@
 	padding:0 0 100px;
 }
 
+.padding-left4 {
+
+	padding-left:4%;
+}
+
 .padding-left5 {
 
 	padding-left:5%;
@@ -851,6 +856,11 @@
 .padding-left-100 {
 
 	padding-left:100px;
+}
+
+.padding-right4 {
+
+	padding-right:4%;
 }
 
 .padding-right5 {
