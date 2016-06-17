@@ -150,7 +150,7 @@ var consoleModule = angular.module("consoleModule", [])
 	}
 
 	return {
-		template:"<div class='console scrollY touch font-50' id='consoleInner'></div><div class='console' id='consoleContainer'></div>",
+		template:"<div class='console scrollY touch' id='consoleInner'></div><div class='console' id='consoleContainer'></div>",
 		link:link
 	}
 });
