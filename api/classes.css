@@ -75,7 +75,7 @@
 #consoleInner {
 	opacity:1.0;
 	color:white;
-	font-size:30px;
+	font-size:40px;
 	z-index:200;
 	overflow:scroll;
 }
