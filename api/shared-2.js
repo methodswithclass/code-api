@@ -617,12 +617,25 @@ angular.module('sharedModule', [])
 .directive('onTap', function () {
 	return function (scope, element, attrs) {
 		return $(element).hammer({
-			 	prevent_default: false,
-			 	drag_vertical: false
+			 	prevent_default: true,
+			 	time:1
 			})
 			 .bind("tap", function (ev) {
 			   return scope.$apply(attrs['onTap']);
 			 });
 	};
 })
+
+.directive('onPress', function () {
+	return function (scope, element, attrs) {
+		return $(element).hammer({
+			 	prevent_default: true,
+			 	time:1
+			})
+			 .bind("pressup", function (ev) {
+			   return scope.$apply(attrs['onPress']);
+			 });
+	};
+})
+
 
