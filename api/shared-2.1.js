@@ -799,3 +799,15 @@ angular.module('sharedModule', [])
 	};
 })
 
+.directive('onPress', function () {
+	return function (scope, element, attrs) {
+		return $(element).hammer({
+			 	prevent_default: true,
+			 	time:1
+			})
+			 .bind("pressup", function (ev) {
+			   return scope.$apply(attrs['onPress']);
+			 });
+	};
+})
+
