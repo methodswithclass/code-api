@@ -632,7 +632,7 @@ angular.module('sharedModule', [])
 			 	prevent_default: true,
 			 	time:1
 			})
-			 .bind("pressup", function (ev) {
+			 .bind("press", function (ev) {
 			   return scope.$apply(attrs['onPress']);
 			 });
 	};
