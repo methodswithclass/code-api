@@ -632,7 +632,8 @@ angular.module('sharedModule', [])
 	return function (scope, element, attrs) {
 		return $(element).hammer({
 			 	prevent_default: true,
-			 	time:5
+			 	time:5,
+			 	threshold:20
 			})
 			 .bind("press", function (ev) {
 			   return scope.$apply(attrs['onPress']);
