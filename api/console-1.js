@@ -83,11 +83,18 @@ var consoleModule = angular.module("consoleModule", [])
 		setHTML(string);
 	}
 
-	var log = function (text) {
+	var log = function () {
 		
 		if (isVisible()) {
 
-			history[history.length] = count++ + "&nbsp; &nbsp;" + text;
+			var message = "";
+
+			for (var i = 0; i < arguments.length; i++) {
+
+				message = message + " " + arguments[i];
+			}
+
+			history[history.length] = count++ + "&nbsp; &nbsp;" + message;
 			
 			if (history.length == total)
 				refresh();
@@ -103,8 +110,8 @@ var consoleModule = angular.module("consoleModule", [])
 
 	var attachToConsole = function () {
 	    var oldLog = console.log;
-	    console.log = function (message) {
-	       	log.apply(console, arguments);
+	    console.log = function () {
+	       	log.apply(log, arguments);
 	        oldLog.apply(console, arguments);
 	    };
 	}
