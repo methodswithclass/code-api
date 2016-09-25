@@ -104,7 +104,7 @@ var consoleModule = angular.module("consoleModule", [])
 	var attachToConsole = function () {
 	    var oldLog = console.log;
 	    console.log = function (message) {
-	       	log(message);
+	       	log.apply(console, arguments);
 	        oldLog.apply(console, arguments);
 	    };
 	}
