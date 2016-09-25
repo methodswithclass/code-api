@@ -678,6 +678,16 @@
 
 /* ********************************************  MARGIN PADDING  ********************************************  */
 
+.margin0 {
+
+	margin:0;
+}
+
+.margin-5 {
+
+	margin:5px;
+}
+
 .margin-10 {
 
 	margin:10px;
@@ -816,6 +826,11 @@
 .margin-v-200 {
 
 	margin:200px 0;
+}
+
+.padding0 {
+
+	padding:0;
 }
 
 .padding-5 {
