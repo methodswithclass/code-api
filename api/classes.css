@@ -1160,6 +1160,11 @@
 	border:none;
 }
 
+.border0 {
+
+	border:0;
+}
+
 .border {
 	border:1px solid black;	
 }
