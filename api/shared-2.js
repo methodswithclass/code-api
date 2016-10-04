@@ -618,9 +618,7 @@ angular.module('sharedModule', [])
 	return function (scope, element, attrs) {
 		return $(element).hammer({
 			 	prevent_default: true,
-			 	drag_vertical: false,
-			 	time:2000,
-			 	threshold:20
+			 	drag_vertical: false
 			})
 			 .bind("tap", function (ev) {
 			   return scope.$apply(attrs['onTap']);
