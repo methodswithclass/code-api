@@ -101,6 +101,7 @@
 
 			radius = obj.size;
 
+			obj.style.position = "absolute";
 			obj.style.width = obj.size + "px";
 			obj.style.height = obj.size + "px";
 			obj.style.borderRadius = obj.size/2 + "px";
@@ -112,6 +113,7 @@
 
 			radius = obj.size;
 
+			obj.style.position = "absolute";
 			obj.style.width = obj.size + "px";
 			obj.style.height = obj.size + "px";
 			obj.style.backgroundColor = params.color;
@@ -120,6 +122,7 @@
 
 		var createCross = function (obj, params) {
 
+			obj.style.position = "absolute";
 			obj.style.backgroundColor = "transparent";
 
 			var vertical = document.createElement("div");
@@ -252,7 +255,7 @@
 	}
 
 
-	var accel = function (input) {
+	var accelerometer = function (input) {
 
 		var self = this;
 
@@ -271,6 +274,7 @@
 		var interval = p.interval || 10;
 		var filterSize = p.filterSize || 3;
 		var gravity = p.gravity || true;
+		var bounce = p.bounce || true;
 		
 		var unfiltered = new vector(0,0,0);
 		var accel1 = new vector(0,0,0);
@@ -295,7 +299,7 @@
 
 				pos1.x	= sideX*obj.bounds.x;
 				vel1.x = -(1-damp)*vel1.x;
-				if ((Math.abs(vel1.x) < minVel && p.gravity) || !p.bounce) {
+				if ((Math.abs(vel1.x) < minVel && gravity) || !bounce) {
 					vel1.x = 0;	
 				}
 			}
@@ -305,7 +309,7 @@
 			if (Math.abs(pos1.y) >= obj.bounds.y) {
 				pos1.y	= sideY*obj.bounds.y;
 				vel1.y = -(1-damp)*vel1.y;
-				if ((Math.abs(vel1.y) < minVel && p.gravity) || !p.bounce) {
+				if ((Math.abs(vel1.y) < minVel && gravity) || !bounce) {
 					vel1.y = 0;
 				}
 			}
@@ -457,4 +461,4 @@
 	}
 
 
-}());
+})();
