@@ -395,7 +395,7 @@
 				
 			console.log("start accel");
 
-			updateParams(p);
+			self.updateParams(p);
 			
 			running = true;
 			
