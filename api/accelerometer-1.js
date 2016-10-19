@@ -2,7 +2,7 @@
 
 (function () {
 
-	var accel_util = function () {
+	window.accel_util = function () {
 
 		var self = this;
 
@@ -45,7 +45,7 @@
 
 	}
 
-	var vector = function (x,y,time) {
+	window.vector = function (x,y,time) {
 
 		var self = this;
 
@@ -93,7 +93,7 @@
 
 	}
 
-	var object = function (input) {
+	window.object = function (input) {
 
 		var self = this;
 
@@ -255,7 +255,7 @@
 	}
 
 
-	var accelerometer = function (input) {
+	window.accelerometer = function (input) {
 
 		var self = this;
 
@@ -461,4 +461,4 @@
 	}
 
 
-})();
+})(window);
