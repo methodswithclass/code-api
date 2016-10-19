@@ -2,6 +2,49 @@
 
 (function () {
 
+	var accel_util = function () {
+
+		var self = this;
+
+		var factor = {
+			global:1,
+			session:0.5
+		};
+
+		var axis = {
+			i:1,
+			j:1
+		}
+
+		self.x = "i";
+		self.y = "j";
+
+		self.setFactor = function (type, _factor) {
+
+			factor[type] = Math.abs(_factor);
+		}
+
+		self.getFactor = function (type) {
+
+			if (type) return Math.abs(factor[type])
+			else return Math.abs(factor.global*factor.session)
+		}
+
+		self.setAxis = function (_axis, value) {
+
+			axis[_axis] = value >= 0 ? 1 : -1;
+
+			console.log("utility set axis", _axis, value);
+
+		}
+
+		self.getAxis = function (_axis) {
+
+			return axis[_axis] >= 0 ? 1 : -1;
+		}
+
+	}
+
 	var vector = function (x,y,time) {
 
 		var self = this;
@@ -49,47 +92,6 @@
 		}
 
 	}
-
-	var util = {
-
-		average:function (array) {
-
-			var sumX = 0;
-			var sumY = 0;
-			
-			for (i in array) {
-				sumX += array[i].x;
-				sumY += array[i].y;
-			}
-			
-			return new vector(sumX/array.length, sumY/array.length, array[array.length-1].time);
-		},
-
-		truncate:function (number, decimal) {
-
-			var value = Math.floor(number*Math.pow(10, decimal))/Math.pow(10, decimal);
-			
-			return value;
-		},
-
-		round:function (number, order) {
-
-			var value = Math.round(number/order)*order;
-
-			return value;
-		},
-
-		resolveDigit:function (digit) {
-			
-			if (digit < 10) {
-				return "0" + digit;	
-			}
-			else {
-				return "" + digit;	
-			}
-		}
-	}
-
 
 	var object = function (input) {
 
@@ -375,10 +377,10 @@
 			if (running) {
 
 				if (gravity) {
-					unfiltered.set(new vector(xDir*factor*raw.gravity.x, yDir*factor*raw.gravity.y, (e.timeStamp - startTime)/1000));
+					unfiltered.set(new vector(axis[x]*factor*raw.gravity.x, yDir*factor*raw.gravity.y, (e.timeStamp - startTime)/1000));
 				}
 				else {
-					unfiltered.set(new vector(xDir*factor*raw.abs.x, yDir*factor*raw.abs.y, (e.timeStamp - startTime)/1000));
+					unfiltered.set(new vector(axis[y]*factor*raw.abs.x, yDir*factor*raw.abs.y, (e.timeStamp - startTime)/1000));
 				}
 
 				//console.log("unfiltered", "x", unfiltered.x, "y", unfiltered.y);
