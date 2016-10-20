@@ -1,6 +1,6 @@
 /***********************************************************************************
   
-		Shared Module v2.1
+		Shared Module v3
 
 		AngularJS library with no other dependencies	
 
@@ -13,7 +13,7 @@
 		send data around within an application
 		
 
-		Methods with Class, LLC, 2015
+		Methods with Class, LLC, 2016
 
 
 ***********************************************************************************/
@@ -33,7 +33,7 @@
 
 	// force the following checks to return true, render the mobile site on desktop for debugging purposes
 	mcshared.forceMobile = function () {
-		_mobile = true;
+		mcshared._mobile = true;
 	}
 
 	// blanket check for any mobile vs desktop user agent
@@ -49,7 +49,7 @@
 	// distinguish between a few popular mobile user agents, desktop agents, and IE
 	mcshared.whatDevice = function (forceMobile) {
 
-		if (_mobile) return mobile;
+		if (mcshared._mobile) return mobile;
 		else if(navigator.userAgent.match(/Android/i) ||
 	            navigator.userAgent.match(/webOS/i) ||
 	            navigator.userAgent.match(/iPhone/i) ||
@@ -57,15 +57,15 @@
 	            navigator.userAgent.match(/iPad/i) ||
 	            navigator.userAgent.match(/Blackberry/i) ) {
 
-			return mobile;
+			return mcshared.mobile;
 		}
 		else if (navigator.userAgent.indexOf('Firefox') != -1 || navigator.userAgent.indexOf('Chrome') != -1 || navigator.userAgent.indexOf('Safari') != -1) {
 
-			return desktop;
+			return mcshared.desktop;
 		}
 		else
 
-			return ie;
+			return mcshared.ie;
 
 	}
 
