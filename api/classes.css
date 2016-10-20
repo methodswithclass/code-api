@@ -275,6 +275,31 @@
 	right:400px;
 }
 
+.right-minus10 {
+
+	right:-10%;
+}
+
+.right-minus15 {
+
+	right:-15%;
+}
+
+.right-minus20 {
+
+	right:-20%;
+}
+
+.right-minus-30 {
+
+	right:-30%;
+}
+
+.right-minus40 {
+
+	right:-40%;
+}
+
 .right-minus-50 {
 
 	right:-50px;
@@ -283,6 +308,17 @@
 .right-minus-100 {
 
 	right:-100px;
+}
+
+.right-minus-150 {
+
+	right:-150px;
+}
+
+.right-minus-200 {
+
+
+	right:-200px;
 }
 
 .left0 {
