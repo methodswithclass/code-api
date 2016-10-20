@@ -373,7 +373,7 @@
 			var screenPos = self.screenPos();
 
 			return {
-				x:screenPos.x
+				x:screenPos.x,
 				y:screenPos.y
 			}
 		}
