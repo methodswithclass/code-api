@@ -359,8 +359,8 @@
 		self.screenPos = function () {
 
 			return {
-				x:$(self.el()).offset().left,
-				y:$(self.el()).offset().top
+				x:self.el().offset().left,
+				y:self.el().offset().top
 			}
 		}
 
@@ -373,8 +373,8 @@
 			var screenPos = self.screenPos();
 
 			return {
-				x:screenPos.x - self.bounds.x,
-				y:screenPos.y - self.bounds.y
+				x:screenPos.x
+				y:screenPos.y
 			}
 		}
 
@@ -382,14 +382,14 @@
 
 			self.setPosition(relPos);
 
-			$(self.el()).hide();
+			self.el().hide();
 		}
 
 		self.show = function() {
 
 			self.setPosition(relPos);
 
-			$(self.el()).show();
+			self.el().show();
 		}
 
 	}
