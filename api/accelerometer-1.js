@@ -471,7 +471,7 @@
 
 			var pos = {x:self.bounds.x + _pos.x, y:self.bounds.y + _pos.y};
 
-			window.dispatchEvent((new CustomEvent('accel', {'detail':{pos:pos, vel:vel, accel:acc}})));
+			window.dispatchEvent((new CustomEvent('accel' + name, {'detail':{pos:pos, vel:vel, accel:acc}})));
 		}
 
 		var integrate = function (accelArray) {
@@ -593,9 +593,9 @@
 			updateMotion(pos0, vel0, accel0);	
 		}
 		
-		self.getMotion = function (func) {
+		self.getMotion = function (id, func) {
 
-			window.addEventListener("accel", function (e) {
+			window.addEventListener("accel" + id, function (e) {
 				func(e.detail.pos, e.detail.vel, e.detail.acc);
 			}, false);
 				
