@@ -182,7 +182,8 @@
 			factorG:"global",
 			factorS:"session",
 			x:"i",
-			y:"j"
+			y:"j",
+			dist:20
 		},
 
 		average:function (array) {
