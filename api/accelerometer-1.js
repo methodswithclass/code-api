@@ -1,6 +1,6 @@
 
 
-(function () {
+(function (window) {
 
 	var factor = {
 		global:1,
@@ -260,7 +260,8 @@
 
 		}
 
-		
+		var util = utility;
+		var g = accelglobal;
 
 		var container = input.object;
 		var arena = $(container).parent();
@@ -371,6 +372,9 @@
 	var accelerometer = function (input) {
 
 		var self = this;
+
+		var util = utility;
+		var g = accelglobal;
 
 		var name = input.name || "none";
 		var obj = input.object;
@@ -494,10 +498,10 @@
 			if (running) {
 
 				if (gravity) {
-					unfiltered.set(new vector(axis[utility.const.x]*factor*raw.gravity.x, yDir*factor*raw.gravity.y, (e.timeStamp - startTime)/1000));
+					unfiltered.set(new vector(axis[g.const.x]*factor*raw.gravity.x, axis[g.const.y]*factor*raw.gravity.y, (e.timeStamp - startTime)/1000));
 				}
 				else {
-					unfiltered.set(new vector(axis[utility.const.y]*factor*raw.abs.x, yDir*factor*raw.abs.y, (e.timeStamp - startTime)/1000));
+					unfiltered.set(new vector(axis[g.const.x]*factor*raw.abs.x, axis[g.const.y]*factor*raw.abs.y, (e.timeStamp - startTime)/1000));
 				}
 
 				//console.log("unfiltered", "x", unfiltered.x, "y", unfiltered.y);
