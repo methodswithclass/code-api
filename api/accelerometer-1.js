@@ -611,7 +611,6 @@
 	}
 
 	window.mcaccel = {
-		utility:utility,
 		global:accelglobal,
 		vector:vector,
 		object:object,
