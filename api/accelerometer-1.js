@@ -2,7 +2,9 @@
 
 (function () {
 
-	window.accel_util = function () {
+	var mcaccel = {};
+
+	mcaccel.utility = function () {
 
 		var self = this;
 
@@ -14,14 +16,19 @@
 		var axis = {
 			i:1,
 			j:1
-		}
+		}	
 
-		self.x = "i";
-		self.y = "j";
+		self.const = {
+			factorG:"global",
+			factorS:"session",
+			x:"i",
+			y:"j"
+		}
 
 		self.setFactor = function (type, _factor) {
 
 			factor[type] = Math.abs(_factor);
+			console.log("utility set factor", type, _factor);
 		}
 
 		self.getFactor = function (type) {
@@ -31,11 +38,9 @@
 		}
 
 		self.setAxis = function (_axis, value) {
-
+			
 			axis[_axis] = value >= 0 ? 1 : -1;
-
 			console.log("utility set axis", _axis, value);
-
 		}
 
 		self.getAxis = function (_axis) {
@@ -45,7 +50,7 @@
 
 	}
 
-	window.vector = function (x,y,time) {
+	mcaccel.vector = function (x,y,time) {
 
 		var self = this;
 
@@ -93,7 +98,7 @@
 
 	}
 
-	window.object = function (input) {
+	mcaccel.object = function (input) {
 
 		var self = this;
 
@@ -255,7 +260,7 @@
 	}
 
 
-	window.accelerometer = function (input) {
+	mcaccel.accelerometer = function (input) {
 
 		var self = this;
 
@@ -459,6 +464,8 @@
 		}
 
 	}
+
+	window.mcaccel = mcaccel;
 
 
 })(window);
