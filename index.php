@@ -2,6 +2,8 @@
 <html>
 <head>
 
+	<title>Code - Methods with Class, LLC</title>
+
 	<link rel="stylesheet" href="site/css/museo/museo300.css" type="text/css" charset="utf-8">
     <link rel="stylesheet" href="api/classes.css">
     <link rel="stylesheet" href="site/css/styles.css">
