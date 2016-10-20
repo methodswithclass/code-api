@@ -4,48 +4,46 @@
 
 	var mcaccel = {};
 
-	mcaccel.utility = function () {
+	mcaccel.factor = {
+		global:1,
+		session:0.5
+	};
 
-		var self = this;
+	mcaccel.axis = {
+		i:1,
+		j:1
+	}	
 
-		var factor = {
-			global:1,
-			session:0.5
-		};
+	mcaccel.utility = {
 
-		var axis = {
-			i:1,
-			j:1
-		}	
-
-		self.const = {
+		const:{
 			factorG:"global",
 			factorS:"session",
 			x:"i",
 			y:"j"
-		}
+		},
 
-		self.setFactor = function (type, _factor) {
+		setFactor:function (type, _factor) {
 
-			factor[type] = Math.abs(_factor);
+			mcaccel.factor[type] = Math.abs(_factor);
 			console.log("utility set factor", type, _factor);
-		}
+		},
 
-		self.getFactor = function (type) {
+		getFactor:function (type) {
 
-			if (type) return Math.abs(factor[type])
-			else return Math.abs(factor.global*factor.session)
-		}
+			if (type) return Math.abs(mcaccel.factor[type])
+			else return Math.abs(mcaccel.factor.global*mcaccel.factor.session)
+		},
 
-		self.setAxis = function (_axis, value) {
+		setAxis:function (_axis, value) {
 
-			axis[_axis] = value >= 0 ? 1 : -1;
+			mcaccel.axis[_axis] = value >= 0 ? 1 : -1;
 			console.log("utility set axis", _axis, value);
-		}
+		},
 
-		self.getAxis = function (_axis) {
+		getAxis:function (_axis) {
 
-			return axis[_axis] >= 0 ? 1 : -1;
+			return mcaccel.axis[_axis] >= 0 ? 1 : -1;
 		}
 
 	}
@@ -153,6 +151,8 @@
 			obj.append(horizontal);
 
 		}
+
+		var util = mcshared.utility;
 
 		var container = input.object;
 		var arena = $(container).parent();
