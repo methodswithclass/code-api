@@ -176,7 +176,7 @@
 
 	}
 
-	var accelglobal = {
+	var accelutility = {
 
 		const:{
 			factorG:"global",
@@ -399,7 +399,7 @@
 		var self = this;
 
 		var util = utility;
-		var g = accelglobal;
+		var g = accelutility;
 
 		var name = input.name || "none";
 		var obj = input.object;
@@ -611,7 +611,7 @@
 	}
 
 	window.mcaccel = {
-		global:accelglobal,
+		utility:accelutility,
 		vector:vector,
 		object:object,
 		accelerometer:accelerometer
