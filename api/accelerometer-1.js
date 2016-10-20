@@ -266,6 +266,29 @@
 		var container = input.object;
 		var arena = $(container).parent();
 		var relPos = {x:0, y:0};
+
+		var setShape = function () {
+
+			console.log("set object shape");
+
+			switch (input.params.shape) {
+
+				case "circle":
+					createCircle(container, input.params);
+				break;
+
+				case "square":
+					createSquare(container, input.params);
+				break;
+
+				case "cross":
+					createCross(container, input.params);
+				break;
+			}
+
+		}
+
+		setShape();
 		
 		self.params = input.params;
 
@@ -284,27 +307,6 @@
 		}
 
 		self.radius = self.size.x/2;
-
-		self.setShape = function () {
-
-			console.log("set object shape");
-
-			switch (self.params.shape) {
-
-				case "circle":
-					createCircle(container, self.params);
-				break;
-
-				case "square":
-					createSquare(container, self.params);
-				break;
-
-				case "cross":
-					createCross(container, self.params);
-				break;
-			}
-
-		}
 
 		self.el = function () {
 
