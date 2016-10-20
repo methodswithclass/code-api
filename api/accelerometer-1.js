@@ -290,7 +290,7 @@
 		}
 
 		var util = utility;
-		var g = accelglobal;
+		var g = accelutility;
 
 		var container = input.object;
 		var relPos = {x:0, y:0};
