@@ -12,7 +12,117 @@
 		j:1
 	}	
 
+
 	var utility = {
+
+		average:function (array, callback) {
+
+			var sum = 0;
+			var sumArray = [];
+
+			if (callback) {
+
+				for (i in array) {
+
+					sum += callback(array[i], i, array);
+				}
+
+				return sum/array.length;
+
+			}
+			else {
+
+				for (i in array) {
+					for (j in array[i]) {
+						sumArray[j] += array[i][j];
+					}
+				}
+
+				var result = {};
+
+				for (k in sumArray) {
+
+					result[k] = sumArray[k]/sumArray.length;
+				}
+
+				return result;
+
+			}
+
+			
+		},
+
+		average_callback_value:function (value, index, array) {
+			return value;
+		},
+
+		truncate:function (number, decimal) {
+
+			var value = Math.floor(number*Math.pow(10, decimal))/Math.pow(10, decimal);
+			
+			return value;
+		},
+
+		round:function (number, order) {
+
+			var value = Math.round(number/order)*order;
+
+			return value;
+		},
+
+		resolveDigit:function (digit) {
+			
+			if (digit < 10) {
+				return "0" + digit;	
+			}
+			else {
+				return "" + digit;	
+			}
+		},
+
+		log:function(x, num) {
+ 			return Math.log(x) / Math.log(num);
+		},
+
+		leadingzeros:function (number, zeros) {
+			
+			if (!zeros) zeros = 1;
+
+			var digits = Math.floor(log(number*10, 10));
+			var total = Math.floor(log(zeros, 10)) - digits;
+			var leading = "";
+			var i = 0;
+			for (var i = 0; i <= total; i++) {
+				leading += "0";
+			}
+
+			console.log(leading + digit);
+
+			return leading + digit;
+		},
+
+		shuffle:function (array) {
+			var currentIndex = array.length, temporaryValue, randomIndex;
+
+			// While there remain elements to shuffle...
+			while (0 !== currentIndex) {
+
+				// Pick a remaining element...
+				randomIndex = Math.floor(Math.random() * currentIndex);
+				currentIndex -= 1;
+
+				// And swap it with the current element.
+				temporaryValue = array[currentIndex];
+				array[currentIndex] = array[randomIndex];
+				array[randomIndex] = temporaryValue;
+			}
+
+		  	return array;
+		}
+
+	}
+
+	var accelglobal = {
 
 		const:{
 			factorG:"global",
@@ -150,7 +260,7 @@
 
 		}
 
-		var util = mcshared.utility;
+		
 
 		var container = input.object;
 		var arena = $(container).parent();
@@ -465,6 +575,7 @@
 
 	window.mcaccel = {
 		utility:utility,
+		global:accelglobal,
 		vector:vector,
 		object:object,
 		accelerometer:accelerometer
