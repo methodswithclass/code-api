@@ -32,18 +32,24 @@
 			}
 			else {
 
+				//console.log("average", array.length, array[0]);
+
 				for (i in array) {
 					for (j in array[i]) {
 						sumArray[j] += array[i][j];
 					}
 				}
 
+				//console.log("average", sumArray);
+
 				var result = {};
 
 				for (k in sumArray) {
 
-					result[k] = sumArray[k]/sumArray.length;
+					result[k] = sumArray[k]/array.length;
 				}
+
+				//console.log("average", result);
 
 				return result;
 
@@ -122,40 +128,6 @@
 
 	}
 
-	var accelglobal = {
-
-		const:{
-			factorG:"global",
-			factorS:"session",
-			x:"i",
-			y:"j"
-		},
-
-		setFactor:function (type, _factor) {
-
-			factor[type] = Math.abs(_factor);
-			console.log("utility set factor", type, _factor);
-		},
-
-		getFactor:function (type) {
-
-			if (type) return Math.abs(factor[type])
-			else return Math.abs(factor.global*factor.session)
-		},
-
-		setAxis:function (_axis, value) {
-
-			axis[_axis] = value >= 0 ? 1 : -1;
-			console.log("utility set axis", _axis, value);
-		},
-
-		getAxis:function (_axis) {
-
-			return axis[_axis] >= 0 ? 1 : -1;
-		}
-
-	}
-
 	var vector = function (x,y,time) {
 
 		var self = this;
@@ -163,7 +135,7 @@
 		self.x = x;
 		self.y = y;
 		self.time = time;
-		
+
 		self.len = function () {
 			return Math.sqrt(self.x*self.x + self.y*self.y);
 		}
@@ -204,34 +176,91 @@
 
 	}
 
+	var accelglobal = {
+
+		const:{
+			factorG:"global",
+			factorS:"session",
+			x:"i",
+			y:"j"
+		},
+
+		average:function (array) {
+
+			var sumX = 0;
+			var sumY = 0;
+
+			for (i in array) {
+
+				sumX += array[i].x;
+				sumY += array[i].y;
+			}
+
+			//console.log("average", sumX/array.length);
+
+			return new vector(sumX/array.length, sumY/array.length, array[array.length-1].time);
+
+		},
+
+		setFactor:function (type, _factor) {
+
+			factor[type] = Math.abs(_factor);
+			console.log("utility set factor", type, _factor);
+		},
+
+		getFactor:function (type) {
+
+			if (type) return Math.abs(factor[type])
+			else return Math.abs(factor.global*factor.session)
+		},
+
+		setAxis:function (_axis, value) {
+
+			axis[_axis] = value >= 0 ? 1 : -1;
+			console.log("utility set axis", _axis, value);
+		},
+
+		getAxis:function (_axis) {
+
+			return axis[_axis] >= 0 ? 1 : -1;
+		}
+
+	}
+
 	var object = function (input) {
 
 		var self = this;
 
 		var createCircle = function (obj, params) {
 
-			radius = obj.size;
+			console.log("create circle");
+
+			radius = params.size;
 
 			obj.style.position = "absolute";
-			obj.style.width = obj.size + "px";
-			obj.style.height = obj.size + "px";
-			obj.style.borderRadius = obj.size/2 + "px";
+			obj.style.width = params.size + "px";
+			obj.style.height = params.size + "px";
+			obj.style.borderRadius = params.size/2 + "px";
 			obj.style.backgroundColor = params.color;
 
 		}
 
 		var createSquare = function (obj, params) {
 
-			radius = obj.size;
+			console.log("create sqaure");
+
+			radius = params.size;
 
 			obj.style.position = "absolute";
-			obj.style.width = obj.size + "px";
-			obj.style.height = obj.size + "px";
+			obj.style.width = params.size + "px";
+			obj.style.height = params.size + "px";
 			obj.style.backgroundColor = params.color;
 
 		}
 
 		var createCross = function (obj, params) {
+
+			console.log("create cross");
 
 			obj.style.position = "absolute";
 			obj.style.backgroundColor = "transparent";
@@ -264,31 +293,30 @@
 		var g = accelglobal;
 
 		var container = input.object;
-		var arena = $(container).parent();
 		var relPos = {x:0, y:0};
 
-		var setShape = function () {
+		var setShape = function (cont) {
 
 			console.log("set object shape");
 
 			switch (input.params.shape) {
 
 				case "circle":
-					createCircle(container, input.params);
+					createCircle(cont, input.params);
 				break;
 
 				case "square":
-					createSquare(container, input.params);
+					createSquare(cont, input.params);
 				break;
 
 				case "cross":
-					createCross(container, input.params);
+					createCross(cont, input.params);
 				break;
 			}
 
 		}
 
-		setShape();
+		setShape(container);
 		
 		self.params = input.params;
 
@@ -301,23 +329,18 @@
 			y:$(container).height()
 		}
 
-		self.bounds = {
-			x:$(arena).width()/2 - self.size.x/2,
-			y:$(arena).height()/2 - self.size.y/2
-		}
-
 		self.radius = self.size.x/2;
 
 		self.el = function () {
 
-			return container;
+			return $(container);
 		}
 
 		self.setPosition = function (pos) {
 
 			relPos = pos;
 			
-			self.position = {x:self.bounds.x + relPos.x, y:self.bounds.y + relPos.y};
+			self.position = {x:relPos.x, y:relPos.y};
 			
 			container.style.left = util.truncate(self.position.x,0) + "px";
 			container.style.top = util.truncate(self.position.y,0) + "px";
@@ -380,13 +403,14 @@
 
 		var name = input.name || "none";
 		var obj = input.object;
+		var arena = obj.el().parent();
 		var p = input.params || {};
 
 		var filterBucket = [];
 
-		var factor = p.factor || 1;
-		var xDir = p.xDir || 1;
-		var yDir = p.yDir || 1;
+		var factor = g.getFactor()*p.factor || 1;
+		var xDir = g.getAxis(g.const.x) || 1;
+		var yDir = g.getAxis(g.const.y) || 1;
 		var threshold = factor*0.5;
 		var mu = p.mu || 0.5;
 		var damp = p.damp || 0.5;
@@ -414,9 +438,9 @@
 			
 			var minVel = 12*(Math.abs(accel1.y)+Math.abs(accel1.x));
 			
-			if (Math.abs(pos1.x) >= obj.bounds.x) {
+			if (Math.abs(pos1.x) >= self.bounds.x) {
 
-				pos1.x	= sideX*obj.bounds.x;
+				pos1.x	= sideX*self.bounds.x;
 				vel1.x = -(1-damp)*vel1.x;
 				if ((Math.abs(vel1.x) < minVel && gravity) || !bounce) {
 					vel1.x = 0;	
@@ -425,8 +449,8 @@
 			
 			var sideY = pos1.y/Math.abs(pos1.y);
 
-			if (Math.abs(pos1.y) >= obj.bounds.y) {
-				pos1.y	= sideY*obj.bounds.y;
+			if (Math.abs(pos1.y) >= self.bounds.y) {
+				pos1.y	= sideY*self.bounds.y;
 				vel1.y = -(1-damp)*vel1.y;
 				if ((Math.abs(vel1.y) < minVel && gravity) || !bounce) {
 					vel1.y = 0;
@@ -442,14 +466,16 @@
 			}
 		}
 
-		var updateMotion = function (pos, vel, acc) {
+		var updateMotion = function (_pos, vel, acc) {
 
-			var event = new CustomEvent('accel', {'detail':{pos:pos, vel:vel, accel:acc}});
+			var pos = {x:self.bounds.x + _pos.x, y:self.bounds.y + _pos.y};
+
+			window.dispatchEvent((new CustomEvent('accel', {'detail':{pos:pos, vel:vel, accel:acc}})));
 		}
 
 		var integrate = function (accelArray) {
 				
-			accel1.set(util.average(accelArray));
+			accel1.set(g.average(accelArray));
 			
 			if (accel1.len() < threshold) {
 				accel1.set(new vector(0,0,accel1.time));
@@ -470,11 +496,16 @@
 			accel0.set(accel1);
 		}
 
+		self.bounds = {
+			x:$(arena).width()/2 - obj.size.x/2,
+			y:$(arena).height()/2 - obj.size.y/2
+		}
+
 		self.updateParams = function (p) {
 
-			factor = p.factor || factor;
-			xDir = p.xDir || xDir;
-			yDir = p.yDir || yDir;
+			factor = g.getFactor()*p.factor || factor;
+			xDir = g.getAxis(g.const.x) || xDir;
+			yDir = g.getAxis(g.const.y) || yDir;
 			threshold = factor*0.5 || threshold;
 			mu = p.mu || mu;
 			damp = p.damp || damp;
@@ -506,7 +537,7 @@
 					unfiltered.set(new vector(axis[g.const.x]*factor*raw.abs.x, axis[g.const.y]*factor*raw.abs.y, (e.timeStamp - startTime)/1000));
 				}
 
-				//console.log("unfiltered", "x", unfiltered.x, "y", unfiltered.y);
+				//console.log("raw", "x", raw.gravity.x, "y", raw.gravity.y);
 			}
 		}
 
@@ -562,7 +593,7 @@
 		}
 		
 		self.getMotion = function (func) {
-			
+
 			window.addEventListener("accel", function (e) {
 				func(e.detail.pos, e.detail.vel, e.detail.acc);
 			}, false);
