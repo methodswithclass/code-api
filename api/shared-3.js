@@ -83,7 +83,7 @@ angular.module('sharedModule', [])
 
 	// angular wrapper for the above function
 	var isMobile = function () {
-		return mchsared.checkMobile();
+		return mcshared.checkMobile();
 	}
 
 	// angular wrapper for the above function
