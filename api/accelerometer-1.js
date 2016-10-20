@@ -384,10 +384,10 @@
 			if (running) {
 
 				if (gravity) {
-					unfiltered.set(new vector(axis[x]*factor*raw.gravity.x, yDir*factor*raw.gravity.y, (e.timeStamp - startTime)/1000));
+					unfiltered.set(new vector(axis[utility.const.x]*factor*raw.gravity.x, yDir*factor*raw.gravity.y, (e.timeStamp - startTime)/1000));
 				}
 				else {
-					unfiltered.set(new vector(axis[y]*factor*raw.abs.x, yDir*factor*raw.abs.y, (e.timeStamp - startTime)/1000));
+					unfiltered.set(new vector(axis[utility.const.y]*factor*raw.abs.x, yDir*factor*raw.abs.y, (e.timeStamp - startTime)/1000));
 				}
 
 				//console.log("unfiltered", "x", unfiltered.x, "y", unfiltered.y);
