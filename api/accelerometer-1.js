@@ -38,7 +38,7 @@
 		}
 
 		self.setAxis = function (_axis, value) {
-			
+
 			axis[_axis] = value >= 0 ? 1 : -1;
 			console.log("utility set axis", _axis, value);
 		}

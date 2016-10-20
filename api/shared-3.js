@@ -150,7 +150,7 @@ angular.module('sharedModule', [])
 
 	}
 
-	var utility = {
+	var util = {
 
 		average:function (array, callback) {
 
@@ -265,7 +265,7 @@ angular.module('sharedModule', [])
     	isPortrait:isPortrait,
     	getOrientation:getOrientation,
     	linear:linear,
-    	utility:utility,
+    	util:util,
 		renderHtml:function (htmlCode) {
 	        return $sce.trustAsHtml(htmlCode);
 	    }
