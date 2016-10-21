@@ -370,7 +370,7 @@
 
 			relPos = pos;
 			
-			self.position = {x:relPos.x, y:relPos.y};
+			self.position = new vector(relPos.x, relPos.y};
 			
 			container.style.left = util.truncate(self.position.x,0) + "px";
 			container.style.top = util.truncate(self.position.y,0) + "px";
@@ -510,9 +510,9 @@
 
 			//console.log("update", _pos, self.bounds);
 
-			var pos = {x:self.bounds.x + _pos.x, y:self.bounds.y + _pos.y};
+			var pos = new vector(self.bounds.x + _pos.x, self.bounds.y + _pos.y, unfiltered.time);
 
-			window.dispatchEvent((new CustomEvent('accel' + name, {'detail':{pos:pos, vel:vel, accel:acc}})));
+			window.dispatchEvent((new CustomEvent('accel' + name, {'detail':{pos:pos, vel:vel, acc:acc}})));
 		}
 
 		var integrate = function (accelArray) {
