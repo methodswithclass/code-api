@@ -171,6 +171,34 @@
 			}
 
 		  	return array;
+		},
+
+
+		// generally solves a system of two linear equations of the form y = mx + b
+		// inputs are two sets of y and x points, returns slope, m, and y = b when x = 0
+		linear:function (params) {
+
+			var y1 = params.y1;
+			var y2 = params.y2;
+			var x1 = params.x1;
+			var x2 = params.x2;
+			var m;
+			var b;
+
+			if (x2 != x1) {
+				m = (y2-y1)/(x2-x1);
+				b = x1*m + y1;
+			}
+			else {
+				m = 0;
+				b = 0;
+			}
+
+			return {
+				m:m,
+				b:b
+			}
+
 		}
 
 	}
