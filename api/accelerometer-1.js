@@ -508,7 +508,7 @@
 
 		var updateMotion = function (_pos, vel, acc) {
 
-			console.log("update", _pos, self.bounds);
+			//console.log("update", _pos, self.bounds);
 
 			var pos = {x:self.bounds.x + _pos.x, y:self.bounds.y + _pos.y};
 
