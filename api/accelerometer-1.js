@@ -582,6 +582,8 @@
 
 		self.reset = function () {
 			
+			console.log("reset accel", name);
+
 			filterBucket = [];
 			
 			unfiltered = new vector(0,0,0);
@@ -596,7 +598,7 @@
 		self.getMotion = function (id, func) {
 
 			window.addEventListener("accel" + id, function (e) {
-				func(e.detail.pos, e.detail.vel, e.detail.acc);
+				func(id, e.detail.pos, e.detail.vel, e.detail.acc);
 			}, false);
 				
 		}
