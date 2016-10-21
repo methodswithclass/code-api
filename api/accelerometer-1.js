@@ -124,6 +124,33 @@
 			}
 
 		  	return array;
+		},
+
+		// generally solves a system of two linear equations of the form y = mx + b
+		// inputs are two sets of y and x points, returns slope, m, and y = b when x = 0
+		linear:function (params) {
+
+			var y1 = params.y1;
+			var y2 = params.y2;
+			var x1 = params.x1;
+			var x2 = params.x2;
+			var m;
+			var b;
+
+			if (x2 != x1) {
+				m = (y2-y1)/(x2-x1);
+				b = x1*m + y1;
+			}
+			else {
+				m = 0;
+				b = 0;
+			}
+
+			return {
+				m:m,
+				b:b
+			}
+
 		}
 
 	}
@@ -532,10 +559,10 @@
 			if (running) {
 
 				if (gravity) {
-					unfiltered.set(new vector(axis[g.const.x]*factor*raw.gravity.x, axis[g.const.y]*factor*raw.gravity.y, (e.timeStamp - startTime)/1000));
+					unfiltered.set(new vector(xDir*factor*raw.gravity.x, yDir*factor*raw.gravity.y, (e.timeStamp - startTime)/1000));
 				}
 				else {
-					unfiltered.set(new vector(axis[g.const.x]*factor*raw.abs.x, axis[g.const.y]*factor*raw.abs.y, (e.timeStamp - startTime)/1000));
+					unfiltered.set(new vector(xDir*factor*raw.abs.x, yDir*factor*raw.abs.y, (e.timeStamp - startTime)/1000));
 				}
 
 				//console.log("raw", "x", raw.gravity.x, "y", raw.gravity.y);
