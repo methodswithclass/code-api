@@ -402,7 +402,7 @@
 		var util = utility;
 		var g = accelutility;
 
-		var name = input.name || "none";
+		var name = input.id || "none";
 		var obj = input.object;
 		var arena = obj.el().parent();
 		var p = input.params || {};
