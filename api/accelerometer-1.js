@@ -433,6 +433,11 @@
 		var timer;
 		var running = false;
 
+		self.bounds = {
+			x:$(arena).width()/2 - obj.size.x/2,
+			y:$(arena).height()/2 - obj.size.y/2
+		}
+
 		var bounce = function () {
 			
 			var sideX = pos1.x/Math.abs(pos1.x);
@@ -495,11 +500,6 @@
 			pos0.set(pos1);
 			vel0.set(vel1);
 			accel0.set(accel1);
-		}
-
-		self.bounds = {
-			x:$(arena).width()/2 - obj.size.x/2,
-			y:$(arena).height()/2 - obj.size.y/2
 		}
 
 		self.updateParams = function (p) {
