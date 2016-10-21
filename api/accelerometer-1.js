@@ -462,9 +462,14 @@
 		var timer;
 		var running = false;
 
-		self.bounds = {
-			x:$(arena).width()/2 - obj.size.x/2,
-			y:$(arena).height()/2 - obj.size.y/2
+		self.bounds = {x:100, y:100};
+
+		var getBounds = function () {
+
+			self.bounds = {
+				x:$(arena).width()/2 - obj.size.x/2,
+				y:$(arena).height()/2 - obj.size.y/2
+			}
 		}
 
 		var bounce = function () {
@@ -577,6 +582,8 @@
 
 			self.updateParams(p);
 			
+			getBounds();
+
 			running = true;
 			
 			startTime = (new Date()).getTime();
@@ -612,6 +619,8 @@
 		self.reset = function () {
 			
 			console.log("reset accel", name);
+
+			getBounds();
 
 			filterBucket = [];
 			
