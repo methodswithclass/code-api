@@ -370,7 +370,7 @@
 
 			relPos = pos;
 			
-			self.position = new vector(relPos.x, relPos.y};
+			self.position = new vector(relPos.x, relPos.y, relPos.time);
 			
 			container.style.left = util.truncate(self.position.x,0) + "px";
 			container.style.top = util.truncate(self.position.y,0) + "px";
