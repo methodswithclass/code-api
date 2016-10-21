@@ -508,6 +508,8 @@
 
 		var updateMotion = function (_pos, vel, acc) {
 
+			console.log("update", _pos);
+
 			var pos = {x:self.bounds.x + _pos.x, y:self.bounds.y + _pos.y};
 
 			window.dispatchEvent((new CustomEvent('accel' + name, {'detail':{pos:pos, vel:vel, accel:acc}})));
