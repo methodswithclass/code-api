@@ -291,6 +291,8 @@
 			console.log("create cross");
 
 			obj.style.position = "absolute";
+			obj.style.width = params.size + "px";
+			obj.style.height = params.size + "px";
 			obj.style.backgroundColor = "transparent";
 
 			var vertical = document.createElement("div");
