@@ -312,8 +312,8 @@
 
 
 
-			obj.append(vertical);
-			obj.append(horizontal);
+			$(obj).append(vertical);
+			$(obj).append(horizontal);
 
 		}
 
