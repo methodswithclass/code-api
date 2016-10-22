@@ -446,8 +446,8 @@
 		var damp = p.damp || 0.5;
 		var interval = p.interval || 10;
 		var filterSize = p.filterSize || 3;
-		var gravity = p.gravity || true;
-		var bounce = p.bounce || true;
+		var gravity = p.gravity;
+		var bounce = p.bounce;
 		
 		var unfiltered = new vector(0,0,0);
 		var accel1 = new vector(0,0,0);
