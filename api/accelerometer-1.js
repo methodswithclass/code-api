@@ -388,8 +388,8 @@
 		self.screenPos = function () {
 
 			return {
-				x:self.el().offset().left,
-				y:self.el().offset().top
+				x:self.el().style.left,
+				y:self.el().stylel.top
 			}
 		}
 
@@ -411,14 +411,14 @@
 
 			self.setPosition(relPos);
 
-			self.el().hide();
+			self.el().style.visibility = "hidden";
 		}
 
 		self.show = function() {
 
 			self.setPosition(relPos);
 
-			self.el().show();
+			self.el().style.visibility = "visible";
 		}
 
 	}
@@ -433,7 +433,7 @@
 
 		var name = input.id || "none";
 		var obj = input.object;
-		var arena = obj.el().parent();
+		var arena = obj.el().parentElement;
 		var p = input.params || {};
 
 		var filterBucket = [];
