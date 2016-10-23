@@ -2185,6 +2185,11 @@
 	height:1200px;
 }
 
+.height-1400 {
+
+	height:1400px;
+}
+
 .height-1500 {
 
 	height:1500px;
@@ -2479,9 +2484,19 @@
 	width:800px;
 }
 
+.width-1000 {
+
+	width:1000px;
+}
+
 .width-1200 {
 
 	width:1200px;
+}
+
+.width-1400 {
+
+	width:1400px;
 }
 
 .width-2000 {
