@@ -389,7 +389,7 @@
 
 			return {
 				x:self.el().style.left,
-				y:self.el().stylel.top
+				y:self.el().style.top
 			}
 		}
 
