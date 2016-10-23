@@ -314,8 +314,8 @@
 
 
 
-			$(obj).append(vertical);
-			$(obj).append(horizontal);
+			obj.innerHTML = vertical;
+			obj.innerHTML = horizontal;
 
 		}
 
@@ -355,15 +355,15 @@
 		self.acceleration = {x:0, y:0};
 
 		self.size = {
-			x:$(container).width(), 
-			y:$(container).height()
+			x:container.offsetWidth, 
+			y:container.offsetHeight
 		}
 
 		self.radius = self.size.x/2;
 
 		self.el = function () {
 
-			return $(container);
+			return container;
 		}
 
 		self.setPosition = function (pos) {
@@ -467,8 +467,8 @@
 		var getBounds = function () {
 
 			self.bounds = {
-				x:$(arena).width()/2 - obj.size.x/2,
-				y:$(arena).height()/2 - obj.size.y/2
+				x:arena.offsetWidth/2 - obj.size.x/2,
+				y:arena.offsethHight/2 - obj.size.y/2
 			}
 		}
 
