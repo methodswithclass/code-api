@@ -1973,32 +1973,7 @@
 .height-auto {
 
 	height:auto;
-}
-
-.height {
-
-	height:100%;
-}
-
-.height5 {
-
-	height:5%;
-}
-
-.height10 {
-
-	height:10%;
-}
-
-.height15 {
-
-	height:15%;
-}
-
-.height20 {
-
-	height:20%;
-}
+400
 
 .height25 {
 
@@ -2098,6 +2073,11 @@
 .height500 {
 
 	height:500%;
+}
+
+.height600 {
+
+	height:600%;
 }
 
 .height-1 {
@@ -2437,6 +2417,11 @@
 .width400 {
 
 	width:400%;
+}
+
+.width600 {
+
+	width:600%;
 }
 
 .width-1 {
