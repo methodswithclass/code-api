@@ -468,7 +468,7 @@
 
 			self.bounds = {
 				x:arena.offsetWidth/2 - obj.size.x/2,
-				y:arena.offsethHeight/2 - obj.size.y/2
+				y:arena.offsetHeight/2 - obj.size.y/2
 			}
 		}
 
