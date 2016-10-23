@@ -2200,6 +2200,16 @@
 	height:2000px;
 }
 
+.height-2200 {
+
+	width:2200px;
+}
+
+.height-2400 {
+
+	width:2400px;
+}
+
 .min-height100 {
 
 	min-height:100%;
@@ -2477,6 +2487,16 @@
 .width-2000 {
 
 	width:2000px;
+}
+
+.width-2200 {
+
+	width:2200px;
+}
+
+.width-2400 {
+
+	width:2400px;
 }
 
 .width-4000 {
