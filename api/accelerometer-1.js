@@ -388,8 +388,8 @@
 		self.screenPos = function () {
 
 			return {
-				x:self.el().style.left,
-				y:self.el().style.top
+				x:self.el().getBoundingClientRect().left,
+				y:self.el()getBoundingClientRect().top
 			}
 		}
 
