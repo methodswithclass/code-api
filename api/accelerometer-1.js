@@ -389,7 +389,7 @@
 
 			return {
 				x:self.el().getBoundingClientRect().left,
-				y:self.el()getBoundingClientRect().top
+				y:self.el().getBoundingClientRect().top
 			}
 		}
 
