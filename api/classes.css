@@ -843,6 +843,11 @@
 	margin-left:100px;
 }
 
+.margin-left5 {
+
+	margin-left:5%;
+}
+
 .margin-left-minus40 {
 
 	margin-left:-40%;
@@ -851,6 +856,16 @@
 .margin-left-minus60 {
 
 	margin-left:-60%;
+}
+
+.margin-h5 {
+
+	margin:0 5%;
+}
+
+.margin-h10 {
+
+	margin:0 10%;
 }
 
 .margin-h-10 {
@@ -866,6 +881,16 @@
 .margin-h-minus-50 {
 
 	margin:0 -50px;
+}
+
+.margin-v5 {
+
+	margin:5% 0;
+}
+
+.margin-v10 {
+
+	margin:10% 0;
 }
 
 .margin-v-10 {
@@ -1950,6 +1975,11 @@
 	height:10%;
 }
 
+.height15 {
+
+	height:15%;
+}
+
 .height20 {
 
 	height:20%;
@@ -2281,6 +2311,11 @@
 .width10 {
 
 	width:10%;
+}
+
+.width15 {
+
+	width:15%;
 }
 
 .width20 {
