@@ -1977,6 +1977,26 @@
 
 .height {
 
+	height:100%;
+}
+
+.height5 {
+
+	height:5%;
+}
+
+.height10 {
+
+	height:10%;
+}
+
+.height15 {
+
+	height:15%;
+}
+
+.height20 {
+	
 	height:20%;
 }
 
