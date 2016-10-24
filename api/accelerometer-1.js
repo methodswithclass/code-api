@@ -266,10 +266,15 @@
 			radius = params.size;
 
 			obj.style.position = "absolute";
-			obj.style.width = params.size + "px";
-			obj.style.height = params.size + "px";
-			obj.style.borderRadius = params.size/2 + "px";
-			obj.style.backgroundColor = params.color;
+			
+			if (params.size) {
+				obj.style.width = params.size + "px";
+				obj.style.height = params.size + "px";
+				obj.style.borderRadius = params.size/2 + "px";
+			}
+
+			
+			if (params.color) obj.style.backgroundColor = params.color;
 
 		}
 
@@ -280,9 +285,13 @@
 			radius = params.size;
 
 			obj.style.position = "absolute";
-			obj.style.width = params.size + "px";
-			obj.style.height = params.size + "px";
-			obj.style.backgroundColor = params.color;
+			if (params.size) {
+				obj.style.width = params.size + "px";
+				obj.style.height = params.size + "px";
+			}
+
+			
+			if (params.color) obj.style.backgroundColor = params.color;
 
 		}
 
@@ -291,8 +300,13 @@
 			console.log("create cross");
 
 			obj.style.position = "absolute";
-			obj.style.width = params.size + "px";
-			obj.style.height = params.size + "px";
+			
+			if (params.size) {
+				obj.style.width = params.size + "px";
+				obj.style.height = params.size + "px";
+			}
+
+			
 			obj.style.backgroundColor = "transparent";
 
 			var vertical = document.createElement("div");
@@ -303,14 +317,14 @@
 			vertical.style.left = "50%";
 			vertical.style.width = "2px";
 			vertical.style.height = "100%";
-			vertical.style.backgroundColor = params.color;
+			if (params.color) vertical.style.backgroundColor = params.color;
 
 			horizontal.style.position = "absolute";
 			horizontal.style.top = "50%";
 			horizontal.style.left = 0;
 			horizontal.style.width = "100%";
 			horizontal.style.height = "2px";
-			horizontal.style.backgroundColor = params.color;
+			if (params.color) horizontal.style.backgroundColor = params.color;
 
 
 
@@ -327,7 +341,7 @@
 
 		var setShape = function (cont) {
 
-			console.log("set object shape");
+			console.log("set object shape to", input.params.shape);
 
 			switch (input.params.shape) {
 
@@ -346,8 +360,9 @@
 
 		}
 
-		setShape(container);
+		if (input.params.shape) setShape(container);
 		
+		self.name = input.name;
 		self.params = input.params;
 
 		self.position = {x:0, y:0};
@@ -431,7 +446,7 @@
 		var util = utility;
 		var g = accelutility;
 
-		var name = input.id || "none";
+		self.name = input.id || "none";
 		var obj = input.object;
 		var arena = obj.el().parentElement;
 		var p = input.params || {};
@@ -512,7 +527,7 @@
 
 			var pos = new vector(self.bounds.x + _pos.x, self.bounds.y + _pos.y, unfiltered.time);
 
-			window.dispatchEvent((new CustomEvent('accel' + name, {'detail':{pos:pos, vel:vel, acc:acc}})));
+			window.dispatchEvent((new CustomEvent('accel' + self.name, {'detail':{pos:pos, vel:vel, acc:acc}})));
 		}
 
 		var integrate = function (accelArray) {
@@ -620,7 +635,7 @@
 
 		self.reset = function () {
 			
-			console.log("reset accel", name);
+			console.log("reset accel", self.name);
 
 			getBounds();
 
