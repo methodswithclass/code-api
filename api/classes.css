@@ -1973,7 +1973,12 @@
 .height-auto {
 
 	height:auto;
-400
+}
+
+.height {
+
+	height:100%;
+}
 
 .height25 {
 
