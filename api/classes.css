@@ -1358,6 +1358,10 @@
 	border-top:1px solid white;
 }
 
+.border-top-blue {
+	border-top:1px solid blue;
+}
+
 .border-left {
 
 	border-left:1px solid black;
