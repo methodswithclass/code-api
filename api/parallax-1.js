@@ -163,7 +163,7 @@ angular.module("parallaxModule", [])
 		        var width = height*aspect;
 		        
 		        if (checkWidth(width) == "under") {
-		            console.log("width under " + name);
+		            //console.log("width under " + name);
 		            width = space.width();
 		            height = width/aspect;
 		            if (checkHeight(height) == "under") {
@@ -173,7 +173,7 @@ angular.module("parallaxModule", [])
 		            }
 		        }
 		        else if (checkWidth(width) == "over") {
-		            console.log("width over " + name);
+		            //console.log("width over " + name);
 		            width = space.width()*1.2;
 		            height = width/aspect;
 		            if (checkHeight(height) == "under") {
@@ -185,12 +185,12 @@ angular.module("parallaxModule", [])
 		       
 		       	
 		       	if (checkWidth(width) && checkHeight(height)) {
-		       		console.log("image good");
+		       		//console.log("image good");
 		       		if (goodAspect(width, height)) {
-		       			console.log("aspect is good " + name + " " + aspect);
+		       			//console.log("aspect is good " + name + " " + aspect);
 		       		}
 		       		else {
-			       		console.log("aspect is bad " + name + " " + aspect);
+			       		//console.log("aspect is bad " + name + " " + aspect);
 			       	}
 		       	}
 

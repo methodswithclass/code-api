@@ -117,7 +117,7 @@ angular.module("parallaxModule", [])
 				active = true;
 
 				inner = $(element).find("#" + $scope.inner)[0];
-				console.log("parallax: no image, inner id is: " + inner.id);
+				//console.log("parallax: no image, inner id is: " + inner.id);
 				mover = inner;
 			}
 
@@ -130,7 +130,7 @@ angular.module("parallaxModule", [])
 				mover = img;
 			}
 			total = $(mover).height()*$(mover).height()/1600*0.8;
-			console.log("version2");
+			//console.log("version2");
 		}
 
 		var scroll = function () {

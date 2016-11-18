@@ -261,7 +261,7 @@ angular.module("parallaxModule", [])
 				}
 			}
 
-			console.log("version 1 factor: " + factor);
+			//console.log("version 1 factor: " + factor);
 		}
 
 		// run setup() to initiate parallax elements when loaded
