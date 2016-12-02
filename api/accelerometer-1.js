@@ -2,17 +2,20 @@
 
 (function (window) {
 
+	//private to this module, no public exposure, access with getters and setters
 	var factor = {
 		global:1,
 		session:0.5
 	};
 
+	//private to this module, no public exposure, access with getters and setters
 	var axis = {
 		i:1,
 		j:1
 	}	
 
-
+	//copy of utility object to reduce dependencies
+	//private to this module, not exposed to public api
 	var utility = {
 
 		average:function (array, callback) {
@@ -155,6 +158,7 @@
 
 	}
 
+	//exposed to public api
 	var vector = function (x,y,time) {
 
 		var self = this;
@@ -203,6 +207,7 @@
 
 	}
 
+	//public utility, exposed to public api
 	var accelutility = {
 
 		const:{
@@ -255,6 +260,7 @@
 
 	}
 
+	//public module, exposed to public api
 	var object = function (input) {
 
 		var self = this;
@@ -439,6 +445,7 @@
 	}
 
 
+	//public module, exposed to public api
 	var accelerometer = function (input) {
 
 		var self = this;
