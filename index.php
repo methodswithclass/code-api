@@ -9,7 +9,7 @@
    
 
     <link rel="stylesheet" href="api/classes.css">
-    <link rel="stylesheet" href="api/parallax/parallax-3.css">
+    <link rel="stylesheet" href="api/parallax-3/parallax-3.css">
     <link rel="stylesheet" href="site/css/styles.css">
     
 
