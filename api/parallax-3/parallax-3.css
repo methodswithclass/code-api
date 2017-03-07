@@ -1,9 +1,17 @@
 
 
 
-.class{
+.parallax {
 
-	height:100%;
+	position:relative;
+	width:100%;
+}
+
+.parallax img {
+
+	position:absolute;
+	height:150%;
+	width:auto;
 }
 
 
