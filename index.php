@@ -5,9 +5,13 @@
 	<title>Code - Methods with Class, LLC</title>
 
 	<link rel="stylesheet" href="site/css/museo/museo300.css" type="text/css" charset="utf-8">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+   
+
     <link rel="stylesheet" href="api/classes.css">
+    <link rel="stylesheet" href="api/parallax/parallax-3.css">
     <link rel="stylesheet" href="site/css/styles.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    
 
     <script src="site/libs/jquery-1.11.3.min.js"></script>
     <script src="site/libs/jquery.scrollto.js"></script>
@@ -65,7 +69,7 @@
 
 	<script src="site/app.js"></script>
 	<script src="api/shared-2.js"></script>
-	<script src="api/parallax-2.2.js"></script>
+	<script src="api/parallax-3/parallax-3.js"></script>
 	<script src="site/data.js"></script>
 	<script src="site/directives.js"></script>
 	<script src="site/state/stateModule.js"></script>
