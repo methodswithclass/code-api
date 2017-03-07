@@ -57,6 +57,80 @@ angular.module("parallaxModule", [])
 		})();
 
 
+		var fix = function (params) {
+
+			var img = params.img;
+	    	var space = params.space;
+	    	var aspect;
+	    	var height;
+	    	var width;
+
+			var goodAspect = function (width, height) {
+				if (Math.abs(width/height - aspect) < 0.01) return true;
+				return false;
+			}
+
+			var checkHeight = function (height) {
+		        if (height < space.height()) return "under";
+		        else if (height > space.height()*1.2) return "over";
+		        return "good";
+		    }
+
+		    var checkWidth = function (width) {
+		        if (width < space.width()) return "under";
+		        else if (width > space.width()*1.5) return "over";
+		        return "good";
+		    }
+
+	    	if ($(img)[0]) {
+
+		    	aspect = img.width()/img.height();
+
+		        height = space.height()*1.2;
+		        width = height*aspect;
+		        
+		        if (checkWidth(width) == "under") {
+		            //console.log("width under " + name);
+		            width = space.width();
+		            height = width/aspect;
+		            if (checkHeight(height) == "under") {
+		                //console.log("height under " + name);
+		                height = space.height()*1.2;
+		                width = height*aspect;
+		            }
+		        }
+		        else if (checkWidth(width) == "over") {
+		            //console.log("width over " + name);
+		            width = space.width()*1.2;
+		            height = width/aspect;
+		            if (checkHeight(height) == "under") {
+		                //console.log("height under " + name);
+		                height = space.height()*1.2;
+		                width = height*aspect;
+		            }
+		        }
+
+		        img.css({height:height, width:width});
+	    	}
+	        
+	    }
+
+
+	    var runFix = function () {
+
+	    	fix({space:$(element), first:true});
+	    }
+
+	    setTimeout(function () {
+			runFix();
+		}, 200);
+
+
+		angular.element($window).bind('resize', function () {
+			runFix();
+		});
+
+
 	}
 
 
