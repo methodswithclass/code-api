@@ -51,7 +51,10 @@ angular.module("parallaxModule", [])
 	var link = function ($scope, element, attr) {
 
 
-	
+		(function() {
+
+			console.log("parallax-3 is running");
+		})();
 
 
 	}
