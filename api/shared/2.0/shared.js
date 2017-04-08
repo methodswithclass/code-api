@@ -68,10 +68,10 @@ var whatDevice = function (forceMobile) {
 
 
 // load this module into your project
-angular.module('sharedModule', [])
+angular.module('shared.module', [])
 
 
-.factory('global', ['$sce', function ($sce) {
+.factory('global.service', ['$sce', function ($sce) {
 
 	// angular wrapper for the above function
 	var isMobile = function () {
@@ -161,7 +161,7 @@ angular.module('sharedModule', [])
 // simple callback functionality
 // promise callback functionality
 // callback chaining functionality
-.factory("events", function ($q) {
+.factory("events.service", function ($q) {
 
 	var self = this;
 
@@ -484,7 +484,7 @@ angular.module('sharedModule', [])
 
 })
 
-.factory("send", function () {
+.factory("send.service", function () {
 
 	var saved = {};
 	var savedNames = [];

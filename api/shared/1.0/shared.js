@@ -64,10 +64,10 @@ var whatDevice = function (forceMobile) {
 }
 
 
-angular.module('sharedModule', [])
+angular.module('shared.module', [])
 
 
-.factory('global', ['$window', '$sce', function ($window, $sce) {
+.factory('global.service', ['$window', '$sce', function ($window, $sce) {
 
 	var isMobile = function () {
 		return checkMobile();
@@ -120,7 +120,7 @@ angular.module('sharedModule', [])
 
 }])
 
-.factory("events", function ($q) {
+.factory("events.service", function ($q) {
 
 	var self = this;
 
@@ -143,7 +143,7 @@ angular.module('sharedModule', [])
 
 })
 
-.factory("send", function () {
+.factory("send.service", function () {
 
 	var receivers = {};
 
