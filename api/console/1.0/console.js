@@ -18,10 +18,10 @@
 
 
 // load this module into your project
-var consoleModule = angular.module("consoleModule", [])
+var consoleModule = angular.module("console.module", [])
 
 
-.factory("con", function() {
+.factory("con.service", function() {
 
 	var total = 1000;
 	var history = [];
