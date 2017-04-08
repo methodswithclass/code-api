@@ -39,7 +39,7 @@ var whatDevice = function (forceMobile) {
 }
 
 
-angular.module('sharedModule', [])
+angular.module('shared.module', [])
 
 
 .factory('global.service', ['$window', '$sce', function ($window, $sce) {
