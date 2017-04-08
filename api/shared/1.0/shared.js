@@ -1,3 +1,28 @@
+/***********************************************************************************
+  
+		Shared Module v1.0
+
+		AngularJS library with no other dependencies	
+
+		contains several services for any angular project.
+		
+		contents:
+		device checking
+		linear equation general solution
+		events callback module
+		send module
+
+		
+
+		Methods with Class, LLC, 2015
+
+
+***********************************************************************************/
+
+
+
+
+
 var desktop = "desktop";
 var mobile = "mobile";
 var ie = "internet explorer";
@@ -39,10 +64,10 @@ var whatDevice = function (forceMobile) {
 }
 
 
-angular.module('shared.module', [])
+angular.module('sharedModule', [])
 
 
-.factory('global.service', ['$window', '$sce', function ($window, $sce) {
+.factory('global', ['$window', '$sce', function ($window, $sce) {
 
 	var isMobile = function () {
 		return checkMobile();
@@ -95,7 +120,7 @@ angular.module('shared.module', [])
 
 }])
 
-.factory("events.service", function ($q) {
+.factory("events", function ($q) {
 
 	var self = this;
 
@@ -118,7 +143,7 @@ angular.module('shared.module', [])
 
 })
 
-.factory("send.service", function () {
+.factory("send", function () {
 
 	var receivers = {};
 

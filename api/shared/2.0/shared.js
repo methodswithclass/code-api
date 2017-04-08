@@ -1,6 +1,6 @@
 /***********************************************************************************
   
-		Shared Module v2.1
+		Shared Module v2.0
 
 		AngularJS library with no other dependencies	
 
@@ -9,8 +9,9 @@
 		contents:
 		device checking
 		linear equation general solution
-		call functions setup in one place of an application from another
-		send data around within an application
+		events callback module
+		send module
+
 		
 
 		Methods with Class, LLC, 2015
@@ -67,7 +68,7 @@ var whatDevice = function (forceMobile) {
 
 
 // load this module into your project
-angular.module('shared.module', [])
+angular.module('sharedModule', [])
 
 
 .factory('global', ['$sce', function ($sce) {
@@ -141,86 +142,11 @@ angular.module('shared.module', [])
 
 	}
 
-	var truncate = function (number, decimal) {
-	
-		var value = Math.floor(number*Math.pow(10, decimal))/Math.pow(10, decimal);
-		
-		return value;
-	}
-
-	var average = function (array, callback) {
-
-		var sum = 0;
-
-		for (i in array) {
-
-			sum += callback(array[i], i, array);
-		}
-
-		return sum/array.length;
-	}
-
-	var value = function (value, index, array) {
-		return value;
-	}
-
-	var round = function (number, order) {
-
-		var value = Math.round(number/order)*order;
-
-		return value;
-	}
-
-	var log = function(x, num) {
- 		return Math.log(x) / Math.log(num);
-	};
-
-	var leadingzeros = function (number, zeros) {
-		if (!zeros) zeros = 1;
-
-		var digits = Math.floor(log(number*10, 10));
-		var total = Math.floor(log(zeros, 10)) - digits;
-		var leading = "";
-		var i = 0;
-		for (var i = 0; i <= total; i++) {
-			leading += "0";
-		}
-
-		console.log(leading + digit);
-
-		return leading + digit;
-	}
-
-	function shuffle(array) {
-		var currentIndex = array.length, temporaryValue, randomIndex;
-
-		// While there remain elements to shuffle...
-		while (0 !== currentIndex) {
-
-			// Pick a remaining element...
-			randomIndex = Math.floor(Math.random() * currentIndex);
-			currentIndex -= 1;
-
-			// And swap it with the current element.
-			temporaryValue = array[currentIndex];
-			array[currentIndex] = array[randomIndex];
-			array[randomIndex] = temporaryValue;
-		}
-
-	  	return array;
-	}
-
     return {
     	isMobile:isMobile,
     	checkDevice:checkDevice,
     	isPortrait:isPortrait,
     	linear:linear,
-    	truncate:truncate,
-    	average:average,
-    	value:value,
-    	round:round,
-    	leadingzeros:leadingzeros,
-    	shuffle:shuffle,
     	getOrientation:getOrientation,
     	renderHtml:function (htmlCode) {
 	        return $sce.trustAsHtml(htmlCode);
@@ -235,7 +161,7 @@ angular.module('shared.module', [])
 // simple callback functionality
 // promise callback functionality
 // callback chaining functionality
-.factory("events.service", function ($q) {
+.factory("events", function ($q) {
 
 	var self = this;
 
@@ -558,7 +484,7 @@ angular.module('shared.module', [])
 
 })
 
-.factory("send.service", function () {
+.factory("send", function () {
 
 	var saved = {};
 	var savedNames = [];
@@ -588,12 +514,12 @@ angular.module('shared.module', [])
 		return false;
 	}
 
-	// an operation to send data back to a receiver
-	var back = function () {
+	// setup a send operation
+	var setup = function () {
 
 
 		// setup a named key/value object to receive data at a later time
-		this.setup = function (params) {
+		this.receiver = function (params) {
 
 			var name = params.name;
 
@@ -616,28 +542,8 @@ angular.module('shared.module', [])
 			names[names.length] = name;
 		}
 
-		// save data to the key/value pair object setup before
-		this.add = function (params) {
-
-			var name = params.name;
-			var id = params.id;
-
-			var bin = receivers[name];
-
-			for (i in bin) {
-
-				bin[i][id] = params.data;
-			}
-
-		}
-
-	}
-
-	// save data to be retrieved later
-	var save = function () {
-
-		// add data to an array to be retrieved later
-		this.add = function (params) {
+		// directly save data in named array to retrieve at a later time
+		this.save = function (params) {
 
 			var name = params.name;
 
@@ -660,9 +566,28 @@ angular.module('shared.module', [])
 			savedNames[savedNames.length] = name;
 
 		}
-		
 
-		// retrieve the array of data
+	}
+
+	// finish send operation
+	var retrieve = function () {
+
+		// save data to the key/value pair object setup before
+		this.accum = function (params) {
+
+			var name = params.name;
+			var id = params.id;
+
+			var bin = receivers[name];
+
+			for (i in bin) {
+
+				bin[i][id] = params.data;
+			}
+
+		}
+
+		// retrieve the array of data that you have been saving to
 		this.get = function (params) {
 
 			var name = params.name;
@@ -682,116 +607,18 @@ angular.module('shared.module', [])
 	
 
 	return {
-		back:new back(),
-		save:new save()
+
+		setup:new setup(),
+		retrieve:new retrieve()
 	}
 
-})
-
-.factory("react", function () {
-
-	var saves = {};
-	var names = [];
-
-	var r = function (name) {
-
-		for (i in names) {
-
-			if (name == names[i]) {
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	var obs = function (input) {
-
-
-		var self = this;
-		var o = [];
-		self.name = input.name || "";
-		self.state = input.state || null;
-		var subs = [];
-
-		console.log(self.name, "observable")
-
-		var notify = function () {
-
-			//console.log(self.name, "notify");
-
-			for (i in subs) {
-				subs[i](self.state);
-			}
-		}
-
-		self.subscribe = function (callback) {
-
-			//console.log(self.name, "subscribe");
-
-			subs.push(callback);
-
-			//notify();
-		}
-
-		self.setState = function (state) {
-
-			//console.log(self.name, "set state", state);
-
-			self.state = state;
-
-			notify();
-		}
-
-	}
-
-	var observable = function (input) {
-
-		if (!r(input.name)) {
-			saves[input.name] = new obs(input);
-			names[names.length] = input.name;
-		}
-		else {
-			saves[input.name].setState(input.state);
-		}
-	}
-
-	var subscribe = function (input) {
-
-		if (r(input.name)) {
-			saves[input.name].subscribe(input.callback);
-		}
-		else {
-			saves[input.name] = new obs(input);
-			saves[input.name].subscribe(input.callback);
-			names[names.length] = input.name;
-		}
-
-	}
-
-	var push = function (input) {
-
-		if (r(input.name)) {
-			saves[input.name].setState(input.state);
-		}
-		else {
-			console.log("no name at push (" + input.name + ")");
-		}
-	}
-
-	return {
-		observable:observable,
-		subscribe:subscribe,
-		push:push
-	}
 })
 
 .directive('onTap', function () {
 	return function (scope, element, attrs) {
 		return $(element).hammer({
 			 	prevent_default: true,
-			 	time:1
+			 	drag_vertical: false
 			})
 			 .bind("tap", function (ev) {
 			   return scope.$apply(attrs['onTap']);
@@ -803,11 +630,13 @@ angular.module('shared.module', [])
 	return function (scope, element, attrs) {
 		return $(element).hammer({
 			 	prevent_default: true,
-			 	time:1
+			 	time:5,
+			 	threshold:20
 			})
-			 .bind("pressup", function (ev) {
+			 .bind("press", function (ev) {
 			   return scope.$apply(attrs['onPress']);
 			 });
 	};
 })
+
 
