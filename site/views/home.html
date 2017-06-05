@@ -1,0 +1,68 @@
+<div class="relative width height">
+
+	<div class="relative width height-600 border-white cutoff" parallax scroll="body" inner="inner" top="true">
+
+		<div class="relative width height" id="inner">
+
+			<div class="relative width80 height60 center">
+
+				<div class="relative width height50">
+					<div class="absolute width text-right top0 font-70">
+						methods with<br>
+						class
+					</div>
+				</div>
+
+				<div class="relative width height50">
+					<div class="absolute width text-right bottom0 font-40">
+						code
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="relative width black-back">
+
+		<div ng-repeat="module in main.modules">
+
+			<div class="relative width height-600">
+					<div class="absolute width60 height80 center white-back lowered">
+
+						<div class="absolute width80 height80 center">
+							<div class="relative width height-200">
+								<div class="absolute width20 vcenter font-50">
+									{{module.name}}
+								</div>
+
+								<div class="absolute width70 vcenter font-25 right0 text-right">
+									{{module.copy.s}}
+								</div>
+							</div>
+
+							<!-- <div class="relative width padding-v-20 font-20">
+
+								versions:
+							</div>
+
+							 -->
+
+							<div class="relative width-300 height-100 hcenter bottom0 black-back white shadow pointer" open>
+								<div class="absolute center text-center font-30">
+									open
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
