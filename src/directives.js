@@ -5,7 +5,7 @@ app.directive("doc", ['data', function (data) {
 		restrict:"E",
 		scope:false,
 		replace:true,
-		templateUrl:"site/views/doc.html",
+		templateUrl:"assets/views/doc.html",
 		link:function ($scope, element, attr) {
 
 		}
@@ -28,7 +28,7 @@ app.directive("doc", ['data', function (data) {
 
 			$scope.getContentUrl = function () {
 
-				return "site/views/" + $scope.type + ".html";
+				return "assets/views/" + $scope.type + ".html";
 			}
 
 		}
@@ -45,7 +45,7 @@ app.directive("doc", ['data', function (data) {
 			data:"="
 		},
 		replace:true,
-		templateUrl:"site/views/paragraph.html",
+		templateUrl:"assets/views/paragraph.html",
 		link:function ($scope, element, attr) {
 
 			
@@ -77,7 +77,7 @@ app.directive("doc", ['data', function (data) {
 
 			$(element).on("click", function () {
 
-				window.open("http://code.methodswithclass.com/api/" + $scope.version.src, "_blank");
+				window.open("http://code.methodswithclass.com/api/" + $scope.module.name +  "/" + $scope.version.number + "/" + $scope.version.src, "_blank");
 			})
 		}
 	}

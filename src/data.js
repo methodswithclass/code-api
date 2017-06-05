@@ -77,13 +77,18 @@ app.factory("data", function () {
 		},
 		versions:[
 		{
-			number:"2",
-			src:"parallax-2.js",
+			number:"2.0",
+			src:"parallax.js",
 			status:depricated
 		},
 		{
 			number:"2.1",
-			src:"parallax-2.1.js",
+			src:"parallax.js",
+			status:depricated
+		},
+		{
+			number:"2.2",
+			src:"parallax.js",
 			status:production
 		}
 		],
@@ -190,12 +195,12 @@ app.factory("data", function () {
 		},
 		versions:[
 		{
-			number:"1",
+			number:"1.0",
 			src:"classes.css",
 			status:production
 		}
 		],
-		current:"1",
+		current:"1.0",
 		doc:[
 		{
 			name:"modules",
@@ -235,17 +240,17 @@ app.factory("data", function () {
 		},
 		versions:[
 		{
-			number:"1",
-			src:"shared-1.js",
+			number:"1.0",
+			src:"shared.js",
 			status:depricated
 		},
 		{
 			number:"2",
-			src:"shared-2.js",
+			src:"shared.js",
 			status:production
 		}
 		],
-		current:"2",
+		current:"2.0",
 		doc:[
 		{
 			name:"modules",
@@ -388,12 +393,12 @@ app.factory("data", function () {
 		},
 		versions:[
 		{
-			number:"1",
-			src:"console-1.js",
+			number:"1.0",
+			src:"console.js",
 			status:production
 		}
 		],
-		current:"1",
+		current:"1.0",
 		doc:[
 		{	
 			name:"modules",

@@ -4,23 +4,30 @@
 
 	<title>Code - Methods with Class, LLC</title>
 
-	<link rel="stylesheet" href="site/css/museo/museo300.css" type="text/css" charset="utf-8">
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-   
 
-    <link rel="stylesheet" href="api/classes.css">
-    <link rel="stylesheet" href="api/parallax-3/parallax-3.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="api/classes.css">
+	<!-- <link rel="stylesheet" href="api/parallax-3/parallax-3.css"> -->
+
+	<!-- inject:css -->
+
+	<link rel="stylesheet" href="site/css/museo/museo300.css" type="text/css" charset="utf-8">
     <link rel="stylesheet" href="site/css/styles.css">
     
+    <!-- endinject -->
 
-    <script src="site/libs/jquery-1.11.3.min.js"></script>
-    <script src="site/libs/jquery.scrollto.js"></script>
-    <script src="site/libs/hammer.js"></script>
-    <script src="site/libs/angular.min.js"></script>
-    <script src="site/libs/angular-route.min.js"></script>
-    <script src="site/libs/angular.ui-router.min.js"></script>
-    <script src="site/libs/jquery.hammer.js"></script>
+
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+    <!-- inject:head:js -->
+
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/jquery.scrollTo/jquery.scrollTo.js"></script>
+    <script src="../bower_components/hammerjs/hammer.js"></script>
+    <script src="../bower_components/angular/angular.min.js"></script>
+    <script src="../bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+
+    <!-- endinject -->
 
     <base href="/">
 
@@ -67,14 +74,19 @@
 	</div>
 
 
+	<script src="api/shared/2.0/shared.js"></script>
+	<script src="api/parallax/2.2/parallax.js"></script>
+
+	<!-- inject:js -->
+
 	<script src="site/app.js"></script>
-	<script src="api/shared-2.js"></script>
-	<script src="api/parallax-3/parallax-3.js"></script>
 	<script src="site/data.js"></script>
 	<script src="site/directives.js"></script>
 	<script src="site/state/stateModule.js"></script>
 	<script src="site/state/runtimeState.js"></script>
 	<script src="site/state/states.js"></script>
+
+	<!-- endinject -->
 
 </body>
 </html>

@@ -7,7 +7,7 @@ stateModule.provider("runtime.state", function ($stateProvider) {
     {
         name:"home",
         url:"/",
-        templateUrl:"site/views/home.html",
+        templateUrl:"assets/views/home.html",
         controller:['$scope', 'data', function ($scope, data) {
 
             var self = this;
@@ -20,7 +20,7 @@ stateModule.provider("runtime.state", function ($stateProvider) {
     {
         name:"parallax",
         url:"/docs/parallax",
-        templateUrl:"site/views/module.html",
+        templateUrl:"assets/views/module.html",
         controller:function ($scope, data) {
 
             $scope.module = data.getModuleByName("parallax");

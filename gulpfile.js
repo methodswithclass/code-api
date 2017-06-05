@@ -57,12 +57,9 @@ gulp.task('styles', function() {
 
 gulp.task('scripts', ['vendor'], function() {
 	return gulp.src([
-	            "src/features/data/dataModule.js",
-	            "src/features/state/stateModule.js",
-	            "src/features/interface/uiModule.js",
-	            "!src/features/interface/parallax.js",
-	            "src/features/**/*.js",
-	            "src/features/app/app.js"
+	                "src/app.js",
+		            "src/state/stateModule.js",
+		            "src/**/*.js"
 	            ])
 	// .pipe(jshint('.jshintrc'))
 	// .pipe(jshint.reporter('default'))
@@ -111,8 +108,13 @@ gulp.task('fonts', function () {
 
 gulp.task("misc", function () {
 
-	return gulp.src(["./favicon.ico"])
+	var favicon = gulp.src(["./favicon.ico"])
 	.pipe(gulp.dest("dist"));
+
+	var api = gulp.src(["api/**/*.*"])
+	.pipe(gulp.dest("dist/api"))
+
+	return merge(favicon, api);
 })
 
 gulp.task('index', ["styles", "scripts", 'html', "fonts", "images", "misc"], function () {
