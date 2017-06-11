@@ -402,7 +402,7 @@
 			innerContext.fillStyle = "#000000";
 			innerContext.fill();
 
-			&(container).append(inner);
+			$(container).append(inner);
 		}
 
 		var drawObject = function (changeinner) {
