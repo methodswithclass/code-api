@@ -371,6 +371,11 @@
 
 		// if (input.params.shape) setShape(container);
 		
+		var container = input.object;
+		var context;
+		var inner;
+		var innerContext;
+		
 		self.name = input.name;
 		self.params = input.params;
 
@@ -388,10 +393,6 @@
 		var util = utility;
 		var g = accelutility;
 
-		var container = input.object;
-		var context;
-		var inner;
-		var innerContext;
 		var relPos = {x:0, y:0};
 
 		var drawInner = function () {
