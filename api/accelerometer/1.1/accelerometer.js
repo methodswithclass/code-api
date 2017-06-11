@@ -272,21 +272,12 @@
 			radius = params.size;
 
 			obj.style.position = "absolute";
-			context = obj.getContext('2d');
-			context.rect(params.x, params.y, params.size, params.size);
-
-			if (params.size) {
-				context.width = params.size + "px";
-				context.height = params.size + "px";
-				// obj.style.borderRadius = params.size/2 + "px";
-
-				inner = document.createElement("canvas");
-				innerContext = inner.getContext('2d');
-				innerContext.arc(params.size/2, params.size/2, params.size/2, 2*Math.pi, false);
-				innerContext.color = "#000000";
-			}
-
 			
+			if (params.size) {
+				obj.style.width = params.size + "px";
+				obj.style.height = params.size + "px";
+				obj.style.borderRadius = params.size/2 + "px";
+			}
 
 			
 			if (params.color) obj.style.backgroundColor = params.color;
@@ -385,8 +376,8 @@
 		self.acceleration = {x:0, y:0};
 
 		self.size = {
-			x:container.offsetWidth, 
-			y:container.offsetHeight
+			x:input.width, 
+			y:input.height
 		}
 
 		self.radius = self.size.x/2;
