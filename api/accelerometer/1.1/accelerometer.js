@@ -371,11 +371,12 @@
 
 		// if (input.params.shape) setShape(container);
 		
-		var container = input.object;
+		var arena = input.arena;
+		var container;
 		var context;
 		var inner;
 		var innerContext;
-		
+
 		self.name = input.name;
 		self.params = input.params;
 
@@ -409,6 +410,7 @@
 		var drawObject = function (changeinner) {
 
 			// obj.style.position = "absolute";
+			container = document.createElement("canvas");
 			context = container.getContext('2d');
 			context.rect(self.position.x, self.position.y, self.size, self.size);
 
@@ -417,6 +419,8 @@
 		}
 
 		drawObject(true);
+
+		$(arena).append(container);
 
 		self.el = function () {
 
