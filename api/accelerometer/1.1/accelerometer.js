@@ -375,7 +375,10 @@
 		self.velocity = {x:0, y:0};
 		self.acceleration = {x:0, y:0};
 
-		self.size = input.size;
+		self.size = {
+			x:input.size,
+			y:input.size
+		}
 
 		self.radius = self.size.x/2;
 
