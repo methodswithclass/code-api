@@ -424,7 +424,7 @@
 			
 			self.position = new vector(relPos.x, relPos.y, relPos.time);
 			
-			context.clear(0,0,self.size, self.size);
+			context.clearRect(0,0,self.size, self.size);
 
 			drawObject();
 
