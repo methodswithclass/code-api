@@ -364,8 +364,8 @@
 		var inner;
 		var innerContext;
 
-		self.name = input.name;
-		self.params = input.params;
+		self.name = input.id || "none";
+		self.params = input.params || {};
 
 		self.position = {x:0, y:0};
 		self.velocity = {x:0, y:0};
@@ -451,13 +451,6 @@
 
 		self.absolutePos = function () {
 
-			// var screenPos = self.screenPos();
-            //
-			// return {
-			// 	x:screenPos.x,
-			// 	y:screenPos.y
-			// }
-
 			return self.position;
 		}
 
@@ -526,7 +519,6 @@
 				x:arena.offsetWidth/2 - obj.size.x/2,
 				y:arena.offsetHeight/2 - obj.size.y/2
 			}
-			// console.log("get bounds", "offsetWidth", arena.offsetWidth, "size", self.size, self.bounds);
 		}
 
 		var bounce = function () {
@@ -631,7 +623,6 @@
 					unfiltered.set(new vector(xDir*factor*raw.abs.x, yDir*factor*raw.abs.y, (e.timeStamp - startTime)/1000));
 				}
 
-				//console.log("raw", "x", raw.gravity.x, "y", raw.gravity.y);
 			}
 		}
 
