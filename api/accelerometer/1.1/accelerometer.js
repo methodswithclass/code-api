@@ -420,11 +420,11 @@
 
 		self.setPosition = function (pos) {
 
+            context.clearRect(relPos.x-self.size.x/2,relPos.y-self.size.y/2,self.size*2, self.size*2);
+
 			relPos = pos;
 			
 			self.position = new vector(relPos.x, relPos.y, relPos.time);
-			
-			context.clearRect(0,0,self.size, self.size);
 
 			drawObject();
 
@@ -527,6 +527,7 @@
 				x:arena.offsetWidth/2 - obj.size.x/2,
 				y:arena.offsetHeight/2 - obj.size.y/2
 			}
+			console.log("get bounds", self.bounds);
 		}
 
 		var bounce = function () {
@@ -637,7 +638,7 @@
 
 		self.start = function () {
 				
-			console.log("start accel");
+			console.log("start accel in accel");
 
 			self.updateParams(p);
 			
