@@ -269,8 +269,6 @@
 
 			console.log("create circle");
 
-			radius = params.size;
-
 			obj.style.position = "absolute";
 			
 			if (params.size) {
@@ -287,8 +285,6 @@
 		var createSquare = function (obj, params) {
 
 			console.log("create sqaure");
-
-			radius = params.size;
 
 			obj.style.position = "absolute";
 			if (params.size) {
@@ -376,8 +372,8 @@
 		self.acceleration = {x:0, y:0};
 
 		self.size = {
-			x:input.size,
-			y:input.size
+			x:self.params.size,
+			y:self.params.size
 		}
 
 		self.radius = self.size.x/2;
@@ -491,7 +487,6 @@
 		self.name = input.id || "none";
 		var obj = input.object;
 		var arena = obj.el().parentElement;
-		console.log("arena", arena);
 		var p = input.params || {};
 
 		var filterBucket = [];
@@ -529,7 +524,7 @@
 				x:arena.offsetWidth/2 - obj.size.x/2,
 				y:arena.offsetHeight/2 - obj.size.y/2
 			}
-			console.log("get bounds", "offsetWidth", arena.offsetWidth, "size", self.size, self.bounds);
+			// console.log("get bounds", "offsetWidth", arena.offsetWidth, "size", self.size, self.bounds);
 		}
 
 		var bounce = function () {
@@ -640,7 +635,7 @@
 
 		self.start = function () {
 				
-			console.log("start accel in accel");
+			console.log("start accel");
 
 			self.updateParams(p);
 			
