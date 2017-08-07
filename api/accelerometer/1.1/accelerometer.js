@@ -491,6 +491,7 @@
 		self.name = input.id || "none";
 		var obj = input.object;
 		var arena = obj.el().parentElement;
+		console.log("arena", arena);
 		var p = input.params || {};
 
 		var filterBucket = [];
@@ -523,11 +524,12 @@
 
 		var getBounds = function () {
 
+
 			self.bounds = {
 				x:arena.offsetWidth/2 - obj.size.x/2,
 				y:arena.offsetHeight/2 - obj.size.y/2
 			}
-			console.log("get bounds", self.bounds);
+			console.log("get bounds", "offsetWidth", arena.offsetWidth, "size", self.size, self.bounds);
 		}
 
 		var bounce = function () {
