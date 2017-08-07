@@ -451,12 +451,14 @@
 
 		self.absolutePos = function () {
 
-			var screenPos = self.screenPos();
+			// var screenPos = self.screenPos();
+            //
+			// return {
+			// 	x:screenPos.x,
+			// 	y:screenPos.y
+			// }
 
-			return {
-				x:screenPos.x,
-				y:screenPos.y
-			}
+			return self.position;
 		}
 
 		self.hide = function () {
