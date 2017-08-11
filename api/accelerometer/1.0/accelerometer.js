@@ -509,6 +509,8 @@
 				x:arena.offsetWidth/2 - obj.size.x/2,
 				y:arena.offsetHeight/2 - obj.size.y/2
 			}
+
+			console.log("get bounds", self.bounds);
 		}
 
 		var bounce = function () {
