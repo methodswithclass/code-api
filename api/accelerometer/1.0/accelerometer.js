@@ -281,7 +281,7 @@
 			if (params.size) {
 				container.style.width = params.size + "px";
 				container.style.height = params.size + "px";
-				console.log("container size", params.size);
+				// console.log("container size", params.size);
 				obj.style.borderRadius = params.size/2 + "px";
 			}
 
@@ -506,7 +506,7 @@
 				y:arena.offsetHeight/2 - obj.size.y/2
 			}
 
-			console.log("get bounds", arena.offsetWidth, obj.size.x/2, self.bounds);
+			// console.log("get bounds", arena.offsetWidth, obj.size.x/2, self.bounds);
 		}
 
 		var bounce = function () {
