@@ -266,68 +266,63 @@
 		var self = this;
 
         var arena = input.arena;
-        var container = {};
+        var container = document.createElement("div");
+        container.style.position = "absolute";
 
 		var createCircle = function (arena, params) {
 
 			console.log("create circle");
 
-			container = document.createElement("div");
-
-            $(arena).append(container);
-
 			var obj = document.createElement("div");
-
 			obj.style.position = "absolute";
+			obj.style.width = "100%";
+			obj.style.height = "100%";
 			
 			if (params.size) {
-				obj.style.width = params.size + "px";
-				obj.style.height = params.size + "px";
+				container.style.width = params.size + "px";
+				container.style.height = params.size + "px";
+				console.log("container size", params.size);
 				obj.style.borderRadius = params.size/2 + "px";
 			}
 
 			if (params.color) obj.style.backgroundColor = params.color;
 
             $(container).append(obj);
+            $(arena).append(container);
 		}
 
 		var createSquare = function (arena, params) {
 
 			console.log("create square");
 
-            container = document.createElement("div");
-
-            $(arena).append(container);
-
             var obj = document.createElement("div");
-
 			obj.style.position = "absolute";
+			obj.style.width = "100%";
+			obj.style.height = "100%";
+
 			if (params.size) {
-				obj.style.width = params.size + "px";
-				obj.style.height = params.size + "px";
+				container.style.width = params.size + "px";
+				container.style.height = params.size + "px";
 			}
 
-			
 			if (params.color) obj.style.backgroundColor = params.color;
 
             $(container).append(obj);
+            $(arena).append(container);
 		}
 
 		var createCross = function (arena, params) {
 
 			console.log("create cross");
 
-            container = document.createElement("div");
-
-            $(arena).append(container);
-
             var obj = document.createElement("div");
-
 			obj.style.position = "absolute";
+			obj.style.width = "100%";
+			obj.style.height = "100%";
 			
 			if (params.size) {
-				obj.style.width = params.size + "px";
-				obj.style.height = params.size + "px";
+				container.style.width = params.size + "px";
+				container.style.height = params.size + "px";
 			}
 
 			obj.style.backgroundColor = "transparent";
@@ -353,6 +348,7 @@
 			$(obj).append(horizontal);
 
             $(container).append(obj);
+            $(arena).append(container);
 
 		}
 
@@ -364,15 +360,15 @@
 
 				case "circle":
 					createCircle(arena, input.params);
-				break;
+					break;
 
 				case "square":
 					createSquare(arena, input.params);
-				break;
+					break;
 
 				case "cross":
 					createCross(arena, input.params);
-				break;
+					break;
 			}
 
 		}
@@ -510,7 +506,7 @@
 				y:arena.offsetHeight/2 - obj.size.y/2
 			}
 
-			console.log("get bounds", arena.offsetWidth, self.bounds);
+			console.log("get bounds", arena.offsetWidth, obj.size.x/2, self.bounds);
 		}
 
 		var bounce = function () {
