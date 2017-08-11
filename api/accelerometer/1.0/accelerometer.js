@@ -510,7 +510,7 @@
 				y:arena.offsetHeight/2 - obj.size.y/2
 			}
 
-			console.log("get bounds", self.bounds);
+			console.log("get bounds", arena.offsetWidth, self.bounds);
 		}
 
 		var bounce = function () {
