@@ -207,7 +207,7 @@
 
 	}
 
-	//public utility, exposed to public api
+	//public utility, exposed to public api as utility
 	var accelutility = {
 
 		const:{

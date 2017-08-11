@@ -265,11 +265,18 @@
 
 		var self = this;
 
-		var createCircle = function (obj, params) {
+        var arena = input.arena;
+        var container = {};
+
+		var createCircle = function (arena, params) {
 
 			console.log("create circle");
 
-			radius = params.size;
+			container = document.createElement("div");
+
+            $(arena).append(container);
+
+			var obj = document.createElement("div");
 
 			obj.style.position = "absolute";
 			
@@ -279,16 +286,20 @@
 				obj.style.borderRadius = params.size/2 + "px";
 			}
 
-			
 			if (params.color) obj.style.backgroundColor = params.color;
 
+            $(container).append(obj);
 		}
 
-		var createSquare = function (obj, params) {
+		var createSquare = function (arena, params) {
 
-			console.log("create sqaure");
+			console.log("create square");
 
-			radius = params.size;
+            container = document.createElement("div");
+
+            $(arena).append(container);
+
+            var obj = document.createElement("div");
 
 			obj.style.position = "absolute";
 			if (params.size) {
@@ -299,12 +310,19 @@
 			
 			if (params.color) obj.style.backgroundColor = params.color;
 
+            $(container).append(obj);
 		}
 
-		var createCross = function (obj, params) {
+		var createCross = function (arena, params) {
 
 			console.log("create cross");
 
+            container = document.createElement("div");
+
+            $(arena).append(container);
+
+            var obj = document.createElement("div");
+
 			obj.style.position = "absolute";
 			
 			if (params.size) {
@@ -312,7 +330,6 @@
 				obj.style.height = params.size + "px";
 			}
 
-			
 			obj.style.backgroundColor = "transparent";
 
 			var vertical = document.createElement("div");
@@ -332,44 +349,38 @@
 			horizontal.style.height = "2px";
 			if (params.color) horizontal.style.backgroundColor = params.color;
 
+			$(obj).append(vertical);
+			$(obj).append(horizontal);
 
-
-			obj.innerHTML = vertical;
-			obj.innerHTML = horizontal;
+            $(container).append(obj);
 
 		}
 
-		var util = utility;
-		var g = accelutility;
-
-		var container = input.object;
-		var relPos = {x:0, y:0};
-
-		var setShape = function (cont) {
+		var setShape = function (arena) {
 
 			console.log("set object shape to", input.params.shape);
 
 			switch (input.params.shape) {
 
 				case "circle":
-					createCircle(cont, input.params);
+					createCircle(arena, input.params);
 				break;
 
 				case "square":
-					createSquare(cont, input.params);
+					createSquare(arena, input.params);
 				break;
 
 				case "cross":
-					createCross(cont, input.params);
+					createCross(arena, input.params);
 				break;
 			}
 
 		}
 
-		if (input.params.shape) setShape(container);
-		
-		self.name = input.name;
-		self.params = input.params;
+        if (input.params.shape) setShape(arena);
+
+		self.name = input.id || "none";
+		self.params = input.params || {};
 
 		self.position = {x:0, y:0};
 		self.velocity = {x:0, y:0};
@@ -381,6 +392,12 @@
 		}
 
 		self.radius = self.size.x/2;
+
+        var util = utility;
+        // var g = accelutility;
+
+
+        var relPos = {x:0, y:0};
 
 		self.el = function () {
 
@@ -450,7 +467,7 @@
 
 		var self = this;
 
-		var util = utility;
+		// var util = utility;
 		var g = accelutility;
 
 		self.name = input.id || "none";
