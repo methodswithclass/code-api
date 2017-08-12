@@ -111,6 +111,8 @@
 
 		truncate:function (number, decimal) {
 
+			console.log("truncate");
+
 			if (decimal == 0) {
 				return Math.floor(number);
 			}
