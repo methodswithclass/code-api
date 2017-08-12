@@ -113,10 +113,6 @@
 
 			console.log("truncate");
 
-			if (decimal == 0) {
-				return Math.floor(number);
-			}
-
 			var value = Math.floor(number*Math.pow(10, decimal))/Math.pow(10, decimal);
 			
 			return value;
