@@ -5,7 +5,7 @@
 	//private to this module, no public exposure, access with getters and setters
 	var factor = {
 		global:1,
-		session:0.5
+		session:1.0
 	};
 
 	//private to this module, no public exposure, access with getters and setters
