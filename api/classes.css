@@ -898,13 +898,10 @@
 	margin:0 10px;
 }
 
-<<<<<<< HEAD
 .margin-h-20 {
 	margin:0 20px;
 }
 
-=======
->>>>>>> d5e24725b4c1dde87da786533debc02f557b561a
 .margin-h-50 {
 
 	margin:0 50px;
@@ -1081,9 +1078,14 @@
 	padding-right:5%;
 }
 
+.padding-h-5 {
+
+    padding:0 5px;
+}
+
 .padding-h-10 {
 
-	padding:0 20px;
+	padding:0 10px;
 }
 
 .padding-h-20 {
@@ -1091,9 +1093,29 @@
 	padding:0 20px;
 }
 
+.padding-h-30 {
+
+	padding:0 30px;
+}
+
+padding-h-40 {
+
+    padding:0 40px;
+}
+
 .padding-h-50 {
 
 	padding:0 50px;
+}
+
+.padding-v-5 {
+
+	padding:5px 0;
+}
+
+.padding-v-10 {
+
+    padding:10px 0;
 }
 
 .padding-v-20 {
