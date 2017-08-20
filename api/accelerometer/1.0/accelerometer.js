@@ -266,7 +266,8 @@
 		var self = this;
 
         var arena = input.arena;
-        var container;
+        var container = document.createElement("div");
+        container.style.position = "absolute";
 
         var createImage = function (arena, params) {
 
@@ -374,14 +375,11 @@
 
             console.log("set object shape to", shape);
 
-            if (container) {
-                container.innerHTML = "";
-                container = null;
-                container = document.createElement("div");
-                container.style.position = "absolute";
-            }
-
-
+            container.innerHTML = "";
+            container = null;
+            container = document.createElement("div");
+            container.style.position = "absolute";
+            
 			switch (shape) {
 
                 case "image":
