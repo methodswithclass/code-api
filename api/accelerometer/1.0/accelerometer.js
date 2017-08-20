@@ -378,8 +378,8 @@
             container.innerHTML = "";
             container = null;
 
-            obj.innerHTML = "";
-            obj = null;
+            //obj.innerHTML = "";
+            //obj = null;
 
 			switch (shape) {
 
