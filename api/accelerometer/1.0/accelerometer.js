@@ -269,6 +269,25 @@
         var container = document.createElement("div");
         container.style.position = "absolute";
 
+        var createImage = function (arena, params) {
+
+            console.log("create image");
+
+            var obj = document.createElement("img");
+            obj.style.position = "absolute";
+            obj.style.width = "100%";
+            obj.style.height = "auto";
+            obj.src = params.src;
+
+            if (params.size) {
+                container.style.width = params.size + "px";
+                container.style.height = params.size + "px";
+            }
+
+            $(container).append(obj);
+            $(arena).append(container);
+        }
+
 		var createCircle = function (arena, params) {
 
 			console.log("create circle");
@@ -352,28 +371,38 @@
 
 		}
 
-		var setShape = function (arena) {
+		var setShape = function (shape, params, arena) {
 
-			console.log("set object shape to", input.params.shape);
+            console.log("set object shape to", shape);
 
-			switch (input.params.shape) {
+            container.innerHTML = "";
+            container = null;
+
+            obj.innerHTML = "";
+            obj = null;
+
+			switch (shape) {
+
+                case "image":
+                    createImage(arena, params);
+                    break;
 
 				case "circle":
-					createCircle(arena, input.params);
+					createCircle(arena, params);
 					break;
 
 				case "square":
-					createSquare(arena, input.params);
+					createSquare(arena, params);
 					break;
 
 				case "cross":
-					createCross(arena, input.params);
+					createCross(arena, params);
 					break;
 			}
 
 		}
 
-        if (input.params.shape) setShape(arena);
+        if (input.params.shape) setShape(input.params.shape, input.params, arena);
 
 		self.name = input.id || "none";
 		self.params = input.params || {};
@@ -393,7 +422,12 @@
         // var g = accelutility;
 
 
-        var relPos = {x:0, y:0};
+        var relPos = { x: 0, y: 0 };
+
+        self.changeShape = function (shape, params) {
+
+            setShape(shape, params, arena);
+        }
 
 		self.el = function () {
 
