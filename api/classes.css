@@ -1333,6 +1333,11 @@
 	border-bottom-right-radius:50px;
 }
 
+.rounded50-perc {
+
+   border-radius:50%;
+}
+
 .nooutline {
 	outline:none;
 	border:none;
