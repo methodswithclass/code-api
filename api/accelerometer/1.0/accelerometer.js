@@ -401,21 +401,32 @@
 
 		}
 
-        if (input.params.shape) setShape(input.params.shape, input.params, arena);
-
 		self.name = input.id || "none";
 		self.params = input.params || {};
 
 		self.position = {x:0, y:0};
 		self.velocity = {x:0, y:0};
-		self.acceleration = {x:0, y:0};
+        self.acceleration = { x: 0, y: 0 };
 
-		self.size = {
-			x:container.offsetWidth, 
-			y:container.offsetHeight
-		}
 
-		self.radius = self.size.x/2;
+        if (input.params.shape) setShape(input.params.shape, input.params, arena);
+
+
+        self.size = { x: 0, y: 0 };
+        self.radius = 0;
+
+        var getSize = function () {
+
+            self.size = {
+                x: container.offsetWidth,
+                y: container.offsetHeight
+            }
+
+            self.radius = self.size.x / 2;
+
+        }
+
+        getSize();
 
         var util = utility;
         // var g = accelutility;
@@ -426,6 +437,8 @@
         self.changeShape = function (shape, params) {
 
             setShape(shape, params, arena);
+
+            getSize();
         }
 
 		self.el = function () {
