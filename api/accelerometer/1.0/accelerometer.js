@@ -441,6 +441,16 @@
             getSize();
         }
 
+        self.changeSize = function (size) {
+
+            container.style.width = size + "px";
+            container.style.height = size + "px";
+
+            $(container).children().first().css({ borderRadius: size / 2 + "px" });
+
+            getSize();
+        }
+
 		self.el = function () {
 
 			return container;
