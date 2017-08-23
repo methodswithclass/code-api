@@ -446,7 +446,7 @@
             container.style.width = size + "px";
             container.style.height = size + "px";
 
-            $(container).children().first().css({ borderRadius: size / 2 + "px" });
+            $(container).children(0).css({ borderRadius: size / 2 + "px" });
 
             getSize();
         }
