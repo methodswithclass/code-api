@@ -2052,21 +2052,17 @@ padding-h-40 {
 
 
 .scroll-style-2::-webkit-scrollbar-track {
-    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
-    /*border:1px solid black;*/
-    width:3px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     background-color: #F5F5F5;
 }
 
 .scroll-style-2::-webkit-scrollbar {
     /*border:1px solid black;*/
-    width: 3px;
+    width: 6px;
     background-color: #F5F5F5;
 }
 
 .scroll-style-2::-webkit-scrollbar-thumb {
-    /*border:1px solid white;*/
-    width:3px;
     background-color: #000000;
 }
 
