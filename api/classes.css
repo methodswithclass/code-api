@@ -2879,6 +2879,11 @@ padding-h-40 {
 	z-index:100;
 }
 
+z-200 {
+
+    z-index:200;
+}
+
 .z-minus-50 {
 
 	z-index:-50;
