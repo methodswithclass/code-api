@@ -2066,6 +2066,7 @@ padding-h-40 {
 }
 
 .scroll-style-2::-webkit-scrollbar-thumb {
+    border-radius: 3px;
     background-color: #000000;
 }
 
