@@ -2049,9 +2049,8 @@ padding-h-40 {
     background-color: #555;
 }
 
-.scroll-1-height {
-
-    height:12px;
+.scroll-1-height::-webkit-scrollbar {
+    height: 12px;
 }
 
 
@@ -2070,7 +2069,7 @@ padding-h-40 {
     background-color: #000000;
 }
 
-.scroll-2-height {
+.scroll-2-height::-webkit-scrollbar {
     height: 6px;
 }
 
