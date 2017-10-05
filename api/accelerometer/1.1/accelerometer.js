@@ -1,3 +1,12 @@
+/*
+
+Accelerometer package
+
+2017 Christopher Polito v1.1
+
+*/
+
+
 
 
 (function (window) {

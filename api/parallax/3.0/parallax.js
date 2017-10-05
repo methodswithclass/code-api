@@ -1,6 +1,6 @@
 /***********************************************************************************
   
-		Parallax Module v2.1
+		Parallax Module v3.0
 
 		AngularJS library with no other dependencies	
 

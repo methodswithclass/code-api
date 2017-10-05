@@ -1,7 +1,7 @@
 
 /***********************************************************************************
   
-		mcshared module v1
+		mcshared module v1.0
 
 		JavaScript library with no other dependencies	
 

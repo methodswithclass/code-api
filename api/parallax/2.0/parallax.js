@@ -1,4 +1,16 @@
 
+
+/*
+
+Parallax package
+
+2017 Christopher Polito v2.0
+
+*/
+
+
+
+
 angular.module("parallaxModule", [])
 
 .factory("device", function () {
