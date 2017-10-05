@@ -14,7 +14,7 @@ Accelerometer package
 	//private to this module, no public exposure, access with getters and setters
 	var factor = {
 		global:1,
-		session:0.5
+		session:1.0
 	};
 
 	//private to this module, no public exposure, access with getters and setters
@@ -275,68 +275,82 @@ Accelerometer package
 		var self = this;
 
         var arena = input.arena;
-        var container = {};
+        var container = document.createElement("div");
+        container.style.position = "absolute";
+
+        var createImage = function (arena, params) {
+
+            console.log("create image");
+
+            var obj = document.createElement("img");
+            obj.style.position = "absolute";
+            obj.style.width = "100%";
+            obj.style.height = "auto";
+            obj.src = params.src;
+
+            if (params.size) {
+                container.style.width = params.size + "px";
+                container.style.height = params.size + "px";
+            }
+
+            $(container).append(obj);
+            $(arena).append(container);
+        }
 
 		var createCircle = function (arena, params) {
 
 			console.log("create circle");
 
-			container = document.createElement("div");
-
-            $(arena).append(container);
-
 			var obj = document.createElement("div");
-
 			obj.style.position = "absolute";
+			obj.style.width = "100%";
+			obj.style.height = "100%";
 			
 			if (params.size) {
-				obj.style.width = params.size + "px";
-				obj.style.height = params.size + "px";
+				container.style.width = params.size + "px";
+				container.style.height = params.size + "px";
+				// console.log("container size", params.size);
 				obj.style.borderRadius = params.size/2 + "px";
 			}
 
 			if (params.color) obj.style.backgroundColor = params.color;
 
             $(container).append(obj);
+            $(arena).append(container);
 		}
 
 		var createSquare = function (arena, params) {
 
 			console.log("create square");
 
-            container = document.createElement("div");
-
-            $(arena).append(container);
-
             var obj = document.createElement("div");
-
 			obj.style.position = "absolute";
+			obj.style.width = "100%";
+			obj.style.height = "100%";
+
 			if (params.size) {
-				obj.style.width = params.size + "px";
-				obj.style.height = params.size + "px";
+				container.style.width = params.size + "px";
+				container.style.height = params.size + "px";
 			}
 
-			
 			if (params.color) obj.style.backgroundColor = params.color;
 
             $(container).append(obj);
+            $(arena).append(container);
 		}
 
 		var createCross = function (arena, params) {
 
 			console.log("create cross");
 
-            container = document.createElement("div");
-
-            $(arena).append(container);
-
             var obj = document.createElement("div");
-
 			obj.style.position = "absolute";
+			obj.style.width = "100%";
+			obj.style.height = "100%";
 			
 			if (params.size) {
-				obj.style.width = params.size + "px";
-				obj.style.height = params.size + "px";
+				container.style.width = params.size + "px";
+				container.style.height = params.size + "px";
 			}
 
 			obj.style.backgroundColor = "transparent";
@@ -362,51 +376,89 @@ Accelerometer package
 			$(obj).append(horizontal);
 
             $(container).append(obj);
+            $(arena).append(container);
 
 		}
 
-		var setShape = function (arena) {
+		var setShape = function (shape, params, arena) {
 
-			console.log("set object shape to", input.params.shape);
+            console.log("set object shape to", shape);
 
-			switch (input.params.shape) {
+            container.innerHTML = "";
+            container = null;
+            container = document.createElement("div");
+            container.style.position = "absolute";
+            
+			switch (shape) {
+
+                case "image":
+                    createImage(arena, params);
+                    break;
 
 				case "circle":
-					createCircle(arena, input.params);
-				break;
+					createCircle(arena, params);
+					break;
 
 				case "square":
-					createSquare(arena, input.params);
-				break;
+					createSquare(arena, params);
+					break;
 
 				case "cross":
-					createCross(arena, input.params);
-				break;
+					createCross(arena, params);
+					break;
 			}
 
 		}
-
-        if (input.params.shape) setShape(arena);
 
 		self.name = input.id || "none";
 		self.params = input.params || {};
 
 		self.position = {x:0, y:0};
 		self.velocity = {x:0, y:0};
-		self.acceleration = {x:0, y:0};
+        self.acceleration = { x: 0, y: 0 };
 
-		self.size = {
-			x:container.offsetWidth, 
-			y:container.offsetHeight
-		}
 
-		self.radius = self.size.x/2;
+        if (input.params.shape) setShape(input.params.shape, input.params, arena);
+
+
+        self.size = { x: 0, y: 0 };
+        self.radius = 0;
+
+        var getSize = function () {
+
+            self.size = {
+                x: container.offsetWidth,
+                y: container.offsetHeight
+            }
+
+            self.radius = self.size.x / 2;
+
+        }
+
+        getSize();
 
         var util = utility;
         // var g = accelutility;
 
 
-        var relPos = {x:0, y:0};
+        var relPos = { x: 0, y: 0 };
+
+        self.changeShape = function (shape, params) {
+
+            setShape(shape, params, arena);
+
+            getSize();
+        }
+
+        self.changeSize = function (size) {
+
+            container.style.width = size + "px";
+            container.style.height = size + "px";
+
+            $(container).children(0).css({ borderRadius: size / 2 + "px" });
+
+            getSize();
+        }
 
 		self.el = function () {
 
@@ -519,7 +571,7 @@ Accelerometer package
 				y:arena.offsetHeight/2 - obj.size.y/2
 			}
 
-			console.log("get bounds", self.bounds);
+			// console.log("get bounds", arena.offsetWidth, obj.size.x/2, self.bounds);
 		}
 
 		var bounce = function () {
