@@ -23,128 +23,128 @@ application but are not related to the evolutionary algorithm, including them si
 	*/
 
 	
-	var events = function () {
+	// var events = function () {
 
 
-		var self = this;
+	// 	var self = this;
 
-		var events = {};
+	// 	var events = {};
 
-		// runs a saved simple callback
-		self.dispatch = function (name) {
+	// 	// runs a saved simple callback
+	// 	self.dispatch = function (name) {
 
-			var result;
+	// 		var result;
 
-			try {
+	// 		try {
 
-				return self.events[name]();
-			}
-			catch (e) {
+	// 			return self.events[name]();
+	// 		}
+	// 		catch (e) {
 
-				return false;
-			}
+	// 			return false;
+	// 		}
 
-		}
+	// 	}
 
-		// saves a simple callback
-		self.on = function (name, _event) {
+	// 	// saves a simple callback
+	// 	self.on = function (name, _event) {
 
-			self.events[name] = _event;
+	// 		self.events[name] = _event;
 
-		}
+	// 	}
 
-	}
-
-
-
-	var react = function () {
+	// }
 
 
-		var self = this;
+
+	// var react = function () {
 
 
-		var saves = {};
-		var names = [];
-
-		var r = function (name) {
-
-			for (i in names) {
-
-				if (name == names[i]) {
-
-					return true;
-				}
-			}
-
-			return false;
-		}
+	// 	var self = this;
 
 
-		var obs = function (input) {
+	// 	var saves = {};
+	// 	var names = [];
+
+	// 	var r = function (name) {
+
+	// 		for (i in names) {
+
+	// 			if (name == names[i]) {
+
+	// 				return true;
+	// 			}
+	// 		}
+
+	// 		return false;
+	// 	}
 
 
-			var self = this;
-			var o = [];
-			self.name = input.name || "";
-			self.state = input.state || null;
-			var subs = [];
-
-			console.log(self.name, "observable")
-
-			var notify = function () {
-
-				//console.log(self.name, "notify");
-
-				for (i in subs) {
-					subs[i](self.state);
-				}
-			}
-
-			self.subscribe = function (callback) {
-
-				//console.log(self.name, "subscribe");
-
-				subs.push(callback);
-
-				//notify();
-			}
-
-			self.setState = function (state) {
-
-				//console.log(self.name, "set state", state);
-
-				self.state = state;
-
-				notify();
-			}
-
-		}
+	// 	var obs = function (input) {
 
 
-		self.subscribe = function (input) {
+	// 		var self = this;
+	// 		var o = [];
+	// 		self.name = input.name || "";
+	// 		self.state = input.state || null;
+	// 		var subs = [];
 
-			if (r(input.name)) {
-				saves[input.name].subscribe(input.callback);
-			}
-			else {
-				saves[input.name] = new obs(input);
-				saves[input.name].subscribe(input.callback);
-				names[names.length] = input.name;
-			}
+	// 		console.log(self.name, "observable")
 
-		}
+	// 		var notify = function () {
 
-		self.push = function (input) {
+	// 			//console.log(self.name, "notify");
 
-			if (r(input.name)) {
-				saves[input.name].setState(input.state);
-			}
-			else {
-				console.log("no name at push (" + input.name + ")");
-			}
-		}
+	// 			for (i in subs) {
+	// 				subs[i](self.state);
+	// 			}
+	// 		}
 
-	}
+	// 		self.subscribe = function (callback) {
+
+	// 			//console.log(self.name, "subscribe");
+
+	// 			subs.push(callback);
+
+	// 			//notify();
+	// 		}
+
+	// 		self.setState = function (state) {
+
+	// 			//console.log(self.name, "set state", state);
+
+	// 			self.state = state;
+
+	// 			notify();
+	// 		}
+
+	// 	}
+
+
+	// 	self.subscribe = function (input) {
+
+	// 		if (r(input.name)) {
+	// 			saves[input.name].subscribe(input.callback);
+	// 		}
+	// 		else {
+	// 			saves[input.name] = new obs(input);
+	// 			saves[input.name].subscribe(input.callback);
+	// 			names[names.length] = input.name;
+	// 		}
+
+	// 	}
+
+	// 	self.push = function (input) {
+
+	// 		if (r(input.name)) {
+	// 			saves[input.name].setState(input.state);
+	// 		}
+	// 		else {
+	// 			console.log("no name at push (" + input.name + ")");
+	// 		}
+	// 	}
+
+	// }
 
 
 
@@ -161,14 +161,14 @@ application but are not related to the evolutionary algorithm, including them si
 			
 		var self = this;
 
-		var pname = states.split();
-
-		console.log(pname.program, "create organism");
-		var pdata = data.get(pname.program);
-		var program = programs.get(pdata.name);
-
 		var i = 0;
 
+		self.name = params.input.name;
+
+		console.log(self.name, "create organism");
+
+		var pdata = params.input.pdata;
+		var program = params.input.program;
 		self.total = pdata.genome;
 		self.dna = [];
 		self.runs = [];
@@ -498,14 +498,20 @@ application but are not related to the evolutionary algorithm, including them si
 
 				console.log("push evdata");
 
-				react.push({
-					name:"ev." + input.name,
-					state:{
-						index:self.index,
-						best:ext.best,
-						worst:ext.worst
-					}
-				});
+				// react.push({
+				// 	name:"ev." + input.name,
+				// 	state:{
+				// 		index:self.index,
+				// 		best:ext.best,
+				// 		worst:ext.worst
+				// 	}
+				// });
+
+				input.setEvdata({
+					index:self.index,
+					best:ext.best,
+					worst:ext.worst
+				})
 
 				var num_parents = 2;
 				var children = reproduce(num_parents);
