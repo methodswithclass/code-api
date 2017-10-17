@@ -594,7 +594,7 @@ application but are not related to the evolutionary algorithm, including them si
 
 
 	window.evolve = {
-		ev:evolveModule
+		module:evolveModule
 	}
 
 
