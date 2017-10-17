@@ -373,7 +373,7 @@ application but are not related to the evolutionary algorithm, including them si
 
 					// console.log("self.pop", self.pop, org);
 
-					self.pop[org].run(function () {
+					self.pop[indi].run(function () {
 
 						indi++;
 
