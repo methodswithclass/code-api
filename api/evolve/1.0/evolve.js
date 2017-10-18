@@ -13,148 +13,44 @@ application but are not related to the evolutionary algorithm, including them si
 (function (window) {
 
 
+	var sum = function (array, $callback) {
 
-	/*
+		var sum = 0;
 
-	
-	Events and React modules are supporting packages and are not related to evolutionary algorithm
-	
+		var callback = function (value, index, array) {
 
-	*/
+			return value;
+		}
 
-	
-	// var events = function () {
+		if ($callback) callback = $callback;
 
+		for (var i in array) {
 
-	// 	var self = this;
+			sum += callback(array[i], i, array);
+		}
 
-	// 	var events = {};
+		return sum;
+	}
 
-	// 	// runs a saved simple callback
-	// 	self.dispatch = function (name) {
+	var average = function (array, $callback) {
 
-	// 		var result;
+		var total = sum(array, $callback);
 
-	// 		try {
-
-	// 			return self.events[name]();
-	// 		}
-	// 		catch (e) {
-
-	// 			return false;
-	// 		}
-
-	// 	}
-
-	// 	// saves a simple callback
-	// 	self.on = function (name, _event) {
-
-	// 		self.events[name] = _event;
-
-	// 	}
-
-	// }
+		return total/array.length;
+	}
 
 
+	var truncate = function (number, decimal) {
+			
+		var value = Math.floor(number*Math.pow(10, decimal))/Math.pow(10, decimal);
+		
+		return value;
+	}
 
-	// var react = function () {
+	var last = function (array) {
 
-
-	// 	var self = this;
-
-
-	// 	var saves = {};
-	// 	var names = [];
-
-	// 	var r = function (name) {
-
-	// 		for (i in names) {
-
-	// 			if (name == names[i]) {
-
-	// 				return true;
-	// 			}
-	// 		}
-
-	// 		return false;
-	// 	}
-
-
-	// 	var obs = function (input) {
-
-
-	// 		var self = this;
-	// 		var o = [];
-	// 		self.name = input.name || "";
-	// 		self.state = input.state || null;
-	// 		var subs = [];
-
-	// 		console.log(self.name, "observable")
-
-	// 		var notify = function () {
-
-	// 			//console.log(self.name, "notify");
-
-	// 			for (i in subs) {
-	// 				subs[i](self.state);
-	// 			}
-	// 		}
-
-	// 		self.subscribe = function (callback) {
-
-	// 			//console.log(self.name, "subscribe");
-
-	// 			subs.push(callback);
-
-	// 			//notify();
-	// 		}
-
-	// 		self.setState = function (state) {
-
-	// 			//console.log(self.name, "set state", state);
-
-	// 			self.state = state;
-
-	// 			notify();
-	// 		}
-
-	// 	}
-
-
-	// 	self.subscribe = function (input) {
-
-	// 		if (r(input.name)) {
-	// 			saves[input.name].subscribe(input.callback);
-	// 		}
-	// 		else {
-	// 			saves[input.name] = new obs(input);
-	// 			saves[input.name].subscribe(input.callback);
-	// 			names[names.length] = input.name;
-	// 		}
-
-	// 	}
-
-	// 	self.push = function (input) {
-
-	// 		if (r(input.name)) {
-	// 			saves[input.name].setState(input.state);
-	// 		}
-	// 		else {
-	// 			console.log("no name at push (" + input.name + ")");
-	// 		}
-	// 	}
-
-	// }
-
-
-
-	/*
-
-	
-	Evolutionary Algorithm modules begin here: Individual, Generation, and main Evolve module
-
-
-	*/
+    	return array[array.length-1];
+	}
 
 
 	var individual = function (params) {

@@ -129,9 +129,9 @@
 
 	var average = function (array, $callback) {
 
-		var sum = sum(array, $callback);
+		var total = sum(array, $callback);
 
-		return sum/array.length;
+		return total/array.length;
 	}
 
 	var value = function (value, index, array) {
@@ -140,10 +140,10 @@
 
 	var truncate = function (number, decimal) {
 			
-			var value = Math.floor(number*Math.pow(10, decimal))/Math.pow(10, decimal);
-			
-			return value;
-		}
+		var value = Math.floor(number*Math.pow(10, decimal))/Math.pow(10, decimal);
+		
+		return value;
+	}
 
 	var round = function (number, order) {
 
