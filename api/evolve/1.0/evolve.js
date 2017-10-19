@@ -469,7 +469,7 @@ application but are not related to the evolutionary algorithm, including them si
 					}, input.evdelay);
 				}
 				else {
-					input.completeEvolve();
+					input.completeEvolve("finished");
 				}
 
 			});
