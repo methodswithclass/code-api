@@ -30,7 +30,7 @@ stateModule.provider("runtime.state", function ($stateProvider) {
     {
         name:"classes",
         url:"/docs/classes",
-        templateUrl:"site/views/module.html",
+        templateUrl:"assets/views/module.html",
         controller:function ($scope, data) {
 
             $scope.module = data.getModuleByName("classes");
@@ -40,7 +40,7 @@ stateModule.provider("runtime.state", function ($stateProvider) {
     {
         name:"shared",
         url:"/docs/shared",
-        templateUrl:"site/views/module.html",
+        templateUrl:"assets/views/module.html",
         controller:function ($scope, data) {
 
             $scope.module = data.getModuleByName("shared");
@@ -50,7 +50,7 @@ stateModule.provider("runtime.state", function ($stateProvider) {
     {
         name:"console",
         url:"/docs/console",
-        templateUrl:"site/views/module.html",
+        templateUrl:"assets/views/module.html",
         controller:function ($scope, data) {
 
             $scope.module = data.getModuleByName("console");
