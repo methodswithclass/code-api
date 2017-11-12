@@ -38,26 +38,38 @@
 		return promises[name];
 	}
 
-	// runs a saved simple callback
+	// runs all callbacks assigned to the same name, from the "on" method
 	var dispatch = function (name) {
 
-		var result;
+		var runEvent = function (index) {
 
-		try {
+			try {
+				
+				if (index < self.events[name].length) {
+					self.events[name][index]();
 
-			return events[name]();
+					runEvent(index + 1);
+				}	
+				
+			}
+			catch (e) {
+				console.log("failed to run all events", e);
+			}
+
 		}
-		catch (e) {
 
-			return false;
-		}
+		runEvent(0);		
 
 	}
 
-	// saves a simple callback
+	// saves one or more callbacks to be called later by dispatch
 	var on = function (name, _event) {
 
-		events[name] = _event;
+		if (!self.events[name]) {
+			self.events[name] = [];
+		}
+
+		self.events[name].push(_event);
 
 	}
 
