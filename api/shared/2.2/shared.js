@@ -273,38 +273,56 @@ angular.module('shared.module', [])
 		return self.promises[name];
 	}
 
-	// runs all callbacks assigned to the same name, from the "on" method
+	// called to trigger the events registered by the "on" method below, all events registered to the same name will be triggered, any values returned by those events can be assigned to an object by this call, with the sub identifiers defined in the "on" method as the keys
 	var dispatch = function (name) {
+
+		var result = {};
 
 		var runEvent = function (index) {
 
 			try {
+
+				var id = self.events[name].find(function (p) {
+
+					return p.id.index == index;
+				})
 				
 				if (index < self.events[name].length) {
-					self.events[name][index]();
+					result[id] = self.events[name][id].event();
 
 					runEvent(index + 1);
-				}	
-				
+				}
+				else {
+					return result;
+				}
+
 			}
 			catch (e) {
 				console.log("failed to run all events", e);
+
+				return result;
 			}
 
 		}
 
-		runEvent(0);		
+		runEvent(0);
 
 	}
 
-	// saves one or more callbacks to be called later by dispatch
-	var on = function (name, _event) {
+
+	// saves a callback event method to a master list and a sub identifier to be later called by the dispatch method above, all the siblings registered by this method are called when the dispatch method is called by only providing the master list name, the id is used only to retrieve the return value of an individual event 
+	var on = function (name, id, _event) {
 
 		if (!self.events[name]) {
-			self.events[name] = [];
+			self.events[name] = {};
+			numEvents = 0;
 		}
 
-		self.events[name].push(_event);
+		self.events[name][id] = {
+			index:numEvents++,
+			id:id, 
+			event:_event
+		}
 
 	}
 
