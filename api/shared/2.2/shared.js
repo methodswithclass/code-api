@@ -243,6 +243,7 @@ angular.module('shared.module', [])
 	this.triggers = {};
 	this.defers = {};
 	this.promises = {};
+	this.index = {};
 
 	// runs a saved promise
 	var future = function (name) {
@@ -276,40 +277,46 @@ angular.module('shared.module', [])
 	// called to trigger the events registered by the "on" method below, all events registered to the same name will be triggered, any values returned by those events can be assigned to an object by this call, with the sub identifiers defined in the "on" method as the keys
 	var dispatch = function (name) {
 
+		console.log("dispatch event", name);
+
 		var result = {};
 		var sub;
 
 		var runEvent = function (index) {
 
 			try {
-
-				for (i in self.events[name]) {
-
-					if (self.events[name][i]["index"] == index) {
-						
-						sub = self.events[name][i];
-					}
-				}
 				
-				if (index < self.events[name].length) {
-					result[sub.id] = self.events[name][sub.id].event();
+				if (index < Object.keys(self.events[name]).length) {
+
+					for (var i in self.events[name]) {
+
+						if (self.events[name][i]["index"] == index) {
+							
+							sub = self.events[name][i];
+						}
+					}
+
+					// console.log("call sub event", sub.id);
+
+					if (sub) {
+						result[sub.id] = self.events[name][sub.id].event();
+					}
+
+					// console.log("return value", result);
 
 					runEvent(index + 1);
-				}
-				else {
-					return result;
 				}
 
 			}
 			catch (e) {
 				console.log("failed to run all events", e);
-
-				return result;
 			}
 
 		}
 
 		runEvent(0);
+
+		return result;
 
 	}
 
@@ -317,16 +324,20 @@ angular.module('shared.module', [])
 	// saves a callback event method to a master list and a sub identifier to be later called by the dispatch method above, all the siblings registered by this method are called when the dispatch method is called by only providing the master list name, the id is used only to retrieve the return value of an individual event 
 	var on = function (name, id, _event) {
 
+		// console.log("register event", name, id);
+
 		if (!self.events[name]) {
 			self.events[name] = {};
-			numEvents = 0;
+			self.index[name] = 0;
 		}
 
 		self.events[name][id] = {
-			index:numEvents++,
+			index:self.index[name],
 			id:id, 
 			event:_event
 		}
+
+		self.index[name] += 1;
 
 	}
 
