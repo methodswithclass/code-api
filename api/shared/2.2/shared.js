@@ -282,13 +282,13 @@ angular.module('shared.module', [])
 
 			try {
 
-				var id = self.events[name].find(function (p) {
+				var sub = self.events[name].forEach(function (value, i) {
 
-					return p.id.index == index;
+					return value.index == index;
 				})
 				
 				if (index < self.events[name].length) {
-					result[id] = self.events[name][id].event();
+					result[id] = self.events[name][sub.id].event();
 
 					runEvent(index + 1);
 				}
