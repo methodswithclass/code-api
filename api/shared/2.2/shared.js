@@ -277,7 +277,7 @@ angular.module('shared.module', [])
 	// called to trigger the events registered by the "on" method below, all events registered to the same name will be triggered, any values returned by those events can be assigned to an object by this call, with the sub identifiers defined in the "on" method as the keys
 	var dispatch = function (name) {
 
-		console.log("dispatch event", name);
+		// console.log("dispatch event", name);
 
 		var result = {};
 		var sub;
@@ -296,7 +296,7 @@ angular.module('shared.module', [])
 						}
 					}
 
-					// console.log("call sub event", sub.id);
+					console.log("dispatch event", name, "with id:", sub.id);
 
 					if (sub) {
 						result[sub.id] = self.events[name][sub.id].event();
@@ -324,7 +324,7 @@ angular.module('shared.module', [])
 	// saves a callback event method to a master list and a sub identifier to be later called by the dispatch method above, all the siblings registered by this method are called when the dispatch method is called by only providing the master list name, the id is used only to retrieve the return value of an individual event 
 	var on = function (name, id, _event) {
 
-		// console.log("register event", name, id);
+		console.log("register event", name, "with id:", id);
 
 		if (!self.events[name]) {
 			self.events[name] = {};
