@@ -277,18 +277,22 @@ angular.module('shared.module', [])
 	var dispatch = function (name) {
 
 		var result = {};
+		var sub;
 
 		var runEvent = function (index) {
 
 			try {
 
-				var sub = self.events[name].forEach(function (value, i) {
+				for (i in self.events[name]) {
 
-					return value.index == index;
-				})
+					if (self.events[name][i]["index"] == index) {
+						
+						sub = self.events[name][i];
+					}
+				}
 				
 				if (index < self.events[name].length) {
-					result[id] = self.events[name][sub.id].event();
+					result[sub.id] = self.events[name][sub.id].event();
 
 					runEvent(index + 1);
 				}
