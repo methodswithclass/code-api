@@ -273,7 +273,7 @@ angular.module('shared.module', [])
 	}
 
 	// called to trigger the events registered by the "on" method below, all events registered to the same name will be triggered, any values returned by those events can be assigned to an object by this call, with the sub identifiers defined in the "on" method as the keys
-	var dispatch = function (name) {
+	var dispatch = function (name, id) {
 
 		// console.log("dispatch event", name);
 
@@ -312,8 +312,13 @@ angular.module('shared.module', [])
 
 		}
 
-		runEvent(0);
-
+		if (id) {
+			result[id] = self.events[name][id].event();
+		}
+		else {
+			runEvent(0);
+		}
+		
 		return result;
 
 	}
