@@ -542,6 +542,10 @@
 	top:200%;
 }
 
+.top-5 {
+	top:5px;
+}
+
 .top-10 {
 
 	top:10px;
@@ -572,8 +576,16 @@
 	top:60px;
 }
 
+.top-70 {
+	top:70px;
+}
+
 .top-80 {
 	top:80px;
+}
+
+.top-90 {
+	top:90px;
 }
 
 .top-100 {
