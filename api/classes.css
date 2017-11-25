@@ -120,6 +120,10 @@
 	display:block;
 }
 
+.none {
+	display:none;
+}
+
 .box {
 
 	box-sizing:border-box;
