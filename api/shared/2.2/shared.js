@@ -333,7 +333,6 @@ angular.module('shared.module', [])
 		 return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
 		}
 
-		console.log("register event", name, "with id:", id);
 
 		if (!self.events[name]) {
 			self.events[name] = {};
@@ -341,6 +340,9 @@ angular.module('shared.module', [])
 		}
 
 		if (isFunction(id)) {
+
+			console.log("register event", name, "with id: single");
+
 			self.events[name] = {
 				index:self.index[name],
 				id:"single",
@@ -348,6 +350,9 @@ angular.module('shared.module', [])
 			}
 		}
 		else { 
+
+			console.log("register event", name, "with id:", id);
+
 			self.events[name][id] = {
 				index:self.index[name],
 				id:id, 
