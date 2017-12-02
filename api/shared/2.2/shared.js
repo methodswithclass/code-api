@@ -343,7 +343,7 @@ angular.module('shared.module', [])
 
 			console.log("register event", name, "with id: single");
 
-			self.events[name] = {
+			self.events[name]["single"] = {
 				index:self.index[name],
 				id:"single",
 				event:id
