@@ -294,7 +294,7 @@ angular.module('shared.module', [])
 						}
 					}
 
-					console.log("dispatch event", name, "with id:", sub.id);
+					console.log("dispatch batch events:", name, ", current event id:", sub.id);
 
 					if (sub) {
 						result[sub.id] = self.events[name][sub.id].event();
@@ -313,6 +313,7 @@ angular.module('shared.module', [])
 		}
 
 		if (id) {
+			console.log("dispatch single event:", name, "with id:", id);
 			result[id] = self.events[name][id].event();
 		}
 		else {
@@ -327,6 +328,11 @@ angular.module('shared.module', [])
 	// saves a callback event method to a master list and a sub identifier to be later called by the dispatch method above, all the siblings registered by this method are called when the dispatch method is called by only providing the master list name, the id is used only to retrieve the return value of an individual event 
 	var on = function (name, id, _event) {
 
+		function isFunction(functionToCheck) {
+		 var getType = {};
+		 return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+		}
+
 		console.log("register event", name, "with id:", id);
 
 		if (!self.events[name]) {
@@ -334,10 +340,19 @@ angular.module('shared.module', [])
 			self.index[name] = 0;
 		}
 
-		self.events[name][id] = {
-			index:self.index[name],
-			id:id, 
-			event:_event
+		if (isFunction(id)) {
+			self.events[name] = {
+				index:self.index[name],
+				id:"single",
+				event:id
+			}
+		}
+		else { 
+			self.events[name][id] = {
+				index:self.index[name],
+				id:id, 
+				event:_event
+			}
 		}
 
 		self.index[name] += 1;
