@@ -301,7 +301,7 @@ angular.module('shared.module', [])
 						? (self.events[name][sub.id] 
 						   ? (self.events[name][sub.id].event 
 						      ? result[sub.id] = self.events[name][sub.id].event()
-						      : console.log("event id", sub.id, "in event bundle named", name, "has no event to fire, --no action taken, returning null"); result[sub.id] = null;);
+						      : console.log("event id", sub.id, "in event bundle named", name, "has no event to fire, --no action taken, returning null"); result[sub.id] = null;)
 						   : console.log("event bundle named", name, "has no event with id", sub.id, " --no action taken, returning null"); result[sub.id] = null;)
 						: console.log("no event bundle with name:", name, " --no action taken, returning null"); result[sub.id] = null;)
 					}
@@ -324,7 +324,7 @@ angular.module('shared.module', [])
 			? (self.events[name][id] 
 			   ? (self.events[name][id].event 
 			      ? result[id] = self.events[name][id].event()
-			      : console.log("event id", id, "in event bundle named", name, "has no event to fire, --no action taken, returning null"); result[id] = null;);
+			      : console.log("event id", id, "in event bundle named", name, "has no event to fire, --no action taken, returning null"); result[id] = null;)
 			   : console.log("event bundle named", name, "has no event with id", id, " --no action taken, returning null"); result[id] = null;)
 			: console.log("no event bundle with name:", name, " --no action taken, returning null"); result[id] = null;)
 		}
