@@ -294,10 +294,16 @@ angular.module('shared.module', [])
 						}
 					}
 
-					console.log("dispatch batch events:", name, ", current event id:", sub.id);
+					console.log("dispatch event in series with id:", sub.id, "from event bundle named:", name);
 
 					if (sub) {
-						result[sub.id] = self.events[name][sub.id].event();
+						(self.events[name] 
+						? (self.events[name][sub.id] 
+						   ? (self.events[name][sub.id].event 
+						      ? result[sub.id] = self.events[name][sub.id].event()
+						      : console.log("event id", sub.id, "in event bundle named", name, "has no event to fire, --no action taken, returning null"); result[sub.id] = null;);
+						   : console.log("event bundle named", name, "has no event with id", sub.id, " --no action taken, returning null"); result[sub.id] = null;)
+						: console.log("no event bundle with name:", name, " --no action taken, returning null"); result[sub.id] = null;)
 					}
 
 					// console.log("return value", result);
@@ -307,16 +313,23 @@ angular.module('shared.module', [])
 
 			}
 			catch (e) {
-				console.log("failed to run all events", e);
+				console.log("failed to run all events in bundle named:", name, "with error message\n(ERROR MESSAGE):", e);
 			}
 
 		}
 
 		if (id) {
-			console.log("dispatch single event:", name, "with id:", id);
-			result[id] = self.events[name][id].event();
+			console.log("dispatch single event with id:", id, "from event bundle named:", name);
+			(self.events[name] 
+			? (self.events[name][id] 
+			   ? (self.events[name][id].event 
+			      ? result[id] = self.events[name][id].event()
+			      : console.log("event id", id, "in event bundle named", name, "has no event to fire, --no action taken, returning null"); result[id] = null;);
+			   : console.log("event bundle named", name, "has no event with id", id, " --no action taken, returning null"); result[id] = null;)
+			: console.log("no event bundle with name:", name, " --no action taken, returning null"); result[id] = null;)
 		}
 		else {
+			console.log("dispatch event bundle named:", name);
 			runEvent(0);
 		}
 		
