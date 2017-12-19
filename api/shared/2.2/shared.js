@@ -297,13 +297,26 @@ angular.module('shared.module', [])
 					console.log("dispatch event in series with id:", sub.id, "from event bundle named:", name);
 
 					if (sub) {
-						(self.events[name] 
-						? (self.events[name][sub.id] 
-						   ? (self.events[name][sub.id].event 
-						      ? result[sub.id] = self.events[name][sub.id].event()
-						      : console.log("event id", sub.id, "in event bundle named", name, "has no event to fire, --no action taken, returning null"); result[sub.id] = null;)
-						   : console.log("event bundle named", name, "has no event with id", sub.id, " --no action taken, returning null"); result[sub.id] = null;)
-						: console.log("no event bundle with name:", name, " --no action taken, returning null"); result[sub.id] = null;)
+
+						if (self.events[name] && self.events[name][sub.id] && self.events[name][sub.id].event) {
+
+							result[sub.id] = self.events[name][sub.id].event();
+						}
+						else {
+							
+							if (!self.events[name]) {
+								console.log("no event bundle with name:", name, " --no action taken, returning null")
+							}
+							else if (!self.events[name][sub.id]) {
+								console.log("event bundle with name:", name, "has no event with id:", sub.id, " --no action taken, returning null")
+							}
+							else if (!self.events[name][sub.id].event) {
+								console.log("event id", sub.id, "in event bundle with name:", name, "has no event to fire, --no action taken, returning null");
+							}
+
+							result[sub.id] = null;
+						}
+
 					}
 
 					// console.log("return value", result);
@@ -313,25 +326,48 @@ angular.module('shared.module', [])
 
 			}
 			catch (e) {
-				console.log("failed to run all events in bundle named:", name, "with error message\n(ERROR MESSAGE):", e);
+				console.log("'" + name + "'", "event bundle series-firing-error caught while firing in progress.\n(ERROR MESSAGE):", e);
+				return result;
 			}
 
 		}
 
 		if (id) {
-			console.log("dispatch single event with id:", id, "from event bundle named:", name);
-			(self.events[name] 
-			? (self.events[name][id] 
-			   ? (self.events[name][id].event 
-			      ? result[id] = self.events[name][id].event()
-			      : console.log("event id", id, "in event bundle named", name, "has no event to fire, --no action taken, returning null"); result[id] = null;)
-			   : console.log("event bundle named", name, "has no event with id", id, " --no action taken, returning null"); result[id] = null;)
-			: console.log("no event bundle with name:", name, " --no action taken, returning null"); result[id] = null;)
+
+			console.log("dispatch single event with id:", id, "from event bundle with name:", name);
+
+			if (self.events[name] && self.events[name][id] && self.events[name][id].event) {
+
+				result[id] = self.events[name][id].event();
+			}
+			else {
+				
+				if (!self.events[name]) {
+					console.log("no event bundle with name:", name, " --no action taken, returning null")
+				}
+				else if (!self.events[name][id]) {
+					console.log("event bundle with name:", name, "has no event with id:", id, " --no action taken, returning null")
+				}
+				else if (!self.events[name][id].event) {
+					console.log("event id", id, "in event bundle with name:", name, "has no event to fire, --no action taken, returning null");
+				}
+
+				result[id] = null;
+			}
+
+
 		}
-		else {
+		else if (self.events[name]) {
+
 			console.log("dispatch event bundle named:", name);
 			runEvent(0);
 		}
+		else {
+
+			console.log("no event bundle with name:", name, " --no action taken, returning null");
+			result["single"] = null;
+		}
+
 		
 		return result;
 
