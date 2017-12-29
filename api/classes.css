@@ -1773,6 +1773,7 @@ padding-h-40 {
 .border-width-20 {
 
 	border-width:20px;
+	border-style:solid;
 }
 
 .border-color-black {
