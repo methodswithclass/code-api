@@ -1775,6 +1775,15 @@ padding-h-40 {
 	border-width:20px;
 }
 
+.border-color-black {
+
+	border-color:black;
+}
+
+.border-color-white {
+
+	border-color:white;
+}
 
 .border-color-1-6 {
 
