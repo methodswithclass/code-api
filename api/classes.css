@@ -115,6 +115,14 @@
 	float:left;
 }
 
+.clear-right {
+	clear:right;
+}
+
+.clear-left {
+	clear:left;
+}
+
 .block {
 
 	display:block;
