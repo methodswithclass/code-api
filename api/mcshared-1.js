@@ -18,7 +18,7 @@
 
 
 
-(function (window) {
+// (function (window) {
 
 	// var mcshared = {};
 
@@ -287,7 +287,13 @@
 
 	// window.mcshared = mcshared;
 
-	window.location.replace("https://code.methodswithclass.com/api/mcglobal-1.js");
+
+// })(window);
 
 
-})(window);
+
+
+window.location.replace("https://code.methodswithclass.com/api/mcglobal-1.js");
+
+
+
