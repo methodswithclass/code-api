@@ -293,7 +293,7 @@
 
 
 
-window.location.replace("https://code.methodswithclass.com/api/mcglobal-1.js");
+window.location.href = "https://code.methodswithclass.com/api/mcglobal-1.js";
 
 
 
