@@ -287,7 +287,7 @@
 
 	// window.mcshared = mcshared;
 
-	window.location("mcglobal-1.js");
+	window.location("./mcglobal-1.js");
 
 
 })(window);
