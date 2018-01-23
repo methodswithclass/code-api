@@ -287,7 +287,7 @@
 
 	// window.mcshared = mcshared;
 
-	window.location.replace("./mcglobal-1.js");
+	window.location.replace("https://code.methodswithclass.com/api/mcglobal-1.js");
 
 
 })(window);
