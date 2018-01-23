@@ -189,7 +189,7 @@ angular.module('shared.module', [])
 		return leading + digit;
 	}
 
-	function shuffle(array) {
+	var shuffle = function (array) {
 		var currentIndex = array.length, temporaryValue, randomIndex;
 
 		// While there remain elements to shuffle...
@@ -208,6 +208,87 @@ angular.module('shared.module', [])
 	  	return array;
 	}
 
+	var waitForElem = function (options, complete) {
+
+        var count = 0;
+        var result = false;
+        var active = {}
+
+        var checkElements = function (array) {
+
+        	result = false;
+        	active = {};
+
+        	if (Array.isArray(array)) {
+
+        		// console.log("###################\n\n\n\n\n\narray is array \n\n\n\n\n\n################")
+
+        		for (var i in array) {
+
+        			// console.log("element", array[i], "does not exist");
+
+	        		if ($(array[i])[0]) {
+	        			active[i] = true;
+	        		}
+
+        		}
+
+
+	        	if (Object.keys(active).length < array.length-1) {
+
+	        		result = true;
+	        	}
+	        	else {
+	        		result = false;
+	        	}
+
+        	}
+        	else {
+
+        		// console.log("@@@@@@@@@@@@@@@@\n\n\n\n\n\n\n\n\array is single\n\n\n\n\n\n@@@@@@@@@@@@@@")
+
+        		if ($(array)[0]) {
+        			// console.log("element does not exist");
+        			result = true;
+        		}
+        		else {
+        			result = false;
+        		}
+
+        	}
+
+        	return result;
+        }
+
+        var waitTimer = setInterval(function () {
+
+            if (checkElements(options.elems) || count >= 500) {
+
+            	// console.log("clear interval");
+
+                clearInterval(waitTimer);
+                waitTimer = null;
+
+                if (count < 500) {
+
+                	// console.log("run complete");
+                    
+                    if (typeof complete === "function") complete(options);
+                }
+                else {
+
+                	// console.log("count limit reached");
+                }
+                
+            }
+            else {
+
+                count++;
+            }
+
+        }, 30);
+    }
+
     return {
     	isMobile:isMobile,
     	checkDevice:checkDevice,
@@ -219,6 +300,7 @@ angular.module('shared.module', [])
     	round:round,
     	leadingzeros:leadingzeros,
     	shuffle:shuffle,
+    	waitForElem:waitForElem,
     	getOrientation:getOrientation,
     	renderHtml:function (htmlCode) {
 	        return $sce.trustAsHtml(htmlCode);
