@@ -239,6 +239,16 @@
 	align-items:center;
 }
 
+.flex-center-Y {
+
+	align-content:center;
+}
+
+.flex-center-X {
+
+	justify-content: center;
+}
+
 
 
 
