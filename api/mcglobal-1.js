@@ -227,7 +227,7 @@
 	        		}
 
 
-		        	if (Object.keys(active).length < array.length-1) {
+		        	if (Object.keys(active).length >= array.length) {
 
 		        		result = true;
 		        	}

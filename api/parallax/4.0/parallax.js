@@ -61,7 +61,7 @@ angular.module("parallaxModule", [])
         		}
 
 
-	        	if (Object.keys(active).length < array.length-1) {
+	        	if (Object.keys(active).length >= array.length) {
 
 	        		result = true;
 	        	}
@@ -304,7 +304,7 @@ angular.module("parallaxModule", [])
 			g = (ph-ih)/2;
 			h = $el.height();
 
-			//console.log("sh:" + sh + " ph:" + ph + " ih:" + ih + " g:" + g + " h:" + h);
+			console.log("sh:" + sh + " ph:" + ph + " ih:" + ih + " g:" + g + " h:" + h);
 
 			if ($scope.top) {
 				eqs = {m:-0.99, b:-1*(ph-sh)/2}
