@@ -71,7 +71,7 @@ var whatDevice = function (forceMobile) {
 angular.module('shared.module', [])
 
 
-.factory('global.service', ['$sce', function ($sce) {
+.factory('utility.service', ['$sce', function ($sce) {
 
 	// angular wrapper for the above function
 	var isMobile = function () {
