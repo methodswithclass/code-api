@@ -200,6 +200,15 @@
 	justify-content: space-around;
 }
 
+.flex-grow {
+
+	flex:flex-grow;
+}
+
+.flex-shrink {
+	flex:flex-shrink;
+}
+
 .flex-grow-1 {
 
 	flex-grow:1;
@@ -229,7 +238,6 @@
 
 	align-items:center;
 }
-
 
 
 
