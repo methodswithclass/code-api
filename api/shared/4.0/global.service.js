@@ -349,6 +349,55 @@
         }, 30);
     }
 
+    // adjusts the size of the image (defined in the directive 'src') to always be bigger than the parent
+	var fixInside = function (params) {
+
+		var i = params.inside;
+    	var s = params.space;
+    	
+    	var iw = i.width;
+    	var ih = i.height;
+    	var sw = s.width;
+    	var sh = s.height;
+
+    	var ar = iw/ih;
+
+		var goodAspect = function (width, height) {
+			if (Math.abs(iw/ih - ar) < 0.01) return true;
+			return false;
+		}
+
+		var checkHeight = function ($h) {
+	        if ($h < sh) return "under";
+	        else if ($h > sh*1.2) return "over";
+	        return "good";
+	    }
+
+	    var checkWidth = function ($w) {
+	        if ($w < sw) return "under";
+	        else if ($w > sw*1.2) return "over";
+	        return "good";
+	    }
+
+        var h = space.height*1.2;
+        var w = height*aspect;
+        
+        if (checkWidth(w) != "good") {
+            w = sw*1.2;
+            h = w/ar;
+            if (checkHeight(h) == "under") {
+                h = sh*1.2;
+                w = h*ar;
+            }
+        }
+
+        return {
+        	width:w,
+        	height:h
+        }
+
+    }
+
 	window.mcutil = {
 		forceMobile:forceMobile,
 		isMobile:isMobile,
@@ -368,7 +417,8 @@
 		shuffle:shuffle,
 		sort:sort,
 		linear:linear,
-		waitForElem:waitForElem
+		waitForElem:waitForElem,
+		fixInside:fixInside
 	}
 
 
