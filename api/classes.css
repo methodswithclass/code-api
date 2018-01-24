@@ -1002,6 +1002,16 @@ top-1000 {
 	margin:20px;
 }
 
+.margin-30 {
+
+	margin:30px;
+}
+
+.margin-40 {
+
+	margin:40px;
+}
+
 .margin-50 {
 
 	margin:50px;
@@ -1156,6 +1166,16 @@ top-1000 {
 	margin:0 20px;
 }
 
+.margin-h-30 {
+
+	margin:0 30px;
+}
+
+.margin-h-40 {
+
+	margin:0 40px;
+}
+
 .margin-h-50 {
 
 	margin:0 50px;
@@ -1284,6 +1304,16 @@ top-1000 {
 .padding-20 {
 
 	padding:20px;
+}
+
+.padding-30 {
+
+	padding:30px;
+}
+
+.padding-40 {
+
+	padding:40px;
 }
 
 .padding-50 {
@@ -1421,7 +1451,7 @@ top-1000 {
 	padding:0 30px;
 }
 
-padding-h-40 {
+.padding-h-40 {
 
     padding:0 40px;
 }
