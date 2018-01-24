@@ -52,61 +52,52 @@ angular.module("parallaxModule", [])
 
 
 		// adjusts the size of the image (defined in the directive 'src') to always be bigger than the parent
-		var fix = function (params) {
+		var fixInside = function (params) {
 
-			var img = params.img;
-	    	var space = params.space;
-	    	var aspect;
+			var i = params.inside;
+	    	var s = params.space;
+	    	
+	    	var iw = i.width;
+	    	var ih = i.height;
+	    	var sw = s.width;
+	    	var sh = s.height;
+
+	    	var ar = iw/ih;
 
 			var goodAspect = function (width, height) {
-				if (Math.abs(width/height - aspect) < 0.01) return true;
+				if (Math.abs(iw/ih - ar) < 0.01) return true;
 				return false;
 			}
 
-			var checkHeight = function (height) {
-		        if (height < space.height()) return "under";
-		        else if (height > space.height()*1.2) return "over";
+			var checkHeight = function ($h) {
+		        if ($h < sh) return "under";
+		        else if ($h > sh*1.2) return "over";
 		        return "good";
 		    }
 
-		    var checkWidth = function (width) {
-		        if (width < space.width()) return "under";
-		        else if (width > space.width()*1.5) return "over";
+		    var checkWidth = function ($w) {
+		        if ($w < sw) return "under";
+		        else if ($w > sw*1.2) return "over";
 		        return "good";
 		    }
 
-	    	if ($(img)[0]) {
-
-		    	if (params.first) aspect = img.width()/img.height();
-
-		        var height = space.height()*1.2;
-		        var width = height*aspect;
-		        
-		        if (checkWidth(width) == "under") {
-		            //console.log("width under " + name);
-		            width = space.width()*1.2;
-		            height = width/aspect;
-		            if (checkHeight(height) == "under") {
-		                //console.log("height under " + name);
-		                height = space.height()*1.2;
-		                width = height*aspect;
-		            }
-		        }
-		        else if (checkWidth(width) == "over") {
-		            //console.log("width over " + name);
-		            width = space.width()*1.2;
-		            height = width/aspect;
-		            if (checkHeight(height) == "under") {
-		                //console.log("height under " + name);
-		                height = space.height()*1.2;
-		                width = height*aspect;
-		            }
-
-		        }
-
-		        img.css({height:height, width:width});
-	    	}
+	        var h = space.height*1.2;
+	        var w = height*aspect;
 	        
+	        if (checkWidth(w) != "good") {
+	            w = sw*1.2;
+	            h = w/ar;
+	            if (checkHeight(h) == "under") {
+	                h = sh*1.2;
+	                w = h*ar;
+	            }
+	        }
+
+	        return {
+	        	width:w,
+	        	height:h
+	        }
+
 	    }
 
 	    // generally solves a system of two linear equations 
@@ -210,34 +201,50 @@ angular.module("parallaxModule", [])
 
 		// get parallax scroll parameters, solve linear equation for current values, called when loaded and anytime the window is resized
 		var reset = function () {
-			if (img) {
-				fix({img:$(img), space:$(element), first:true});
-			}
-			ih = img ? $(img).height() : ph*0.8;
-			g = (ph-ih)/2;
-			h = $el.height();
-
-			//console.log("sh:" + sh + " ph:" + ph + " ih:" + ih + " g:" + g + " h:" + h);
-
-			if ($scope.top) {
-				eqs = {m:-0.99, b:-1*(ph-sh)/2}
-			}
-			else if (ih < h) {
-
-				eqs = linear({
-					x1:2,
-					y1:-1*g,
-
-					x2:h-sh+2,
-					y2:sh-ih-g
-				});
-			}
-			else {
-				eqs = {m:-0.99, b:-1*(ph-h)/2};
-			}
-
-			console.log("m:" + eqs.m + " b:" + eqs.b);
 			
+			if ($(img)[0] && $(element)[0]) {
+				
+				var ed = fixInside({
+					inside:{
+						width:$(img).width(), 
+						height:$(img).height()
+					}, 
+					space:{
+						width:$(element).width(),
+						height:$(element).height()
+					}
+				});
+
+				$(img).css({width:ed.width, height:ed.height});
+
+				ih = $(img).height() > 0 ? $(img).height() : ph*0.8;
+
+
+				g = (ph-ih)/2;
+				h = $el.height();
+
+				//console.log("sh:" + sh + " ph:" + ph + " ih:" + ih + " g:" + g + " h:" + h);
+
+				if ($scope.top) {
+					eqs = {m:-0.99, b:-1*(ph-sh)/2}
+				}
+				else if (ih < h) {
+
+					eqs = linear({
+						x1:2,
+						y1:-1*g,
+
+						x2:h-sh+2,
+						y2:sh-ih-g
+					});
+				}
+				else {
+					eqs = {m:-0.99, b:-1*(ph-h)/2};
+				}
+
+				console.log("m:" + eqs.m + " b:" + eqs.b);
+
+			}
 			
 		}
 
