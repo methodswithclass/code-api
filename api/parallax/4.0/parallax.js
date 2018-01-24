@@ -163,8 +163,8 @@ angular.module("parallaxModule", [])
 		        return "good";
 		    }
 
-	        var h = space.height*1.2;
-	        var w = height*aspect;
+	        var h = sh*1.2;
+	        var w = h*ar;
 	        
 	        if (checkWidth(w) != "good") {
 	            w = sw*1.2;
