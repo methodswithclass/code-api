@@ -4,9 +4,20 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
+const config = require("./config.js");
+
 var refreshPages = [
 "docs"
 ]
+
+var PORTS = {
+	heroku:8080,
+	http:80,
+	livereload:config.livereloadPort,
+	misc1:4000,
+	misc2:4200,
+	misc3:4210
+}
 
 // // If an incoming request uses
 // // a protocol other than HTTPS,
@@ -26,7 +37,7 @@ var refresh = function () {
 
 	return function (req, res, next) {
 
-		console.log(req.url);
+		// console.log(req.url);
 
 		var urlArray = req.url.split("/");
 
@@ -50,20 +61,42 @@ app.use(bodyParser.urlencoded({'extended':'true'}));            // parse applica
 app.use(bodyParser.json());                                     // parse application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 
-// app.use('/dist/bower_components',  express.static(path.join(__dirname, 'dist/bower_components')));
-app.use("/dist/assets/css", express.static(path.join(__dirname, "dist/assets/css")));
-app.use("/dist/assets/css/museo", express.static(path.join(__dirname, "dist/assets/css/museo")));
-app.use("/dist/assets/js", express.static(path.join(__dirname, "dist/assets/js")));
+
+app.use(require('connect-livereload')({
+	port: PORTS.livereload
+}));
+
+
 app.use("/", express.static(path.join(__dirname, "dist")));
 
 
-// app.get('/*', function(req, res) {
-// 	console.log("return dist");
-// 	// res.sendFile(path.join(__dirname, 'dist'));
-// 	res.sendFile('index.html', {root: path.join(__dirname, 'dist')});
-// });
 
-var listener = app.listen(process.env.PORT || 8080, function () {
+
+
+var env = process.env.NODE_ENV;
+var port;
+
+	
+if (process.env.PORT) {
+	port = process.env.PORT;
+}
+else if (env == "production") {
+
+	port = PORTS.heroku;
+
+}
+else if (env == "development") {
+
+	port = PORTS.misc2;
+}
+else {
+
+	port = PORTS.misc1;
+}
+
+
+
+var listener = app.listen(port, function () {
 
 	console.log("listening on port", listener.address().port);
 });

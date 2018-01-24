@@ -1,19 +1,22 @@
-stateModule.factory("states", ['$q', 'runtime.state', '$state', '$rootScope', function ($q, runtime, $state, $rootScope) {
+stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', function ($q, runtime, $state, $transitions) {
 
 	var prevState;
 
 	var states = runtime.states;
 
-	$rootScope.$on('$stateChangeStart', 
-		function(event, toState, toParams, fromState, fromParams) {
+	$transitions.onStart({}, function($trans) {
 
 			//console.log(toState);	  
 
-			prevState = fromState;
+			prevState = $trans.$from().name;
 
-			console.log(toState);
-		}
-	);
+			console.log("to state", $trans.$to());
+	});
+
+	$transitions.onSuccess({}, function($trans) {
+
+			console.log("successfully changed to state", $trans.$to());
+	});
 
 	var current = function () {
 

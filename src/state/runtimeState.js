@@ -70,6 +70,9 @@ stateModule.provider("runtime.state", function ($stateProvider) {
 
         var service = function () {
 
+            var self = this;
+
+            self.states = states;
 
         }
 

@@ -84,7 +84,7 @@ angular.module("parallaxModule", [])
 		        
 		        if (checkWidth(width) == "under") {
 		            //console.log("width under " + name);
-		            width = space.width();
+		            width = space.width()*1.2;
 		            height = width/aspect;
 		            if (checkHeight(height) == "under") {
 		                //console.log("height under " + name);
@@ -101,6 +101,7 @@ angular.module("parallaxModule", [])
 		                height = space.height()*1.2;
 		                width = height*aspect;
 		            }
+
 		        }
 
 		        img.css({height:height, width:width});

@@ -293,7 +293,9 @@
 
 var redirect= function () {
 
-	window.location.href = "https://code.methodswithclass.com/api/mcglobal-1.js";
+	console.log("redirect", window);
+
+	window.location.replace("https://code.methodswithclass.com/api/mcglobal-1.js");
 
 }
 
