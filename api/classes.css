@@ -239,12 +239,12 @@
 	align-items:center;
 }
 
-.flex-center-Y {
+.flex-centerY {
 
 	align-content:center;
 }
 
-.flex-center-X {
+.flex-centerX {
 
 	justify-content: center;
 }
