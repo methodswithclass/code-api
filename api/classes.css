@@ -1052,6 +1052,16 @@ top-1000 {
 	margin-bottom:100px;
 }
 
+.margin-bottom-200 {
+
+	margin-bottom:200px;
+}
+
+.margin-bottom-300 {
+
+	margin-bottom:300px;
+}
+
 .margin-bottom-400 {
 
 	margin-bottom:400px;
@@ -1258,6 +1268,16 @@ top-1000 {
 .margin-v-200 {
 
 	margin:200px 0;
+}
+
+.margin-v-300 {
+
+	margin:300px 0;
+}
+
+.margin-v-400 {
+
+	margin:400px 0;
 }
 
 .padding-left {
