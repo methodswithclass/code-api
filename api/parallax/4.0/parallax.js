@@ -52,10 +52,13 @@ angular.module("parallaxModule", [])
 
         		for (var i in array) {
 
-        			// console.log("element", array[i], "does not exist");
-
 	        		if ($(array[i])[0]) {
+	        			// console.log("multi element", i, array[i], "does exist");
 	        			active[i] = true;
+	        		}
+	        		else {
+
+        				// console.log("multi element", i, array[i], "does not exist");
 	        		}
 
         		}
@@ -75,10 +78,11 @@ angular.module("parallaxModule", [])
         		// console.log("@@@@@@@@@@@@@@@@\n\n\n\n\n\n\n\n\array is single\n\n\n\n\n\n@@@@@@@@@@@@@@")
 
         		if ($(array)[0]) {
-        			// console.log("element does not exist");
+        			// console.log("single element", array, "does exist");
         			result = true;
         		}
         		else {
+        			// console.log("single element", array, "does not exist");
         			result = false;
         		}
 
@@ -98,7 +102,7 @@ angular.module("parallaxModule", [])
 
                 if (count < 500) {
 
-                	// console.log("run complete");
+                	// console.log("check complete");
                     
                     if (typeof complete === "function") complete(options);
                 }
@@ -136,48 +140,50 @@ angular.module("parallaxModule", [])
 		// adjusts the size of the image (defined in the directive 'src') to always be bigger than the parent
 		var fixInside = function (params) {
 
-			var i = params.inside;
-	    	var s = params.space;
+			var $i = params.inside;
+	    	var $s = params.space;
 	    	
-	    	var iw = i.width;
-	    	var ih = i.height;
-	    	var sw = s.width;
-	    	var sh = s.height;
+	    	var $iw = $i.width;
+	    	var $ih = $i.height;
+	    	var $sw = $s.width;
+	    	var $sh = $s.height;
 
-	    	var ar = iw/ih;
+	    	var $ar = $iw/$ih;
 
 			var goodAspect = function (width, height) {
-				if (Math.abs(iw/ih - ar) < 0.01) return true;
+				if (Math.abs($iw/$ih - $ar) < 0.01) return true;
 				return false;
 			}
 
 			var checkHeight = function ($h) {
-		        if ($h < sh) return "under";
-		        else if ($h > sh*1.2) return "over";
+		        if ($h < $sh) return "under";
+		        else if ($h > $sh*1.2) return "over";
 		        return "good";
 		    }
 
 		    var checkWidth = function ($w) {
-		        if ($w < sw) return "under";
-		        else if ($w > sw*1.2) return "over";
+		        if ($w < $sw) return "under";
+		        else if ($w > $sw*1.2) return "over";
 		        return "good";
 		    }
 
-	        var h = sh*1.2;
-	        var w = h*ar;
+	        var $h = $sh*1.2;
+	        var $w = $h*$ar;
 	        
-	        if (checkWidth(w) != "good") {
-	            w = sw*1.2;
-	            h = w/ar;
-	            if (checkHeight(h) == "under") {
-	                h = sh*1.2;
-	                w = h*ar;
+	        if (checkWidth($w) != "good") {
+	            $w = $sw*1.2;
+	            $h = $w/$ar;
+	            if (checkHeight($h) == "under") {
+	                $h = $sh*1.2;
+	                $w = $h*$ar;
 	            }
 	        }
 
+	        // console.log("adjust image", $w, $h);
+
 	        return {
-	        	width:w,
-	        	height:h
+	        	width:$w,
+	        	height:$h
 	        }
 
 	    }
@@ -214,7 +220,7 @@ angular.module("parallaxModule", [])
 		var img;
 		var top;
 		var active = false;
-		var factor = $scope.factor ? $scope.factor : 1;
+		var factor = $scope.params ? ($scope.params.factor ? $scope.params.factor : 1) : 1;
 
 		var o;
 		var sh;
@@ -226,7 +232,7 @@ angular.module("parallaxModule", [])
 		var eqs;
 
 		// if src is defined, add the image to the parent div dynamically, called when loaded
-		var setup = function () {
+		var setup = function (complete) {
 
 			$(element).css({
 				overflow:"hidden"
@@ -251,6 +257,7 @@ angular.module("parallaxModule", [])
 
 				img = document.createElement("img");
 				img.src = $scope.src;
+				img.id = "parallax-img";
 				$(inner).append(img);
 
 
@@ -277,6 +284,8 @@ angular.module("parallaxModule", [])
 
 			sh = $(element).height();
 			ph = $(inner).height();
+
+			if (typeof complete === "function") complete();
 		}
 
 
@@ -284,46 +293,99 @@ angular.module("parallaxModule", [])
 		// get parallax scroll parameters, solve linear equation for current values, called when loaded and anytime the window is resized
 		var reset = function () {
 
-				
-			var ed = fixInside({
-				inside:{
-					width:$(img).width(), 
-					height:$(img).height()
-				}, 
-				space:{
-					width:$(element).width(),
-					height:$(element).height()
+			var xBuffer = 100;
+			var yBuffer = 20;
+
+
+			var getEqs = function ($ih) {
+
+				g = (ph-$ih)/2;
+				h = $el.height();
+
+				// console.log($scope.name, "sh:" + sh + " ph:" + ph + " ih:" + $ih + " g:" + g + " h:" + h);
+
+				if (!$scope.top) {
+
+					console.log($scope.name, "linear");
+
+					eqs = linear({
+						x1:xBuffer,
+						y1:yBuffer,
+
+						x2:h + xBuffer,
+						y2:(sh-ph) + yBuffer
+					});
+
 				}
-			});
+				else {
+					console.log($scope.name, "simple");
+					eqs = {m:-0.99, b:-1*(ph-sh)/2};
+				}
 
-			$(img).css({width:ed.width, height:ed.height});
+				// console.log($scope.name, "m:" + eqs.m + " b:" + eqs.b);
 
-			ih = $(img).height() > 0 ? $(img).height() : ph*0.8;
-
-
-			g = (ph-ih)/2;
-			h = $el.height();
-
-			console.log("sh:" + sh + " ph:" + ph + " ih:" + ih + " g:" + g + " h:" + h);
-
-			if ($scope.top) {
-				eqs = {m:-0.99, b:-1*(ph-sh)/2}
 			}
-			else if (ih < h) {
 
-				eqs = linear({
-					x1:2,
-					y1:-1*g,
+			if (img) {
 
-					x2:h-sh+2,
-					y2:sh-ih-g
-				});
+				u.waitForElem({elems:["#parallax-img", element]}, function () {
+
+					var $img = $("#parallax-img");
+
+					var ed = fixInside({
+						inside:{
+							width:$img.width(), 
+							height:$img.height()
+						}, 
+						space:{
+							width:$(element).width(),
+							height:$(element).height()
+						}
+					});
+
+					$(img).css({width:ed.width, height:ed.height});
+
+					getEqs(ed.height);
+
+				})
+				
 			}
 			else {
-				eqs = {m:-0.99, b:-1*(ph-h)/2};
-			}
 
-			console.log("m:" + eqs.m + " b:" + eqs.b);
+				// console.log("adjust inner", $scope.adjustinner);
+
+				if ($scope.adjustinner) {
+
+					// console.log("adjust inner", $scope.inner);
+
+					u.waitForElem({elems:["#" + $scope.inner, element]}, function () {
+
+						var $inner = $("#" + $scope.inner);
+
+						// console.log("fix inside", $inner[0]);
+
+						var ed = fixInside({
+							inside:{
+								width:$inner.width(), 
+								height:$inner.height()
+							}, 
+							space:{
+								width:$(element).width(),
+								height:$(element).height()
+							}
+						});
+
+						// console.log("inside fixed", ed.width, ed.height);
+
+						$inner.css({width:ed.width, height:ed.height});
+
+					});
+
+				}
+
+				getEqs(ph*0.8);
+
+			}
 			
 		}
 
@@ -332,7 +394,9 @@ angular.module("parallaxModule", [])
 			// if device is desktop and a parallax scrolling element is defined
 			if (u.valid() && active) {
 
-				o = $(element).offset().top - $el.offset().top;
+				o = $(element).offset().top;
+
+				// console.log("offset", $scope.name, $(element).offset().top);
 
 				top = o*eqs.m*factor + eqs.b;
 
@@ -342,22 +406,18 @@ angular.module("parallaxModule", [])
 			//console.log("version 1 factor: " + factor);
 		}
 
-		// initiate parallax elements when loaded,
-		// determine parallax values,
-		// and run scroll() once when loaded so that scrolling doesn't cause jump
-		// setTimeout(function () {
-			// setup();
-		// }, 200);
 
-		u.waitForElem({elems:[($scope.inner ? ("#" + $scope.inner) : $scope.src), element]}, function () {
+		var runSetup = function (complete) {
 
-			setup()
-		});
+			setup(complete);
+		}
 
+		var runResetAndScroll = function () {
 
-		u.waitForElem({elems:[img, $el, element, inner]}, function () {
+			if ($scope.getParams) {
+				$scope.params = $scope.getParams();
+			}
 
-			
 			reset();
 			scroll();
 
@@ -367,35 +427,44 @@ angular.module("parallaxModule", [])
 			});
 
 			$el.bind('scroll', scroll);
+		}
+
+
+		var count = 0;
+		var paramsTimer;
+
+		u.waitForElem({elems:[($scope.inner ? ("#" + $scope.inner) : "#parallax-img"), element]}, function () {
+
+			runSetup(function () {
+
+				u.waitForElem({elems:[$el, element, inner]}, function () {
+							
+					runResetAndScroll();
+				})
+
+			});
+
+
+
 		})
 
-		// setTimeout(function () {
-
-		// 	reset();
-		// 	scroll();
-		// }, 500);
-
-		// determine values and run the top setting function when the window is resized
-		// angular.element($window).bind('resize', function () {
-		// 	reset();
-		// 	scroll();
-		// });
-
-		// bind the top setting function for parallax to the scrolling event
-		// $el.bind('scroll', scroll);
 
 	}
 
 	return {
 		scope:{
-			name:"@", //identifier. optional. for debugging
-			src:"@", //image source. optional. required if inner is not defined, can't be both
-			inner:"@", // child element id. optional. required if src is not defined, can't be both
-			scroll:"@", // overflow:scroll element id. required. nothing will work unless this module can detect scrolling and the top of the document is different than the top of the window
-			top:"=", // boolean. optional. if a parallax scrolling element has a zero offset when loaded, it may be desired to have this behavior
-			factor:"="
+			name:"@", 	// identifier. 						optional. debugging
+			src:"@", 	// image source. 					optional. required if inner is not defined, must be one, can't be both
+			inner:"@", 	// child element    id. 			optional. required if src is not defined, must be one, can't be both
+			scroll:"@", // overflow:scroll 	id.			 	required. 
+							// this module requires manual element overflow:scroll, 
+							// it will not work with only the default window scroll
+			top:"=", 	// is top or not 	boolean 		optional. true if the element has a zero offset when loaded
+			factor:"=",	// multiplier		number			optional.	mulitplier to adjust speed of parallax effect as desired.
+			adjustinner:"=" // to adjust the size of the inner element or not 		boolean
 		},
 		link:link
 	};
+
 
 }]);
