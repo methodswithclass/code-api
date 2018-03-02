@@ -952,6 +952,12 @@
 
 /* ********************************************  MARGIN PADDING  ********************************************  */
 
+
+.margin-auto {
+
+	margin:auto;
+}
+
 .margin0 {
 
 	margin:0;
@@ -1278,6 +1284,11 @@
 .margin-v-400 {
 
 	margin:400px 0;
+}
+
+.padding-auto {
+
+	padding:auto;
 }
 
 .padding-left {
