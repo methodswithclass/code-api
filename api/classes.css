@@ -2047,6 +2047,11 @@
 }
 
 
+.border-green6 {
+
+	border-color:#12ff00;
+}
+
 
 .border {
 	border:1px solid black;	
@@ -2350,6 +2355,16 @@
 .green5-back {
 
 	background-color: #3d7529;
+}
+
+.green6 {
+
+	color:#12ff00;
+}
+
+.green6-back {
+
+	background-color:#12ff00;
 }
 
 .red {
