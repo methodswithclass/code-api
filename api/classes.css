@@ -2114,6 +2114,12 @@
 	border-bottom:1px solid white;	
 }
 
+
+.border-bottom-green6 {
+
+	border-bottom:1px solid #12ff00;
+}
+
 .lowered {
 	box-shadow: 0 0 10px 0 #424242 inset;		
 }
