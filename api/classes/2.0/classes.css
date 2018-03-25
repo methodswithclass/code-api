@@ -2649,6 +2649,9 @@ background color
 .height600 {
   height: 600%; }
 
+.height-0 {
+  height: 0px; }
+
 .height-1 {
   height: 1px; }
 
@@ -2660,6 +2663,9 @@ background color
 
 .height-4 {
   height: 4px; }
+
+.height-0 {
+  height: 0px; }
 
 .height-5 {
   height: 5px; }
@@ -2936,6 +2942,9 @@ background color
 
 .width600 {
   width: 600%; }
+
+.width-0 {
+  width: 0px; }
 
 .width-1 {
   width: 1px; }
