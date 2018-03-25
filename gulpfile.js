@@ -10,7 +10,8 @@ filter = require("gulp-filter"),
 merge = require("merge-stream"),
 mainBowerFiles = require("main-bower-files"),
 nodemon = require('gulp-nodemon'),
-livereload = require('gulp-livereload');
+livereload = require('gulp-livereload'),
+sass = require("gulp-sass");
 
 
 const config = require("./config.js");
@@ -90,8 +91,18 @@ gulp.task('scripts', ['vendor'], function() {
 	.pipe(gulp.dest('dist/assets/js'));
 });
 
+gulp.task('api-sass', function () {
+  return gulp.src('api/classes/**/*.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest('api/classes/'));
+});
+ 
+gulp.task('api-sass:watch', function () {
+  gulp.watch('api/classes/**/*.scss', ['api-sass']);
+});
 
-gulp.task('styles', function() {
+
+gulp.task('styles', ["api-sass"], function() {
 	return gulp.src('src/assets/css/**/*.css', { style: 'expanded' })
 	.pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
 	// .pipe(concat("styles.css"))

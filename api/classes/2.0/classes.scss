@@ -322,51 +322,53 @@
 /*_________________________________Right_______________________________*/
 
 
-$i = 0
+$i: 0;
 
 @while $i <= 100 {
   .right#{$i} {
-    right: #{$i}%;
-  }
-  $i: $i + 5; 
-}
+    right: #{$i}"%";
+  }  
+
+  $i: $i + 5;
+
+} 
 
 
-$i = 0;
+$i: 0;
 
 @while $i <= 100 {
   .right-#{$i} {
-    right: #{$i}px;
+    right: #{$i}"px";
   }
   $i: $i + 5;
 }
 
-$i = 200;
+$i: 200;
 
 @while $i < 500 {
   .right-#{$i} {
-    right: #{$i}px;
+    right: #{$i}"px";
   }
   $i: $i + 100;
 }
 
 
-$i = -100
+$i: -100;
 
 @while $i >= 0 {
-  .right-minus(abs(#{$i})) {
-    right: #{$i}%;
+  .right-minus#{abs($i)} {
+    right: #{$i}"%";
   }
   $i: $i + 10; 
 }
 
 
 
-$i = -200
+$i: -200;
 
 @while $i >= 0 {
-  .right-minus-(abs(#{$i}) {
-    right: #{$i}px;
+  .right-minus-(#{abs($i)} {
+    right: #{$i}"px";
   }
   $i: $i + 10; 
 }
@@ -378,53 +380,53 @@ $i = -200
 /*_________________________________Left_______________________________*/
 
 
-$i = 0
+$i: 0;
 
 @while $i <= 100 {
   .left#{$i} {
-    left: #{$i}%;
+    left: #{$i}"%";
   }
   $i: $i + 5; 
 }
 
 
-$i = 0;
+$i: 0;
 
 @while $i <= 100 {
   .left-#{$i} {
-    left: #{$i}px;
+    left: #{$i}"px";
   }
   $i: $i + 5;
 }
 
 
-$i = 200;
+$i: 200;
 
 
 @while $i < 500 {
   .left-#{$i} {
-    left: #{$i}px;
+    left: #{$i}"px";
   }
   $i: $i + 100;
 }
 
 
-$i = -100
+$i: -100;
 
 @while $i >= 0 {
-  .left-minus(abs(#{$i})) {
-    left: #{$i}%;
+  .left-minus#{abs($i)} {
+    left: #{$i}"%";
   }
   $i: $i + 10; 
 }
 
 
 
-$i = -200
+$i: -200;
 
 @while $i >= 0 {
-  .left-minus-(abs(#{$i})) {
-    left: #{$i}px;
+  .left-minus-#{abs($i)} {
+    left: #{$i}"px";
   }
   $i: $i + 10; 
 }
@@ -436,51 +438,51 @@ $i = -200
 /*_________________________________Top_______________________________*/
 
 
-$i = 0
+$i: 0;
 
 @while $i <= 100 {
   .top#{$i} {
-    top: #{$i}%;
+    top: #{$i}"%";
   }
   $i: $i + 5; 
 }
 
 
-$i = 0;
+$i: 0;
 
 @while $i <= 100 {
   .top-#{$i} {
-    top: #{$i}px;
+    top: #{$i}"px";
   }
   $i: $i + 5;
 }
 
-$i = 200;
+$i: 200;
 
 @while $i < 500 {
   .top-#{$i} {
-    top: #{$i}px;
+    top: #{$i}"px";
   }
   $i: $i + 100;
 }
 
 
-$i = -100
+$i: -100;
 
 @while $i >= 0 {
-  .top-minus(abs(#{$i})) {
-    top: #{$i}%;
+  .top-minus#{abs($i)} {
+    top: #{$i}"%";
   }
   $i: $i + 10; 
 }
 
 
 
-$i = -200
+$i: -200;
 
 @while $i >= 0 {
-  .top-minus-(abs(#{$i})) {
-    top: #{$i}px;
+  .top-minus-#{abs($i)} {
+    top: #{$i}"px";
   }
   $i: $i + 10; 
 }
@@ -492,51 +494,51 @@ $i = -200
 /*_________________________________Bottom_______________________________*/
 
 
-$i = 0
+$i: 0;
 
 @while $i <= 100 {
   .bottom#{$i} {
-    bottom: #{$i}%;
+    bottom: #{$i}"%";
   }
   $i: $i + 5; 
 }
 
 
-$i = 0;
+$i: 0;
 
 @while $i <= 100 {
   .bottom-#{$i} {
-    bottom: #{$i}px;
+    bottom: #{$i}"px";
   }
   $i: $i + 5;
 }
 
-$i = 200;
+$i: 200;
 
 @while $i < 500 {
   .bottom-#{$i} {
-    bottom: #{$i}px;
+    bottom: #{$i}"px";
   }
   $i: $i + 100;
 }
 
 
-$i = -100
+$i: -100;
 
 @while $i >= 0 {
-  .bottom-minus(abs(#{$i})) {
-    bottom: #{$i}%;
+  .bottom-minus#{abs($i)} {
+    bottom: #{$i}"%";
   }
   $i: $i + 10; 
 }
 
 
 
-$i = -200
+$i: -200;
 
 @while $i >= 0 {
-  .bottom-minus-(abs(#{$i})) {
-    bottom: #{$i}px;
+  .bottom-minus-#{abs($i)} {
+    bottom: #{$i}"px";
   }
   $i: $i + 10; 
 }
@@ -558,33 +560,33 @@ $i = -200
 
 
 
-$i = 0
+$i: 0;
 
 @while $i <= 10 {
   .margin#{$i} {
-    margin: #{$i}%;
+    margin: #{$i}"%";
   }
   $i: $i + 1; 
 }
 
 
 
-$i = 0
+$i: 0;
 
 @while $i <= 100 {
   .margin-#{$i} {
-    margin: #{$i}px;
+    margin: #{$i}"px";
   }
   $i: $i + 5; 
 }
 
 
 
-$i = 20
+$i: 20;
 
 @while $i <= 50 {
   .margin-top-#{$i} {
-    margin-top: #{$i}px;
+    margin-top: #{$i}"px";
   }
   $i: $i + 10; 
 }
@@ -604,11 +606,11 @@ $i = 20
 
 
 
-$i = 100
+$i: 100;
 
 @while $i <= 500 {
   .margin-bottom-#{$i} {
-    margin-bottom: #{$i}px;
+    margin-bottom: #{$i}"px";
   }
   $i: $i + 100; 
 }
@@ -621,11 +623,11 @@ $i = 100
 }
 
 
-$i = 10
+$i: 10;
 
 @while $i <= 100 {
   .margin-right-#{$i} {
-    margin-right: #{$i}px;
+    margin-right: #{$i}"px";
   }
   $i: $i + 10; 
 }
@@ -642,22 +644,22 @@ $i = 10
 }
 
 
-$i = 10
+$i: 10;
 
 @while $i <= 100 {
   .margin-left-#{$i} {
-    margin-left: #{$i}px;
+    margin-left: #{$i}"px";
   }
   $i: $i + 10; 
 }
 
 
 
-$i = -100
+$i: -100;
 
 @while $i >= 10 {
-  .margin-left-minus(abs(#{$i})) {
-    margin-left: #{$i}%;
+  .margin-left-minus#{abs($i)} {
+    margin-left: #{$i}"%";
   }
   $i: $i + 10; 
 }
@@ -665,11 +667,11 @@ $i = -100
 
 
 
-$i = 5
+$i: 5;
 
 @while $i <= 50 {
   .margin-h#{$i} {
-    margin:0 #{$i}%;
+    margin:0 #{$i}"%";
   }
   $i: $i + 5; 
 }
@@ -677,44 +679,44 @@ $i = 5
 
 
 
-$i = 5
+$i: 5;
 
 @while $i <= 100 {
   .margin-h-#{$i} {
-    margin:0 #{$i}px;
+    margin:0 #{$i}"px";
   }
   $i: $i + 5; 
 }
 
 
 
-$i = 200
+$i: 200;
 
 @while $i <= 500 {
   .margin-h-#{$i} {
-    margin:0 #{$i}px;
+    margin:0 #{$i}"px";
   }
   $i: $i + 100; 
 }
 
 
 
-$i = -100
+$i: -100;
 
 @while $i >= 0 {
-  .margin-h-minus-(abs(#{$i})) {
-    margin:0 #{$i}%;
+  .margin-h-minus-#{abs($i)} {
+    margin:0 #{$i}"%";
   }
   $i: $i + 10; 
 }
 
 
 
-$i = 5
+$i: 5;
 
 @while $i <= 50 {
   .margin-v#{$i} {
-    margin:#{$i}% 0;
+    margin:#{$i}"%" 0;
   }
   $i: $i + 5; 
 }
@@ -722,33 +724,33 @@ $i = 5
 
 
 
-$i = 5
+$i: 5;
 
 @while $i <= 100 {
   .margin-v-#{$i} {
-    margin:#{$i}px 0;
+    margin:#{$i}"px" 0;
   }
   $i: $i + 5; 
 }
 
 
 
-$i = 200
+$i: 200;
 
 @while $i <= 500 {
   .margin-v-#{$i} {
-    margin:#{$i}px 0;
+    margin:#{$i}"px" 0;
   }
   $i: $i + 100; 
 }
 
 
 
-$i = -100
+$i: -100;
 
 @while $i >= 0 {
-  .margin-v-minus-(abs(#{$i})) {
-    margin:#{$i}% 0;
+  .margin-v-minus-#{abs($i)} {
+    margin:#{$i}"%" 0;
   }
   $i: $i + 10; 
 }
@@ -784,33 +786,33 @@ $i = -100
 
 
 
-$i = 0
+$i: 0;
 
 @while $i <= 10 {
   .padding#{$i} {
-    padding: #{$i}%;
+    padding: #{$i}"%";
   }
   $i: $i + 1; 
 }
 
 
 
-$i = 0
+$i: 0;
 
 @while $i <= 100 {
   .padding-#{$i} {
-    padding: #{$i}px;
+    padding: #{$i}"px";
   }
   $i: $i + 5; 
 }
 
 
 
-$i = 20
+$i: 20;
 
 @while $i <= 50 {
   .padding-top-#{$i} {
-    padding-top: #{$i}px;
+    padding-top: #{$i}"px";
   }
   $i: $i + 10; 
 }
@@ -830,11 +832,11 @@ $i = 20
 
 
 
-$i = 100
+$i: 100;
 
 @while $i <= 500 {
   .padding-bottom-#{$i} {
-    padding-bottom: #{$i}px;
+    padding-bottom: #{$i}"px";
   }
   $i: $i + 100; 
 }
@@ -843,15 +845,15 @@ $i = 100
 
 .padding-right-5 {
 
-    padding-right:5px;
+    padding-right:5 + "px";
 }
 
 
-$i = 10
+$i: 10;
 
 @while $i <= 100 {
   .padding-right-#{$i} {
-    padding-right: #{$i}px;
+    padding-right: #{$i}"px";
   }
   $i: $i + 10; 
 }
@@ -868,22 +870,22 @@ $i = 10
 }
 
 
-$i = 10
+$i: 10;
 
 @while $i <= 100 {
   .padding-left-#{$i} {
-    padding-left: #{$i}px;
+    padding-left: #{$i}"px";
   }
   $i: $i + 10; 
 }
 
 
 
-$i = -100
+$i: -100;
 
 @while $i >= 10 {
-  .padding-left-minus(abs(#{$i})) {
-    padding-left: #{$i}%;
+  .padding-left-minus#{abs($i)} {
+    padding-left: #{$i}"%";
   }
   $i: $i + 10; 
 }
@@ -891,11 +893,11 @@ $i = -100
 
 
 
-$i = 5
+$i: 5;
 
 @while $i <= 50 {
   .padding-h#{$i} {
-    padding:0 #{$i}%;
+    padding:0 #{$i}"%";
   }
   $i: $i + 5; 
 }
@@ -903,44 +905,44 @@ $i = 5
 
 
 
-$i = 5
+$i: 5;
 
 @while $i <= 100 {
   .padding-h-#{$i} {
-    padding:0 #{$i}px;
+    padding:0 #{$i}"px";
   }
   $i: $i + 5; 
 }
 
 
 
-$i = 200
+$i: 200;
 
 @while $i <= 500 {
   .padding-h-#{$i} {
-    padding:0 #{$i}px;
+    padding:0 #{$i}"px";
   }
   $i: $i + 100; 
 }
 
 
 
-$i = -100
+$i: -100;
 
 @while $i >= 0 {
-  .padding-h-minus-(abs(#{$i})) {
-    padding:0 #{$i}%;
+  .padding-h-minus-#{abs($i)} {
+    padding:0 #{$i}"%";
   }
   $i: $i + 10; 
 }
 
 
 
-$i = 5
+$i: 5;
 
 @while $i <= 50 {
   .padding-v#{$i} {
-    padding:#{$i}% 0;
+    padding:#{$i}"%" 0;
   }
   $i: $i + 5; 
 }
@@ -948,33 +950,33 @@ $i = 5
 
 
 
-$i = 5
+$i: 5;
 
 @while $i <= 100 {
   .padding-v-#{$i} {
-    padding:#{$i}px 0;
+    padding:#{$i}"px" 0;
   }
   $i: $i + 5; 
 }
 
 
 
-$i = 200
+$i: 200;
 
 @while $i <= 500 {
   .padding-v-#{$i} {
-    padding:#{$i}px 0;
+    padding:#{$i}"px" 0;
   }
   $i: $i + 100; 
 }
 
 
 
-$i = -100
+$i: -100;
 
 @while $i >= 0 {
-  .padding-v-minus-(abs(#{$i})) {
-    padding:#{$i}% 0;
+  .padding-v-minus-#{abs($i)} {
+    padding:#{$i}"%" 0;
   }
   $i: $i + 10; 
 }
@@ -1008,33 +1010,33 @@ $i = -100
 
 
 
-$i = 5
+$i: 5;
 
 @while $i <= 100 {
   .font-#{$i} {
-    font-size:#{$i}px;
+    font-size:#{$i}"px";
   }
   $i: $i + 5; 
 }
 
 
 
-$i = 200
+$i: 200;
 
 @while $i <= 500 {
   .font-#{$i} {
-    font-size:#{$i}px;
+    font-size:#{$i}"px";
   }
   $i: $i + 100; 
 }
 
 
 
-$i = 0.2
+$i: 0.2;
 
 @while $i <= 1 {
-  .font(10*#{$i})-rem {
-    font-size:#{$i}rem;
+  .font#{10*$i}-rem {
+    font-size:#{$i}"rem";
   }
   $i: $i + 0.2; 
 }
@@ -1043,20 +1045,22 @@ $i = 0.2
 
 
 
-$i = 1.5
+$i: 1.5;
 
 @while $i <= 10 {
 
-	$name = ""
-	$test = #{$i} - floor(#{$i}/10)
+	$name: "";
+	$test: $i - floor($i)/10;
 
-	@if $test == 0
-		$name = #{$i}
-	@else
-		$name = (10*#{$i})
+	@if $test == 0 {
+		$name: #{$i};
+	}
+	@else {
+		$name: #{10*$i};
+	}
 
-  	.font($name)-rem {
-    	font-size:#{$i}rem;
+  	.font#{$name}-rem {
+    	font-size:#{$i}"rem";
   	}
   	$i: $i + 0.5; 
 }
@@ -1067,13 +1071,13 @@ $i = 1.5
 
 
 
-$i = 10
+$i: 10;
 
 
 @while $i <= 100 {
 
 	.line-height-#{$i} {
-		line-height:#{$i}px;
+		line-height:#{$i}"px";
 	}
 
 	$i: $i + 10;
@@ -1089,13 +1093,13 @@ $i = 10
 
 
 
-$i = 10
+$i: 10;
 
 
 @while $i <= 100 {
 
 	.rounded#{$i} {
-		border-radius:#{$i}px;
+		border-radius:#{$i}"px";
 	}
 
 	$i: $i + 10;
@@ -1104,14 +1108,14 @@ $i = 10
 
 
 
-$i = 10
+$i: 10;
 
 
 @while $i <= 100 {
 
 	.rounded-top-#{$i} {
-		border-top-left-radius:#{$i}px;
-		border-top-right-radius:#{$i}px;
+		border-top-left-radius:#{$i}"px";
+		border-top-right-radius:#{$i}"px";
 	}
 
 	$i: $i + 10;
@@ -1119,14 +1123,14 @@ $i = 10
 
 
 
-$i = 10
+$i: 10;
 
 
 @while $i <= 100 {
 
 	.rounded-bottom-#{$i} {
-		border-bottom-left-radius:#{$i}px;
-		border-bottom-right-radius:#{$i}px;
+		border-bottom-left-radius:#{$i}"px";
+		border-bottom-right-radius:#{$i}"px";
 	}
 
 	$i: $i + 10;
@@ -1134,14 +1138,14 @@ $i = 10
 
 
 
-$i = 10
+$i: 10;
 
 
 @while $i <= 100 {
 
 	.rounded-left-#{$i} {
-		border-top-left-radius:#{$i}px;
-		border-bottom-left-radius:#{$i}px;
+		border-top-left-radius:#{$i}"px";
+		border-bottom-left-radius:#{$i}"px";
 	}
 
 	$i: $i + 10;
@@ -1151,14 +1155,14 @@ $i = 10
 
 
 
-$i = 10
+$i: 10;
 
 
 @while $i <= 100 {
 
 	.rounded-right-#{$i} {
-		border-top-right-radius:#{$i}px;
-		border-bottom-right-radius:#{$i}px;
+		border-top-right-radius:#{$i}"px";
+		border-bottom-right-radius:#{$i}"px";
 	}
 
 	$i: $i + 10;
@@ -1188,13 +1192,13 @@ $i = 10
 
 
 
-$i = 5
+$i: 5;
 
 
 @while $i <= 50 {
 
 	.border-#{$i} {
-		border:#{$i}px solid black;
+		border:#{$i}"px" solid black;
 	}
 
 	$i: $i + 5;
@@ -1345,7 +1349,7 @@ $i = 5
 }
 
 .raised-dark {
-	box-shadow: 0 0 30px 0 #000;
+	box-shadow: 0 0 10px 0 #000;
 }
 
 .shadow {
@@ -1362,7 +1366,7 @@ $i = 5
 
 
 
-$i = 0
+$i: 0;
 
 
 @while $i <= 100 {
@@ -2061,14 +2065,14 @@ background color
 
 
 
-$i = 0
+$i: 0;
 
 
 @while $i <= 95 {
 
 
 	.height#{$i} {
-		height:#{$i}%;
+		height:#{$i}"%";
 	}
 
 	$i: $i + 5;
@@ -2076,14 +2080,14 @@ $i = 0
 
 
 
-$i = 110
+$i: 110;
 
 
 @while $i <= 200 {
 
 
 	.height#{$i} {
-		height:#{$i}%;
+		height:#{$i}"%";
 	}
 
 	$i: $i + 10;
@@ -2092,14 +2096,14 @@ $i = 110
 
 
 
-$i = 300
+$i: 300;
 
 
 @while $i <= 600 {
 
 
 	.height#{$i} {
-		height:#{$i}%;
+		height:#{$i}"%";
 	}
 
 	$i: $i + 100;
@@ -2108,14 +2112,14 @@ $i = 300
 
 
 
-$i = 1
+$i: 1;
 
 
 @while $i < 5 {
 
 
 	.height-#{$i} {
-		height:#{$i}px;
+		height:#{$i}"px";
 	}
 
 	$i: $i + 1;
@@ -2123,14 +2127,14 @@ $i = 1
 
 
 
-$i = 5
+$i: 5;
 
 
 @while $i <= 100 {
 
 
 	.height-#{$i} {
-		height:#{$i}px;
+		height:#{$i}"px";
 	}
 
 	$i: $i + 5;
@@ -2139,14 +2143,14 @@ $i = 5
 
 
 
-$i = 110
+$i: 110;
 
 
 @while $i <= 200 {
 
 
 	.height-#{$i} {
-		height:#{$i}px;
+		height:#{$i}"px";
 	}
 
 	$i: $i + 10;
@@ -2155,14 +2159,14 @@ $i = 110
 
 
 
-$i = 300
+$i: 300;
 
 
 @while $i <= 1000 {
 
 
 	.height-#{$i} {
-		height:#{$i}px;
+		height:#{$i}"px";
 	}
 
 	$i: $i + 100;
@@ -2173,14 +2177,14 @@ $i = 300
 
 
 
-$i = 1200
+$i: 1200;
 
 
 @while $i <= 2400 {
 
 
 	.height-#{$i} {
-		height:#{$i}px;
+		height:#{$i}"px";
 	}
 
 	$i: $i + 200;
@@ -2200,14 +2204,14 @@ $i = 1200
 
 
 
-$i = 200
+$i: 200;
 
 
 @while $i <= 2000 {
 
 
 	.min-height-#{$i} {
-		min-height:#{$i}px;
+		min-height:#{$i}"px";
 	}
 
 	$i: $i + 200;
@@ -2236,14 +2240,14 @@ $i = 200
 
 
 
-$i = 0
+$i: 0;
 
 
 @while $i <= 95 {
 
 
 	.width#{$i} {
-		width:#{$i}%;
+		width:#{$i}"%";
 	}
 
 	$i: $i + 5;
@@ -2251,14 +2255,14 @@ $i = 0
 
 
 
-$i = 110
+$i: 110;
 
 
 @while $i <= 200 {
 
 
 	.width#{$i} {
-		width:#{$i}%;
+		width:#{$i}"%";
 	}
 
 	$i: $i + 10;
@@ -2267,14 +2271,14 @@ $i = 110
 
 
 
-$i = 300
+$i: 300;
 
 
 @while $i <= 600 {
 
 
 	.width#{$i} {
-		width:#{$i}%;
+		width:#{$i}"%";
 	}
 
 	$i: $i + 100;
@@ -2283,14 +2287,14 @@ $i = 300
 
 
 
-$i = 1
+$i: 1;
 
 
 @while $i < 5 {
 
 
 	.width-#{$i} {
-		width:#{$i}px;
+		width:#{$i}"px";
 	}
 
 	$i: $i + 1;
@@ -2298,14 +2302,14 @@ $i = 1
 
 
 
-$i = 5
+$i: 5;
 
 
 @while $i <= 100 {
 
 
 	.width-#{$i} {
-		width:#{$i}px;
+		width:#{$i}"px";
 	}
 
 	$i: $i + 5;
@@ -2314,14 +2318,14 @@ $i = 5
 
 
 
-$i = 110
+$i: 110;
 
 
 @while $i <= 200 {
 
 
 	.width-#{$i} {
-		width:#{$i}px;
+		width:#{$i}"px";
 	}
 
 	$i: $i + 10;
@@ -2330,14 +2334,14 @@ $i = 110
 
 
 
-$i = 300
+$i: 300;
 
 
 @while $i <= 1000 {
 
 
 	.width-#{$i} {
-		width:#{$i}px;
+		width:#{$i}"px";
 	}
 
 	$i: $i + 100;
@@ -2348,14 +2352,14 @@ $i = 300
 
 
 
-$i = 1200
+$i: 1200;
 
 
 @while $i <= 2400 {
 
 
 	.width-#{$i} {
-		width:#{$i}px;
+		width:#{$i}"px";
 	}
 
 	$i: $i + 200;
@@ -2375,14 +2379,14 @@ $i = 1200
 
 
 
-$i = 200
+$i: 200;
 
 
 @while $i <= 2000 {
 
 
 	.min-width-#{$i} {
-		min-width:#{$i}px;
+		min-width:#{$i}"px";
 	}
 
 	$i: $i + 200;
@@ -2403,7 +2407,7 @@ $i = 200
 
 
 
-$i = 10
+$i: 10;
 
 
 @while $i <= 100 {
@@ -2418,7 +2422,7 @@ $i = 10
 
 
 
-$i = 200
+$i: 200;
 
 
 @while $i <= 500 {
@@ -2433,13 +2437,13 @@ $i = 200
 
 
 
-$i = -100
+$i: -100;
 
 
 @while $i >= 10 {
 
 
-	.z-minus-(abs(#{$i})) {
+	.z-minus-#{abs($i)} {
 		z-index:#{$i};
 	}
 

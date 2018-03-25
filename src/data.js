@@ -198,6 +198,11 @@ app.factory("data", function () {
 			number:"1.0",
 			src:"classes.css",
 			status:production
+		},
+		{
+			number:"2.0",
+			src:"classes.scss",
+			status:development
 		}
 		],
 		current:"1.0",
@@ -233,9 +238,9 @@ app.factory("data", function () {
 		name:"shared",
 		copy:{
 			s:"general utility for a web app",
-			l:"contains several services for any angular project. an events service to call functions from other parts of an app, a service to send and receive generic kinds of objects or data to different parts of an app",
+			l:"contains several services for any generic javascript app, unopinionated toward fraework (compatibable with Angular, React, Backbone, etc). Provides an events service to call functions from other parts of an app, a service to send and receive objects and data across an app, and more",
 			full:[
-				"this module offers several services that can used globally in a project. services for chekcing device state, declaring a function and then firing it from a different point in the app at a later time, accumulating several callbacks that can fired in succession in the order you dictate, and saving data at runtime to a central location to be retrieved from anywhere in the app at a later time."
+				"this module offers several services that can used globally in a project. services for chekcing device state, declaring a function and then firing it to locally from where it was delcared from a different point in the app at a later time, accumulating several callbacks that can fired in succession in the order you dictate, and saving data at runtime to a central location to be retrieved from anywhere in the app at a later time, among others."
 			]
 		},
 		versions:[
@@ -245,12 +250,22 @@ app.factory("data", function () {
 			status:depricated
 		},
 		{
-			number:"2",
+			number:"2.0",
+			src:"shared.js",
+			status:depricated
+		},
+		{
+			number:"3.0",
+			src:"shared.js",
+			status:depricated
+		},
+		{
+			number:"4.0",
 			src:"shared.js",
 			status:production
 		}
 		],
-		current:"2.0",
+		current:"4.0",
 		doc:[
 		{
 			name:"modules",

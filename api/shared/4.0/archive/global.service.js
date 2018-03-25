@@ -1,15 +1,16 @@
 
 /***********************************************************************************
   
-		Utility Module v4.0
+		Shared Module v4.0
 
 		JavaScript library with no other dependencies	
 
-		contains several general functions for
+		contains several general services for
 
-		device type identification
-		a utility with common functions across any project
-		
+		events
+		sending/receiving data
+		general functionality
+		and a lightweight observable service
 
 		Methods with Class, LLC, 2016
 
