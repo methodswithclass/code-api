@@ -525,9 +525,9 @@ $i: 200;
 
 $i: -100;
 
-@while $i >= 0 {
+@while $i <= 0 {
   .bottom-minus#{abs($i)} {
-    bottom: #{$i+"%"};
+    bottom: #{$i + "%"};
   }
   $i: $i + 10; 
 }
@@ -536,7 +536,7 @@ $i: -100;
 
 $i: -200;
 
-@while $i >= 0 {
+@while $i <= 0 {
   .bottom-minus-#{abs($i)} {
     bottom: #{$i}px;
   }
