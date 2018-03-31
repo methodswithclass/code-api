@@ -1045,29 +1045,24 @@ $i: 0.2;
 
 
 
-$i: 1.5;
+$i: 0.2;
 
-@while $i <= 10 {
+@while $i <= 5 {
 
 	$name: "";
-	$test: $i - floor($i)/10;
+	$test: abs($i*1000 - floor($i)*1000);
 
-	@if $test == 0 {
+	@if $test == 0
 		$name: #{$i};
-	}
-	@else {
-		$name: #{10*$i};
-	}
+	@else
+		$name: #{$i*1000};
+
 
   	.font#{$name}-rem {
     	font-size:#{$i}rem;
   	}
-  	$i: $i + 0.5; 
+  	$i: $i + 0.1; 
 }
-
-
-
-
 
 
 
