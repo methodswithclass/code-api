@@ -1034,35 +1034,31 @@ $i: 200;
 
 $i: 0.2;
 
-@while $i <= 1 {
-  .font#{10*$i}-rem {
-    font-size:#{$i}rem;
-  }
-  $i: $i + 0.2; 
-}
-
-
-
-
-
-$i: 0.2;
-
 @while $i <= 5 {
 
 	$name: "";
-	$test: abs($i*1000 - floor($i)*1000);
+	$test: abs($i - floor($i));
 
-	@if $test == 0 {
+
+	@if abs(0 - $test) <= 0.01 or $i == 1 or $i == 5 {
 		$name: #{$i};
 	}
 	@else {
-		$name: #{$i*1000};
+
+		$shift: 0;
+
+		@if $i < 1 {
+			$shift:100;
+		}
+
+		$name: #{$i*100 + $shift};
 	}
 
 
   	.font#{$name}-rem {
     	font-size:#{$i}rem;
   	}
+
   	$i: $i + 0.1; 
 }
 
