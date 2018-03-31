@@ -1052,10 +1052,12 @@ $i: 0.2;
 	$name: "";
 	$test: abs($i*1000 - floor($i)*1000);
 
-	@if $test == 0
+	@if $test == 0 {
 		$name: #{$i};
-	@else
+	}
+	@else {
 		$name: #{$i*1000};
+	}
 
 
   	.font#{$name}-rem {
