@@ -326,6 +326,9 @@
 .right-400 {
   right: 400px; }
 
+.right-500 {
+  right: 500px; }
+
 .right-minus100 {
   right: -100%; }
 
@@ -557,6 +560,9 @@
 
 .left-400 {
   left: 400px; }
+
+.left-500 {
+  left: 500px; }
 
 .left-minus100 {
   left: -100%; }
@@ -790,6 +796,9 @@
 .top-400 {
   top: 400px; }
 
+.top-500 {
+  top: 500px; }
+
 .top-minus100 {
   top: -100%; }
 
@@ -1021,6 +1030,9 @@
 
 .bottom-400 {
   bottom: 400px; }
+
+.bottom-500 {
+  bottom: 500px; }
 
 .bottom-minus100 {
   bottom: -100%; }

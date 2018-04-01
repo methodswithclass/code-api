@@ -345,7 +345,7 @@ $i: 0;
 
 $i: 200;
 
-@while $i < 500 {
+@while $i <= 500 {
   .right-#{$i} {
     right: #{$i}px;
   }
@@ -403,7 +403,7 @@ $i: 0;
 $i: 200;
 
 
-@while $i < 500 {
+@while $i <= 500 {
   .left-#{$i} {
     left: #{$i}px;
   }
@@ -459,7 +459,7 @@ $i: 0;
 
 $i: 200;
 
-@while $i < 500 {
+@while $i <= 500 {
   .top-#{$i} {
     top: #{$i}px;
   }
@@ -515,7 +515,7 @@ $i: 0;
 
 $i: 200;
 
-@while $i < 500 {
+@while $i <= 500 {
   .bottom-#{$i} {
     bottom: #{$i}px;
   }
