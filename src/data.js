@@ -201,7 +201,7 @@ app.factory("data", function () {
 		},
 		{
 			number:"2.0",
-			src:"classes.scss",
+			src:"classes.css",
 			status:development
 		}
 		],
