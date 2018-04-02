@@ -1397,7 +1397,7 @@ $i: 0;
 
 
 	.opacity#{$i} {
-		opacity:#{$i}
+		opacity:#{$i/100}
 	}
 
 	$i: $i + 5;
