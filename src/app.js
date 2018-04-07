@@ -10,9 +10,11 @@ var app = angular.module("app", ['parallaxModule', 'stateModule'])
 	for (var i = 0; i < states.length; i++) {
 	  runtimeProvider.addState(states[i]);
 	}
-}]).
+}])
 
-run(function (states) {
+.run(function (states) {
+
+	states.getPackage();
 
 	states.go("home");
 });
