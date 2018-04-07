@@ -92,12 +92,15 @@ stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', 
 		}
 
 
+		if (package == "classes") {
+
+			version == "2.0";
+			ext = "css";
+		}
+
+
 		window.open("https://code.methodswithclass.com/" + package + "/" + version + "/" + package + "." + ext);
 
-
-		// send.setup.save({name:"navigate", data:param});
-
-		
 	}
 
 	var current = function () {
