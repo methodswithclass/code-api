@@ -42,7 +42,6 @@
     "gulp-uglify": "^3.0.0",
     "jshint": "^2.9.4",
     "main-bower-files": "^2.13.1",
-    "mc-shared": "^4.1.5",
     "merge-stream": "^1.0.1",
     "pug": "^2.0.0-rc.4",
     "sass": "^1.0.0-rc.1"
