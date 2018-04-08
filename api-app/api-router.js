@@ -130,7 +130,7 @@ var getDataFromArray = function (packageName) {
 var getDataFromString = function (str) {
 
 	var versionArray = str.split(".");
-	var version;
+	var version = "";
 	var ext;
 
 	versionArray.map((value, index, array) => {
@@ -141,7 +141,11 @@ var getDataFromString = function (str) {
 		}
 		else {
 
-			version += "." + value;
+			version += value;
+
+			if (index <= array.length - 2) {
+				version += ".";
+			}
 		}
 	})
 
