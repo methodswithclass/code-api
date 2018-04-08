@@ -133,6 +133,10 @@ var getDataFromString = function (str) {
 	var version = "";
 	var ext;
 
+	if (versionArray.length == 1) {
+		versionArray.push("0");
+	}
+
 	versionArray.map((value, index, array) => {
 
 		if (index == array.length - 1) {
