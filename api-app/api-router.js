@@ -145,12 +145,12 @@ var getDataFromString = function (str) {
 
 			version += value;
 			
-			if (index <= array.length - 3) {
+			if (array.length >= 3 && index <= array.length - 3) {
 				version += ".";
 			}
 
 			if (index == 0 && array.length == 2) {
-				version += "0"
+				version += ".0"
 			}
 		}
 	})
