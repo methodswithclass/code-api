@@ -1,4 +1,4 @@
-stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', function ($q, runtime, $state, $transitions) {
+stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', "$location", function ($q, runtime, $state, $transitions, $ocation) {
 
 	var prevState;
 
@@ -51,7 +51,7 @@ stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', 
 
 		console.log("check inbound for url", $location.absUrl());
 
-		var raw;
+
 		var urlArray = $location.url().split("/");
 		var package;
 		var packageName;
@@ -59,8 +59,7 @@ stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', 
 		var ext;
 
 		packageName = urlArray[1];
-
-
+		
 		var dashIndex = packageName.search("-");
 		var periodIndex = packageName.search(".");
 

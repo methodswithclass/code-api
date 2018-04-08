@@ -78,6 +78,9 @@ app.directive("doc", ['data', function (data) {
 			$(element).on("click", function () {
 
 				window.open("/api/" + $scope.module.name +  "/" + $scope.version.number + "/" + $scope.version.src, "_blank");
+
+
+				// window.open("/api/" + $scope.version.src, "_blank");
 			})
 		}
 	}

@@ -30,7 +30,7 @@ gulp.task("serve", ["build"], function () {
 	var stream = nodemon({ 
 		script: './server.js',
 		ext:"js html css json",
-		watch:["./src", "./server.js"],
+		watch:["./src", "server.js", "./api-app"],
 		tasks:["build"]
 	});
 	
@@ -45,7 +45,7 @@ gulp.task("serve", ["build"], function () {
 
 	})
 
-	stream.on("crash", function () {
+	stream.on("crash", function () { 
 		
 		stream.emit('restart', 2000);
 	})

@@ -14,7 +14,8 @@ var app = angular.module("app", ['parallaxModule', 'stateModule'])
 
 .run(function (states) {
 
-	states.getPackage();
+	
+	// states.getPackage();
 
 	states.go("home");
 });
