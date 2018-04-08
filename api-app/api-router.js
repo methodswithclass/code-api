@@ -145,7 +145,7 @@ var getDataFromString = function (str) {
 
 			version += value;
 			
-			if (index <= array.length - 2) {
+			if (index <= array.length - 3) {
 				version += ".";
 			}
 
