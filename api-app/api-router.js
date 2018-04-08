@@ -133,6 +133,8 @@ var getDataFromString = function (str) {
 	var version = "";
 	var ext;
 
+	console.log("version array", versionArray);
+
 	versionArray.map((value, index, array) => {
 
 		if (index == array.length - 1) {
@@ -143,7 +145,7 @@ var getDataFromString = function (str) {
 
 			version += value;
 			
-			if (index <= array.length - 3) {
+			if (index <= array.length - 2) {
 				version += ".";
 			}
 
