@@ -149,7 +149,7 @@ var getDataFromString = function (str) {
 				version += ".";
 			}
 
-			if (index == 0) {
+			if (index == 0 && array.length == 2) {
 				version += "0"
 			}
 		}
