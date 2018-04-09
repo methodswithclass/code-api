@@ -2524,6 +2524,9 @@
 .border-bottom {
   border-bottom: 1px solid black; }
 
+.border-top-blue {
+  border-top: 1px solid blue; }
+
 .border-top-trans {
   border-top: 1px solid; }
 
@@ -2539,11 +2542,11 @@
 .border-top-white {
   border-top: 1px solid white; }
 
-.border-top-blue {
-  border-top: 1px solid blue; }
-
 .border-bottom-white {
   border-bottom: 1px solid white; }
+
+.border-right-white {
+  border-right: 1px solid white; }
 
 .border-left-white {
   border-left: 1px solid white; }
@@ -3017,11 +3020,11 @@ background color
 
 .scroll-Y-dark-wide::-webkit-scrollbar {
   width: 12px;
-  background-color: #555; }
+  background-color: #eee; }
 
 .scroll-Y-dark-wide::-webkit-scrollbar-thumb {
   border-radius: 6px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.7); }
 
 /* Dark Small Vertical */
 .scroll-Y-dark-narrow::-webkit-scrollbar-track {
@@ -3033,43 +3036,31 @@ background color
 
 .scroll-Y-dark-narrow::-webkit-scrollbar-thumb {
   border-radius: 3px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
+  -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.7); }
 
 /* wide white vertical */
 .scroll-Y-white-wide::-webkit-scrollbar-track {
-  bakground-color: #555; }
+  bakground-color: #333; }
 
 .scroll-Y-white-wide::-webkit-scrollbar {
   width: 12px;
-  background-color: #ddd; }
+  background-color: #eee; }
 
 .scroll-Y-white-wide::-webkit-scrollbar-thumb {
   border-radius: 6px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.7); }
 
 /* wide white vertical */
 .scroll-Y-white-narrow::-webkit-scrollbar-track {
-  bakground-color: #555; }
+  bakground-color: #333; }
 
 .scroll-Y-white-narrow::-webkit-scrollbar {
-  width: 12px;
-  background-color: #ddd; }
+  width: 6px;
+  background-color: #eee; }
 
 .scroll-Y-white-narrow::-webkit-scrollbar-thumb {
-  border-radius: 6px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
-
-/* Dark small horizontal */
-.scroll-X-dark-narrow::-webkit-scrollbar-track {
-  bakground-color: white; }
-
-.scroll-X-dark-narrow::-webkit-scrollbar {
-  height: 6px;
-  background-color: #555; }
-
-.scroll-X-dark-narrow::-webkit-scrollbar-thumb {
   border-radius: 3px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
+  -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.7); }
 
 /* wide dark Horizontal */
 .scroll-X-dark-wide::-webkit-scrollbar-track {
@@ -3081,11 +3072,23 @@ background color
 
 .scroll-X-dark-wide::-webkit-scrollbar-thumb {
   border-radius: 6px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.7); }
+
+/* Dark small horizontal */
+.scroll-X-dark-narrow::-webkit-scrollbar-track {
+  bakground-color: white; }
+
+.scroll-X-dark-narrow::-webkit-scrollbar {
+  height: 6px;
+  background-color: #eee; }
+
+.scroll-X-dark-narrow::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.7); }
 
 /* wide white horizontal */
 .scroll-X-white-wide::-webkit-scrollbar-track {
-  bakground-color: #555; }
+  bakground-color: #333; }
 
 .scroll-X-white-wide::-webkit-scrollbar {
   height: 12px;
@@ -3093,31 +3096,19 @@ background color
 
 .scroll-X-white-wide::-webkit-scrollbar-thumb {
   border-radius: 6px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
-
-/* wide white horizontal */
-.scroll-X-white-wide::-webkit-scrollbar-track {
-  bakground-color: #555; }
-
-.scroll-X-white-wide::-webkit-scrollbar {
-  height: 12px;
-  background-color: #ddd; }
-
-.scroll-X-white-wide::-webkit-scrollbar-thumb {
-  border-radius: 6px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.7); }
 
 /* wide white vertical */
-.scroll-X-white-wide::-webkit-scrollbar-track {
-  bakground-color: #555; }
+.scroll-X-white-narrow::-webkit-scrollbar-track {
+  bakground-color: #333; }
 
-.scroll-X-white-wide::-webkit-scrollbar {
-  width: 12px;
-  background-color: #ddd; }
+.scroll-X-white-narrow::-webkit-scrollbar {
+  width: 6px;
+  background-color: #eee; }
 
-.scroll-X-white-wide::-webkit-scrollbar-thumb {
-  border-radius: 6px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
+.scroll-X-white-narrow::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.7); }
 
 .touch {
   -webkit-overflow-scrolling: touch; }
