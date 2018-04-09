@@ -602,14 +602,16 @@ $i: 20;
 
 
 
-.margin-bottom-40 {
 
-	margin-bottom:40px;
-}
 
-.margin-bottom-50 {
 
-	margin-bottom:50px;
+$i: 0;
+
+@while $i < 100 {
+  .margin-bottom-#{$i} {
+    margin-bottom: #{$i}px;
+  }
+  $i: $i + 10; 
 }
 
 
