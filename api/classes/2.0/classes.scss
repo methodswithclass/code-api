@@ -2115,6 +2115,24 @@ $scrollInsetOpacity: 0.3;
 
 
 
+@mixin boxShadow ($size) {
+
+
+	@if ($size == $wide) {
+    	/*-moz-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    	box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
+    	-webkit-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    }
+    @else {
+
+    	/*-moz-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    	box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
+    	-webkit-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    }
+}
+
+
+
 @mixin thumbColor($color) {
 
 	@if ($color == $dark) {
@@ -2172,18 +2190,12 @@ $scrollInsetOpacity: 0.3;
 
 	@if ($size == $wide) {
     	border-radius: $scrollWideBorderRadius;
-
-    	-moz-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
-    	-webkit-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
-    	box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
 	}
 	@else {
     	border-radius: $scrollNarrowBorderRadius;
-
-    	-moz-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
-    	-webkit-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
-   	 	box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
 	}
+
+	@include boxShadow($size);
 
 }
 
