@@ -2087,7 +2087,14 @@ background color
 }
 
 
+$Y: "Y";
+$X: "X";
 
+$dark: "dark";
+$light: "light";
+
+$wide: "wide";
+$narrow: "narrow";
 
 
 $scrollDarkThumb: #333333;
@@ -2108,25 +2115,134 @@ $scrollInsetOpacity: 0.3;
 
 
 
+@mixin thumbColor($color) {
+
+	@if ($color == $dark) {
+		background-color: $scrollDarkThumb;
+	}
+	@else {
+		background-color: $scrollLightThumb;
+	}
+
+}
+
+
+
+@mixin thumbSize ($size) {
+
+
+	@if ($size == $wide) {
+    	border-radius: $scrollWideBorderRadius;
+
+    	-webkit-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    	box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    	-moz-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+	}
+	@else {
+    	border-radius: $scrollNarrowBorderRadius;
+
+    	-webkit-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
+   	 	box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    	-moz-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
+	}
+
+}
+
+
+
+@mixin scrollbar ($direction, $size) {
+
+	@if ($size == $wide) {
+
+		@if ($direction == $Y) {
+
+			width: $scrollWide
+		}
+		@else {
+			height: $scrollWide;
+		}
+
+	}
+	@else {
+
+		@if ($direction == $Y) {
+
+			width: $scrollNarrow
+		}
+		@else {
+			height: $scrollNarrow;
+		}
+	}
+}
+
+
+
+@mixin track($color) {
+
+	@if ($color == $dark) {
+
+		background-color: $scrollDarkTrack;
+	}
+	@else {
+
+		background-color: $scrollLightTrack;
+	}
+}
 
 
 /* wide dark vertical */
 
-.scroll-Y-dark-wide::-webkit-scrollbar-track {
-    background-color: $scrollDarkTrack
+.scroll-dark::-webkit-scrollbar-track {
+    @include track($dark)
 }
 
-.scroll-Y-dark-wide::-webkit-scrollbar {
-    width: $scrollWide;
-    background-color: $scrollDarkThumb;
+.scroll-light::-webkit-scrollbar-track {
+    @include track($dark)
 }
 
-.scroll-Y-dark-wide::-webkit-scrollbar-thumb {
-    background-color: $scrollDarkThumb;
-    border-radius: $scrollWideBorderRadius;
-    -webkit-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+.scroll-Y-wide::-webkit-scrollbar {
+
+	@include scrollbar($Y, $wide);
 }
 
+.scroll-Y-narrow::-webkit-scrollbar {
+
+	@include scrollbar($Y, $narrow);
+}
+
+
+.scroll-X-wide::-webkit-scrollbar {
+
+	@include scrollbar($X, $wide);
+}
+
+.scroll-X-narrow::-webkit-scrollbar {
+
+	@include scrollbar($X, $narrow);
+}
+
+
+.scroll-dark::-webkit-scrollbar-thumb {
+
+	@include thumbColor($dark);
+}
+
+.scroll-light::-webkit-scrollbar-thumb {
+
+	@include thumbColor($light);
+}
+
+
+.scroll-Y-wide::webkit-scrollbar-thumb {
+
+	@include thumbSize($wide);
+}
+
+
+.scroll-X-wide::webkit-scrollbar-thumb {
+
+	@include thumbSize($narrow);
+}
 
 
 
