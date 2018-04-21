@@ -2153,6 +2153,7 @@ $scrollInsetOpacity: 0.3;
 @mixin scrollbar ($direction, $size) {
 
 	@if ($size == $wide) {
+		border-radius:$scrollWideBorderRadius;
 
 		@if ($direction == $Y) {
 
@@ -2164,6 +2165,7 @@ $scrollInsetOpacity: 0.3;
 
 	}
 	@else {
+		border-radius: $scrollNarrowBorderRadius;
 
 		@if ($direction == $Y) {
 
@@ -2200,27 +2202,6 @@ $scrollInsetOpacity: 0.3;
     @include track($dark)
 }
 
-.scroll-Y-wide::-webkit-scrollbar {
-
-	@include scrollbar($Y, $wide);
-}
-
-.scroll-Y-narrow::-webkit-scrollbar {
-
-	@include scrollbar($Y, $narrow);
-}
-
-
-.scroll-X-wide::-webkit-scrollbar {
-
-	@include scrollbar($X, $wide);
-}
-
-.scroll-X-narrow::-webkit-scrollbar {
-
-	@include scrollbar($X, $narrow);
-}
-
 
 .scroll-dark::-webkit-scrollbar-thumb {
 
@@ -2233,16 +2214,59 @@ $scrollInsetOpacity: 0.3;
 }
 
 
+
+.scroll-Y-wide::-webkit-scrollbar {
+
+	@include scrollbar($Y, $wide);
+}
+
+.scroll-Y-narrow::-webkit-scrollbar {
+
+	@include scrollbar($Y, $narrow);
+}
+
+.scroll-X-wide::-webkit-scrollbar {
+
+	@include scrollbar($X, $wide);
+}
+
+.scroll-X-narrow::-webkit-scrollbar {
+
+	@include scrollbar($X, $narrow);
+}
+
+
+
+
+
+
+
+
 .scroll-Y-wide::webkit-scrollbar-thumb {
 
 	@include thumbSize($wide);
 }
 
-
-.scroll-X-wide::webkit-scrollbar-thumb {
+.scroll-Y-narrow::webkit-scrollbar-thumb {
 
 	@include thumbSize($narrow);
 }
+
+.scroll-X-wide::webkit-scrollbar-thumb {
+
+	@include thumbSize($wide);
+}
+
+
+.scroll-X-narrow::webkit-scrollbar-thumb {
+
+	@include thumbSize($narrow);
+}
+
+
+
+
+
 
 
 
