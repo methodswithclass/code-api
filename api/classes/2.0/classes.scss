@@ -1043,7 +1043,7 @@ $i: 200;
 
 
 
-$i: 0.2;
+$i: 0.1;
 
 @while $i <= 5 {
 
@@ -2090,9 +2090,21 @@ background color
 
 
 
+$scrollDarkThumb: #333333;
+$scrollDarkTrack: #EEEEEE;
 
+$scrollLightThumb: #EEEEEE;
+$scrollLightTrack: #333333;
 
+$scrollWide: 12px;
+$scrollWideBorderRadius: 6px;
+$scrollWideShadowInset: 2px;
 
+$scrollNarrow: 6px;
+$scrollNarrowBorderRadius: 3px;
+$scrollNarrowShadowInset: 1px;
+
+$scrollInsetOpacity: 0.3;
 
 
 
@@ -2101,40 +2113,74 @@ background color
 /* wide dark vertical */
 
 .scroll-Y-dark-wide::-webkit-scrollbar-track {
-    background-color: white;
+    background-color: $scrollDarkTrack
 }
 
 .scroll-Y-dark-wide::-webkit-scrollbar {
-    width: 12px;
-    background-color: #eee;
+    width: $scrollWide;
+    background-color: $scrollDarkThumb;
 }
 
 .scroll-Y-dark-wide::-webkit-scrollbar-thumb {
-    border-radius: 6px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.7);
+    border-radius: $scrollWideBorderRadius;
+    -webkit-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
 }
 
+
+
+
+
+
+
+
+.scroll-Y-dark-narrow::-webkit-scrollbar-track {
+    background-color: $scrollDarkTrack;
+}
+
+.scroll-Y-dark-narrow::-webkit-scrollbar {
+    width: $scrollNarrow;
+    background-color: $scrollDarkThumb;
+}
+
+.scroll-Y-dark-narrow::-webkit-scrollbar-thumb {
+    border-radius: $scrollNarrowBorderRadius;
+    -webkit-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
+}
 
 
 
 /* Dark Small Vertical */
-
+/*
 .scroll-Y-dark-narrow::-webkit-scrollbar-track {
 	bakground-color:white;
 }
 
 .scroll-Y-dark-narrow::-webkit-scrollbar {
     width: 6px;
-    background-color:#555;
+    background-color:#eee;
 }
 
 .scroll-Y-dark-narrow::-webkit-scrollbar-thumb {
     border-radius: 3px;
-    -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,.7);
+    -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,.3);
+}*/
+
+
+
+
+.scroll-Y-white-wide::-webkit-scrollbar-track {
+    background-color: $scrollLightTrack;
 }
 
+.scroll-Y-white-wide::-webkit-scrollbar {
+    width: $scrollWide;
+    background-color: $scrollLightThumb;
+}
 
-
+.scroll-Y-white-wide::-webkit-scrollbar-thumb {
+    border-radius: $scrollWideBorderRadius;
+    -webkit-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+}
 
 
 
@@ -2142,39 +2188,66 @@ background color
 
 /* wide white vertical */
 
+
+/*
+
 .scroll-Y-white-wide::-webkit-scrollbar-track {
-	bakground-color:#333;
+	bakground-color:#eee;
 }
 
 .scroll-Y-white-wide::-webkit-scrollbar {
     width: 12px;
-    background-color:#eee;
+    background-color:#333;
 }
 
 .scroll-Y-white-wide::-webkit-scrollbar-thumb {
     border-radius: 6px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.7);
+    -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,.3);
 }
 
+*/
 
 
 
 /* wide white vertical */
 
+
+
+
 .scroll-Y-white-narrow::-webkit-scrollbar-track {
-	bakground-color:#333;
+    background-color: $scrollLightTrack;
+}
+
+.scroll-Y-white-narrow::-webkit-scrollbar {
+    width: $scrollNarrow;
+    background-color: $scrollLightThumb;
+}
+
+.scroll-Y-white-narrow::-webkit-scrollbar-thumb {
+    border-radius: $scrollNarrowBorderRadius;
+    -webkit-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
+}
+
+
+
+
+/*
+
+.scroll-Y-white-narrow::-webkit-scrollbar-track {
+	bakground-color:#eee;
 }
 
 .scroll-Y-white-narrow::-webkit-scrollbar {
     width: 6px;
-    background-color:#eee;
+    background-color:#333;
 }
 
 .scroll-Y-white-narrow::-webkit-scrollbar-thumb {
     border-radius: 3px;
-    -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,.7);
+    -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,.3);
 }
 
+*/
 
 
 
@@ -2187,24 +2260,62 @@ background color
 
 /* wide dark Horizontal */
 
+
+
+.scroll-X-dark-wide::-webkit-scrollbar-track {
+    background-color: $scrollDarkTrack;
+}
+
+.scroll-X-dark-wide::-webkit-scrollbar {
+    height: $scrollWide;
+    background-color: $scrollDarkThumb;
+}
+
+.scroll-X-dark-wide::-webkit-scrollbar-thumb {
+    border-radius: $scrollWideBorderRadius;
+    -webkit-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+}
+
+
+
+/*
 .scroll-X-dark-wide::-webkit-scrollbar-track {
     background-color: white;
 }
 
 .scroll-X-dark-wide::-webkit-scrollbar {
     height: 12px;
-    background-color: #555;
+    background-color: #eee;
 }
 
 .scroll-X-dark-wide::-webkit-scrollbar-thumb {
     border-radius: 6px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.7);
+    -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,.3);
+}
+
+*/
+
+/* Dark small horizontal */
+
+
+
+.scroll-X-dark-narrow::-webkit-scrollbar-track {
+    background-color: $scrollDarkTrack;
+}
+
+.scroll-X-dark-narrow::-webkit-scrollbar {
+    height: $scrollNarrow;
+    background-color: $scrollDarkThumb;
+}
+
+.scroll-X-dark-narrow::-webkit-scrollbar-thumb {
+    border-radius: $scrollNarrowBorderRadius;
+    -webkit-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
 }
 
 
 
-/* Dark small horizontal */
-
+/*
 
 .scroll-X-dark-narrow::-webkit-scrollbar-track {
 	bakground-color:white;
@@ -2217,10 +2328,10 @@ background color
 
 .scroll-X-dark-narrow::-webkit-scrollbar-thumb {
     border-radius: 3px;
-    -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,.7);
+    -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,.3);
 }
 
-
+*/
 
 
 
@@ -2228,40 +2339,87 @@ background color
 
 /* wide white horizontal */
 
+
+
+
+
 .scroll-X-white-wide::-webkit-scrollbar-track {
-	bakground-color:#333;
+    background-color: $scrollLightTrack;
+}
+
+.scroll-X-white-wide::-webkit-scrollbar {
+    height: $scrollWide;
+    background-color: $scrollLightThumb;
+}
+
+.scroll-X-white-wide::-webkit-scrollbar-thumb {
+    border-radius: $scrollWideBorderRadius;
+    -webkit-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+}
+
+
+/*
+
+.scroll-X-white-wide::-webkit-scrollbar-track {
+	bakground-color:#eee;
 }
 
 .scroll-X-white-wide::-webkit-scrollbar {
     height: 12px;
-    background-color:#ddd;
+    background-color:#333;
 }
 
 .scroll-X-white-wide::-webkit-scrollbar-thumb {
     border-radius: 6px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.7);
+    -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,.3);
 }
+
+
+*/
+
 
 
 /* wide white vertical */
 
+
+
+
 .scroll-X-white-narrow::-webkit-scrollbar-track {
-	bakground-color:#333;
+    background-color: $scrollLightTrack;
+}
+
+.scroll-X-white-narrow::-webkit-scrollbar {
+    height: $scrollNarrow;
+    background-color: $scrollLightThumb;
+}
+
+.scroll-X-white-narrow::-webkit-scrollbar-thumb {
+    border-radius: $scrollNarrowBorderRadius;
+    -webkit-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
+}
+
+
+
+
+/*
+
+.scroll-X-white-narrow::-webkit-scrollbar-track {
+	bakground-color:#eee;
 }
 
 .scroll-X-white-narrow::-webkit-scrollbar {
     width: 6px;
-    background-color:#eee;
+    background-color:#333;
 }
 
 .scroll-X-white-narrow::-webkit-scrollbar-thumb {
     border-radius: 3px;
-    -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,.7);
+    -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,.3);
 }
 
 
 
-
+*/
 
 
 
