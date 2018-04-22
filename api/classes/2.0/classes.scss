@@ -2118,7 +2118,7 @@ $scrollInsetOpacity: 0.3;
 @mixin boxShadow ($size) {
 
 
-	@if ($size == $wide) {
+	@if $size == $wide {
     	/*-moz-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
     	box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
     	-webkit-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
@@ -2135,7 +2135,7 @@ $scrollInsetOpacity: 0.3;
 
 @mixin thumbColor($color) {
 
-	@if ($color == $dark) {
+	@if $color == $dark {
 		background-color: $scrollDarkThumb;
 	}
 	@else {
@@ -2147,7 +2147,7 @@ $scrollInsetOpacity: 0.3;
 
 @mixin trackColor($color) {
 
-	@if ($color == $dark) {
+	@if $color == $dark {
 
 		background-color: $scrollDarkTrack;
 	}
@@ -2161,9 +2161,9 @@ $scrollInsetOpacity: 0.3;
 
 @mixin trackSize ($direction, $size) {
 
-	@if ($size == $wide) {
+	@if $size == $wide {
 
-		@if ($direction == $Y) {
+		@if $direction == $Y {
 
 			width: $scrollWide
 		}
@@ -2174,7 +2174,7 @@ $scrollInsetOpacity: 0.3;
 	}
 	@else {
 
-		@if ($direction == $Y) {
+		@if $direction == $Y {
 
 			width: $scrollNarrow
 		}
@@ -2203,9 +2203,9 @@ $scrollInsetOpacity: 0.3;
 
 @mixin scrollbar ($direction, $size) {
 
-	@if ($size == $wide) {
+	@if $size == $wide {
 
-		@if ($direction == $Y) {
+		@if $direction == $Y {
 
 			width: $scrollWide
 		}
@@ -2216,7 +2216,7 @@ $scrollInsetOpacity: 0.3;
 	}
 	@else {
 
-		@if ($direction == $Y) {
+		@if $direction == $Y {
 
 			width: $scrollNarrow
 		}
