@@ -2105,7 +2105,7 @@ $scrollLightTrack: #333333;
 
 $scrollWide: 12px;
 $scrollWideBorderRadius: 6px;
-$scrollWideShadowInset: 6px;
+$scrollWideShadowInset: 2px;
 
 $scrollNarrow: 6px;
 $scrollNarrowBorderRadius: 3px;
@@ -2226,51 +2226,6 @@ $scrollInsetOpacity: 0.3;
 	}
 }
 
-
-
-
-
-/* wide dark vertical */
-
-
-/*
-.scroll-dark::-webkit-scrollbar-track {
-    @include trackColor($dark)
-}
-
-.scroll-dark::-webkit-scrollbar {
-    @include thumbColor($dark)
-}
-
-
-.scroll-dark::-webkit-scrollbar-thumb {
-
-	@include thumbColor($dark);
-}
-
-
-
-
-
-
-
-
-.scroll-light::-webkit-scrollbar-track {
-    @include trackColor($light)
-}
-
-.scroll-light::-webkit-scrollbar {
-    @include thumbColor($light)
-}
-
-
-.scroll-light::-webkit-scrollbar-thumb {
-
-	@include thumbColor($light);
-}
-
-
-*/
 
 
 
