@@ -2276,18 +2276,17 @@ $scrollInsetOpacity: 0.3;
 
 
 
-.scrollY-dark-wide::-webkit-scrollbar-track {
+.scroll-Y-dark-wide::-webkit-scrollbar-track {
 	@include trackColor($dark);
 }
 
-.scrollY-dark-wide::-webkit-scrollbar {
-	/*@include thumbColor($dark);*/
+.scroll-Y-dark-wide::-webkit-scrollbar {
+	@include thumbColor($dark);
 	@include scrollbar($Y, $wide);
 }
 
 
-.scrollY-dark-wide::webkit-scrollbar-thumb {
-	@include thumbColor($dark);
+.scroll-Y-dark-wide::webkit-scrollbar-thumb {
 	@include thumbSize($wide);
 }
 
