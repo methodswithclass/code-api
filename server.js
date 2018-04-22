@@ -27,9 +27,9 @@ var PORTS = {
 
 sass.render(
 {
-	file:path.join(__dirname, "dist/api/classes/2.0/classes.scss"),
+	file:path.join(__dirname, "http://code.methodswithclass.com/api/classes/2.0/classes.scss"),
 	[
-		{file:path.join(__dirname, "dist/api/classes/2.0/classes.css")}
+		{file:path.join(__dirname, "assets/css/classes.css")}
 	]
 }, 
 function(err, result) { 
