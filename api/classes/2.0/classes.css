@@ -2941,7 +2941,7 @@ background color
 
 /* Dark Small Vertical */
 .scroll-style-2::-webkit-scrollbar-track {
-  bakground-color: white; }
+  background-color: white; }
 
 .scroll-style-2::-webkit-scrollbar {
   width: 6px;
@@ -2953,7 +2953,7 @@ background color
 
 /* Dark small horizontal */
 .scroll-X-style-2::-webkit-scrollbar-track {
-  bakground-color: white; }
+  background-color: white; }
 
 .scroll-X-style-2::-webkit-scrollbar {
   height: 6px;
@@ -2965,7 +2965,7 @@ background color
 
 /* wide white vertical */
 .scroll-style-white-1::-webkit-scrollbar-track {
-  bakground-color: #555; }
+  background-color: #555; }
 
 .scroll-style-white-1::-webkit-scrollbar {
   width: 12px;
@@ -2977,7 +2977,7 @@ background color
 
 /* wide white horizontal */
 .scroll-X-style-white-1::-webkit-scrollbar-track {
-  bakground-color: #555; }
+  background-color: #555; }
 
 .scroll-X-style-white-1::-webkit-scrollbar {
   height: 12px;
@@ -2989,7 +2989,7 @@ background color
 
 /* wide white vertical */
 .scroll-style-white-1::-webkit-scrollbar-track {
-  bakground-color: #555; }
+  background-color: #555; }
 
 .scroll-style-white-1::-webkit-scrollbar {
   width: 12px;
@@ -3001,7 +3001,7 @@ background color
 
 /* wide white horizontal */
 .scroll-X-style-white-1::-webkit-scrollbar-track {
-  bakground-color: #555; }
+  background-color: #555; }
 
 .scroll-X-style-white-1::-webkit-scrollbar {
   height: 12px;
@@ -3129,7 +3129,7 @@ background color
 /* Dark Small Vertical */
 /*
 .scroll-Y-dark-narrow::-webkit-scrollbar-track {
-	bakground-color:white;
+	background-color:white;
 }
 
 .scroll-Y-dark-narrow::-webkit-scrollbar {
@@ -3156,7 +3156,7 @@ background color
 /*
 
 .scroll-Y-white-wide::-webkit-scrollbar-track {
-	bakground-color:#eee;
+	background-color:#eee;
 }
 
 .scroll-Y-white-wide::-webkit-scrollbar {
@@ -3185,7 +3185,7 @@ background color
 /*
 
 .scroll-Y-white-narrow::-webkit-scrollbar-track {
-	bakground-color:#eee;
+	background-color:#eee;
 }
 
 .scroll-Y-white-narrow::-webkit-scrollbar {
@@ -3242,7 +3242,7 @@ background color
 /*
 
 .scroll-X-dark-narrow::-webkit-scrollbar-track {
-	bakground-color:white;
+	background-color:white;
 }
 
 .scroll-X-dark-narrow::-webkit-scrollbar {
@@ -3271,7 +3271,7 @@ background color
 /*
 
 .scroll-X-white-wide::-webkit-scrollbar-track {
-	bakground-color:#eee;
+	background-color:#eee;
 }
 
 .scroll-X-white-wide::-webkit-scrollbar {
@@ -3301,7 +3301,7 @@ background color
 /*
 
 .scroll-X-white-narrow::-webkit-scrollbar-track {
-	bakground-color:#eee;
+	background-color:#eee;
 }
 
 .scroll-X-white-narrow::-webkit-scrollbar {
