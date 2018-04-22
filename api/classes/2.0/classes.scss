@@ -2286,7 +2286,7 @@ $scrollInsetOpacity: 0.3;
 }
 
 
-.scroll-Y-dark-wide::webkit-scrollbar-thumb {
+.scroll-Y-dark-wide::-webkit-scrollbar-thumb {
 	@include thumbSize($wide);
 }
 
@@ -2294,16 +2294,16 @@ $scrollInsetOpacity: 0.3;
 
 
 .scroll-Y-dark-narrow::-webkit-scrollbar-track {
-    @include trackSize($Y, $narrow);
+    @include trackColor($dark);
 }
 
 
 .scroll-Y-dark-narrow::-webkit-scrollbar {
-
+	@include thumbColor($dark);
 	@include scrollbar($Y, $narrow);
 }
 
-.scroll-Y-dark-narrow::webkit-scrollbar-thumb {
+.scroll-Y-dark-narrow::-webkit-scrollbar-thumb {
 
 	@include thumbSize($narrow);
 }
