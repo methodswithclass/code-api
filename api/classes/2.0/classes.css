@@ -3018,71 +3018,137 @@ background color
   height: 6px; }
 
 /* wide dark vertical */
+/*
 .scroll-dark::-webkit-scrollbar-track {
-  background-color: #EEEEEE; }
+    @include trackColor($dark)
+}
 
 .scroll-dark::-webkit-scrollbar {
-  background-color: #333333; }
+    @include thumbColor($dark)
+}
+
 
 .scroll-dark::-webkit-scrollbar-thumb {
-  background-color: #333333; }
+
+	@include thumbColor($dark);
+}
+
+
+
+
+
+
+
 
 .scroll-light::-webkit-scrollbar-track {
-  background-color: #333333; }
+    @include trackColor($light)
+}
 
 .scroll-light::-webkit-scrollbar {
-  background-color: #EEEEEE; }
+    @include thumbColor($light)
+}
+
 
 .scroll-light::-webkit-scrollbar-thumb {
+
+	@include thumbColor($light);
+}
+
+
+*/
+.scroll-Y-dark-wide::-webkit-scrollbar-track {
   background-color: #EEEEEE; }
 
-.scroll-Y-wide::-webkit-scrollbar-track {
+.scroll-Y-dark-wide::-webkit-scrollbar {
+  /*@include thumbColor($dark);*/
   width: 12px; }
 
-.scroll-Y-wide::-webkit-scrollbar {
-  border-radius: 6px;
-  width: 12px; }
-
-.scroll-Y-wide::webkit-scrollbar-thumb {
+.scroll-Y-dark-wide::webkit-scrollbar-thumb {
+  background-color: #333333;
   border-radius: 6px;
   /*-moz-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
     	box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
 
-.scroll-X-wide::-webkit-scrollbar-track {
-  height: 12px; }
+.scroll-Y-dark-narrow::-webkit-scrollbar-track {
+  width: 6px; }
 
-.scroll-X-wide::-webkit-scrollbar {
-  border-radius: 6px;
-  height: 12px; }
+.scroll-Y-dark-narrow::-webkit-scrollbar {
+  width: 6px; }
 
-.scroll-X-wide::webkit-scrollbar-thumb {
-  border-radius: 6px;
-  /*-moz-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
-    	box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
-
-.scroll-X-narrow::-webkit-scrollbar-track {
-  height: 6px; }
-
-.scroll-X-narrow::-webkit-scrollbar {
-  border-radius: 3px;
-  height: 6px; }
-
-.scroll-X-narrow::webkit-scrollbar-thumb {
+.scroll-Y-dark-narrow::webkit-scrollbar-thumb {
   border-radius: 3px;
   /*-moz-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
     	box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
   -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.3); }
 
-.scroll-Y-narrow::-webkit-scrollbar-track {
+.scroll-Y-light-wide::-webkit-scrollbar-track {
+  width: 12px; }
+
+.scroll-Y-light-wide::-webkit-scrollbar {
+  width: 12px; }
+
+.scroll-light-wide::webkit-scrollbar-thumb {
+  border-radius: 6px;
+  /*-moz-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    	box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
+
+.scroll-Y-ndark-arrow::-webkit-scrollbar-track {
   width: 6px; }
 
-.scroll-Y-narrow::-webkit-scrollbar {
+.scroll-Y-dark-narrow::-webkit-scrollbar {
+  width: 6px; }
+
+.scroll-Y-dark-narrow::webkit-scrollbar-thumb {
   border-radius: 3px;
-  width: 6px; }
+  /*-moz-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    	box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
+  -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.3); }
 
-.scroll-Y-narrow::webkit-scrollbar-thumb {
+.scroll-X-dark-wide::-webkit-scrollbar-track {
+  height: 12px; }
+
+.scroll-X-dark-wide::-webkit-scrollbar {
+  height: 12px; }
+
+.scroll-X-dark-wide::webkit-scrollbar-thumb {
+  border-radius: 6px;
+  /*-moz-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    	box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
+
+.scroll-X-dark-narrow::-webkit-scrollbar-track {
+  height: 6px; }
+
+.scroll-X-dark-narrow::-webkit-scrollbar {
+  height: 6px; }
+
+.scroll-X-dark-narrow::webkit-scrollbar-thumb {
+  border-radius: 3px;
+  /*-moz-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    	box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
+  -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.3); }
+
+.scroll-X-dark-wide::-webkit-scrollbar-track {
+  height: 12px; }
+
+.scroll-X-dark-wide::-webkit-scrollbar {
+  height: 12px; }
+
+.scroll-X-dark-wide::webkit-scrollbar-thumb {
+  border-radius: 6px;
+  /*-moz-box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);
+    	box-shadow: inset 0 0 $scrollWideShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); }
+
+.scroll-X-dark-narrow::-webkit-scrollbar-track {
+  height: 6px; }
+
+.scroll-X-dark-narrow::-webkit-scrollbar {
+  height: 6px; }
+
+.scroll-X-dark-narrow::webkit-scrollbar-thumb {
   border-radius: 3px;
   /*-moz-box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);
     	box-shadow: inset 0 0 $scrollNarrowShadowInset rgba(0,0,0, $scrollInsetOpacity);*/
