@@ -4,24 +4,64 @@
 
 cd "${0%/*}"
 
-constName1="commitAndPush"
-constName2="pushOnly"
+commitConst="commitAndPush"
+pushConst="pushOnly"
+standardConst="standard"
+standardOp="standardOperation"
 
-message="$1"
-remote="$2"
-branch="$3"
+first="$1"
+second="$2"
+third="$3"
 
-operation=$constName1
+operation=$commitConst
 
 
-if [[ -z $branch ]]; 
-then
+
+adjustArguments() {
+
 	
-	operation=$constName2
-	message=""
-	remote="$1"
-	branch="$2"
-fi
+
+	if [[ $first == $standardConst ]];
+	then
+
+		operation=$standardOp
+
+		if [[ -z $third && -z $second && -n $first ]];
+		then
+
+			message="update"
+			remote="origin"
+			branch="master"
+
+		elif [[ -n $second ]];
+		then
+
+			message="update"
+			remote="origin"
+			branch=$second
+
+		fi
+	else
+
+		if [[ -z $third && -n $second && -n $first ]]; 
+		then
+
+			operation=$pushConst
+			message=""
+			remote=$first
+			branch=$second
+
+		elif [[ -n $third ]];
+		then
+
+			operation=$commitConst
+			message=$first
+			remote=$second
+			branch=$third
+
+		fi
+	fi
+}
 
 
 commit () {
@@ -53,7 +93,7 @@ commitAndPush() {
 
 	echo "commit and push"
 
-	if [[ -n $branch && -n $message && $operation == $constName1 ]]; 
+	if [[ -n $branch && -n $message ]] && [[ $operation == $commitConst || $operation == $standardOp ]]; 
 	then
 
 		commit
@@ -69,7 +109,7 @@ pushOnly() {
 
 	echo "push only"
 
-	if [[ $operation == $constName2 ]];
+	if [[ $operation == $pushConst ]];
 	then
 
 		checkPush
@@ -82,13 +122,15 @@ pushOnly() {
 
 run() {
 
+	adjustArguments
 
-
-	if [[ -n $branch && -n $message ]];
+	if [[ $operation == $commitConst || $operation == $standardOp ]];
 	then
 
 		commitAndPush
-	else
+
+	elif [[ $operation == $pushConst ]];
+	then
 
 		pushOnly
 	fi
