@@ -10,7 +10,7 @@ const middleware = require("./middleware/middleware.js");
 
 const config = require("./config.js");
 
-
+const sass = require("./node-sass");
 
 
 
@@ -25,7 +25,22 @@ var PORTS = {
 
 
 
+sass.render(
+{
+	file:path.join(__dirname, "dist/api/classes/2.0/classes.scss"),
+	[
+		{file:path.join(__dirname, "dist/api/classes/2.0/classes.css")}
+	]
+}, 
+function(err, result) { 
 
+	if (err) {
+		console.log(err);
+	}
+	else {
+		console.log(result);
+	}
+});
 
 
 
