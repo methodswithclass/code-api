@@ -2263,20 +2263,20 @@ $sizes: (
 
 			.scroll-#{$dirName}-#{$colorName}-#{$sizeName}::-webkit-scrollbar-track {
 
-				@include trackColor($colorName);
+				@include trackColor(#{$colorName});
 			}
 
 
 			.scroll-#{$dirName}-#{$colorName}-#{$sizeName}::-webkit-scrollbar {
 
-				@include thumbColor($colorName);
-				@include scrollbar($dirName, $sizeName);
+				@include thumbColor(#{$colorName});
+				@include scrollbar(#{$dirName}, #{$sizeName});
 			}
 
 
 			.scroll-#{$dirName}-#{$colorName}-#{$sizeName}::-webkit-scrollbar-thumb {
 
-				@include thumbSize($sizeName);
+				@include thumbSize(#{$sizeName});
 			}
 
 	

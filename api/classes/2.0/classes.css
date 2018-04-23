@@ -3023,7 +3023,7 @@ background color
 	
 			*/
 .scroll-vertical-dark-wide::-webkit-scrollbar-track {
-  background`-color: #EEEEEE; }
+  background-color: #EEEEEE; }
 
 .scroll-vertical-dark-wide::-webkit-scrollbar {
   background-color: #333333;
