@@ -2278,6 +2278,7 @@ $sizes: (
 			.scroll-#{$dirName}-#{$colorName}-#{$sizeName}::-webkit-scrollbar-thumb {
 
 				@include thumbSize(#{$sizeName});
+				@include thumbColor(#{$colorName});
 			}
 
 	
