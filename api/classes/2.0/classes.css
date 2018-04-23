@@ -3027,7 +3027,7 @@ background color
 
 .scroll-vertical-dark-wide::-webkit-scrollbar {
   background-color: #333333;
-  height: 12px; }
+  width: 12px; }
 
 .scroll-vertical-dark-wide::-webkit-scrollbar-thumb {
   border-radius: 6px;
@@ -3046,7 +3046,7 @@ background color
 
 .scroll-vertical-dark-narrow::-webkit-scrollbar {
   background-color: #333333;
-  height: 6px; }
+  width: 6px; }
 
 .scroll-vertical-dark-narrow::-webkit-scrollbar-thumb {
   border-radius: 3px;
@@ -3065,7 +3065,7 @@ background color
 
 .scroll-vertical-light-wide::-webkit-scrollbar {
   background-color: #EEEEEE;
-  height: 12px; }
+  width: 12px; }
 
 .scroll-vertical-light-wide::-webkit-scrollbar-thumb {
   border-radius: 6px;
@@ -3084,7 +3084,7 @@ background color
 
 .scroll-vertical-light-narrow::-webkit-scrollbar {
   background-color: #EEEEEE;
-  height: 6px; }
+  width: 6px; }
 
 .scroll-vertical-light-narrow::-webkit-scrollbar-thumb {
   border-radius: 3px;
