@@ -23,7 +23,7 @@ var parallax = angular.module("parallaxModule", []);
 
 
 // determines whether current device can use parallax scrolling. IE and mobile devices return false.
-parallax.factory("utility", function () {
+parallax.factory("util", function () {
 
 	var valid = function() {
 
@@ -130,7 +130,7 @@ parallax.factory("utility", function () {
 
 
 // add this directive to the element you want to add a parallax scrolling element too
-parallax.directive('parallax', ['utility', '$window', function (u, $window) {
+parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 
 	// link function, see below for parameters
@@ -138,7 +138,7 @@ parallax.directive('parallax', ['utility', '$window', function (u, $window) {
 
 
 		// adjusts the size of the image (defined in the directive 'src') to always be bigger than the parent
-		svar fixInside = function (params) {
+		var fixInside = function (params) {
 
 			var $i = params.inside;
 	    	var $s = params.space;
