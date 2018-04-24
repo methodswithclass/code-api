@@ -306,7 +306,7 @@ angular.module("parallaxModule", [])
 
 				if (!$scope.top) {
 
-					console.log($scope.name ? $scope.name + " linear" : "");
+					console.log("equation", $scope.name ? $scope.name : "", "is linear");
 
 					eqs = linear({
 						x1:xBuffer,
@@ -318,7 +318,7 @@ angular.module("parallaxModule", [])
 
 				}
 				else {
-					console.log($scope.name ? $scope.name + " simple" : "");
+					console.log("equation", $scope.name ? $scope.name : "", "is simple");
 					eqs = {m:-0.99, b:-1*(ph-sh)/2};
 				}
 
