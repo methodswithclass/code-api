@@ -3,7 +3,7 @@
 
 /***********************************************************************************
   
-		Shared Module v4.4.1
+		Shared Module v4.5.0
 
 		JavaScript library with no other dependencies	
 
@@ -658,15 +658,15 @@ var obj = {};
 
 	var avgArray = function (options) {
 
-		var array = options.array ? options.array : undefined;
-		var $$value = options["$$value"] ? options["$$value"] : undefined;
-		var number = options.number ? options.number : undefined;
+		var array = options["array"] ? options["array"] : undefined;
+		var $$value = options["value"] ? options["value"] : undefined;
+		var number = options["number"] ? options["number"] : undefined;
 
 		var avg;
 
-		var valueExists = $$value ? doesExist($$value, "string") : false;
-		var numberExists = number ? doesExist(number) : false;
-		var arrayExists = array ? doesExist(array) : false;
+		var valueExists = doesExist($$value, "string");
+		var numberExists = doesExist(number);
+		var arrayExists = doesExist(array);
 
 
 		if (arrayExists) {
