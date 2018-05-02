@@ -599,7 +599,9 @@ var obj = {};
 
 	var doesExist = function (item, type) {
 
-		return ((typeof item).toLowercase() !== (type ? type : "undefined"));
+		var $type = typeof item;
+
+		return ($type.toString().toLowercase() !== (type ? type : "undefined"));
 	}
 
 	var sum = function (array, $callback) {
