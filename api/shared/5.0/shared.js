@@ -660,7 +660,7 @@ var obj = {};
 
 		var array = options["array"] ? options["array"] : undefined;
 		var $$value = options["value"] ? options["value"] : undefined;
-		var number = options["number"] ? options["number"] : undefined;
+		var number = options["truncate"] ? options["truncate"] : undefined;
 
 		var avg;
 
