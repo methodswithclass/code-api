@@ -599,7 +599,7 @@ var obj = {};
 
 	var doesExist = function (item, type) {
 
-		return ((typeof item).toLowercase() !== (type ? type || "undefined"));
+		return ((typeof item).toLowercase() !== (type ? type : "undefined"));
 	}
 
 	var sum = function (array, $callback) {
@@ -658,15 +658,15 @@ var obj = {};
 
 	var avgArray = function (options) {
 
-		var array = options.array ? options.array || undefined;
-		var $$value = options["$$value"] ? options["$$value"] || undefined;
-		var number = options.number ? options.number || undefined;
+		var array = options.array ? options.array : undefined;
+		var $$value = options["$$value"] ? options["$$value"] : undefined;
+		var number = options.number ? options.number : undefined;
 
 		var avg;
 
-		var valueExists = $$value ? doesExist($$value, "string") || false;
-		var numberExists = number ? doesExist(number) || false;
-		var arrayExists = array ? doesExist(array) || false;
+		var valueExists = $$value ? doesExist($$value, "string") : false;
+		var numberExists = number ? doesExist(number) : false;
+		var arrayExists = array ? doesExist(array) : false;
 
 
 		if (arrayExists) {
