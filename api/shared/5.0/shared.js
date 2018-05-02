@@ -599,7 +599,7 @@ var obj = {};
 
 	var doesExist = function (item, type) {
 
-		return (typeof item).toLowercase() !== (type ? type || "undefined");
+		return ((typeof item).toLowercase() !== (type ? type || "undefined"));
 	}
 
 	var sum = function (array, $callback) {
