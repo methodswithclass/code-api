@@ -601,7 +601,7 @@ var obj = {};
 
 		var $type = typeof item;
 
-		return ($type.toString().toLowercase() !== (type ? type : "undefined"));
+		return ($type.toString().toLowerCase() !== (type ? type : "undefined"));
 	}
 
 	var sum = function (array, $callback) {
