@@ -24,7 +24,7 @@ apiRouter.use(function (req, res, next) {
 
 		// path = path.join(urlString(url));
 
-		path = "/api" + trans.urlString(url);
+		path = "/api" + trans.urlString(urlObj);
 
 		console.log("forward path", path);
 
