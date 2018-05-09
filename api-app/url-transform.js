@@ -215,13 +215,11 @@ var forwardAddress = function (req) {
 
 			console.log("no dash");
 
-			// ext = fileArray[1];
-			// var temp = getDataFromArray(package);
-			// version = temp.version;
-
 			package = fileArray[0];
-			version = "1.0";
+
 			ext = "." + fileArray[1];
+			var temp = getDataFromArray(package);
+			version = temp.version;
 
 		}
 
