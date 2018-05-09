@@ -20,7 +20,7 @@ apiRouter.use(function (req, res, next) {
 	
 	if (typeof urlObj === "object") {
 
-		console.log("url", urlObj.);
+		console.log("url", urlObj);
 
 		// path = path.join(urlString(url));
 
