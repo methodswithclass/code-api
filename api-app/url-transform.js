@@ -249,7 +249,7 @@ var urlString = function (urlObj) {
 
 		urlObj.order.map((value, index) => {
 
-			path += + "/" + urlObj[value];
+			path += "/" + urlObj[value];
 		});
 	}
 	else {
