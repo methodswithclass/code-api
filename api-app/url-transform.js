@@ -207,7 +207,7 @@ var forwardAddress = function (req) {
 
 			var temp = getDataFromString(fileArray[1]);
 			version = temp.version;
-			ext = temp.ext;
+			ext = "." + temp.ext;
 
 
 		}
