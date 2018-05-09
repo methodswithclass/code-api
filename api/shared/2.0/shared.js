@@ -68,7 +68,7 @@ var whatDevice = function (forceMobile) {
 
 
 // load this module into your project
-angular.module('shared.module', [])
+angular.module('sharedModule', [])
 
 
 .factory('global.service', ['$sce', function ($sce) {

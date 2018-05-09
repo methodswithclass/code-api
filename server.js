@@ -53,6 +53,8 @@ app.use("/", express.static(path.join(__dirname, "dist")));
 var env = process.env.NODE_ENV;
 var port;
 
+console.log("environment", env);
+
 	
 if (process.env.PORT) {
 	port = process.env.PORT;
@@ -70,7 +72,6 @@ else {
 
 	port = PORTS.misc1;
 }
-
 
 
 var listener = app.listen(port, function () {
