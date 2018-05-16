@@ -2269,6 +2269,9 @@
 .rounded100 {
   border-radius: 100px; }
 
+.rounded50-perc {
+  border-radius: 50%; }
+
 .rounded-top-10 {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px; }
