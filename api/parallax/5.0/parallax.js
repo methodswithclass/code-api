@@ -346,9 +346,9 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 			if (img) {
 
-				u.waitForElem({elems:$options.elems[1]}, function (options) {
+				// u.waitForElem({elems:$options.elems[1]}, function (options) {
 
-					var $img = options.elems;
+					var $img = $options.elems;
 
 					var ed = fixInside({
 						inside:{
@@ -365,7 +365,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 					getEqs(ed.height);
 
-				})
+				// })
 				
 			}
 			else {
@@ -376,9 +376,9 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 					// console.log("adjust inner", $scope.inner);
 
-					u.waitForElem({elems:$options.elems[1]}, function (options) {
+					// u.waitForElem({elems:$options.elems[1]}, function (options) {
 
-						var $inner = options.elems;
+						var $inner = $options.elems;
 
 						// console.log("fix inside", $inner[0]);
 
@@ -397,7 +397,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 						$($inner).css({width:ed.width, height:ed.height});
 
-					});
+					// });
 
 				}
 
@@ -454,18 +454,13 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		var count = 0;
 		var paramsTimer;
 
-		u.waitForElem({elems:($scope.inner ? ("#" + $scope.inner) : "#parallax-img")}, function (options) {
+		u.waitForElem({elems:[$scope.scroll, ($scope.inner ? ("#" + $scope.inner) : "#parallax-img")]}, function (options) {
 
 			runSetup(options, function () {
-
-				u.waitForElem({elems:[$el, options.elems]}, function ($options) {
 							
-					runResetAndScroll($options);
-				})
+				runResetAndScroll(options);
 
 			});
-
-
 
 		})
 
