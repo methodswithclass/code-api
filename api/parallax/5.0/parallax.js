@@ -336,8 +336,8 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 						x1:h - xBuffer,
 						x2:xBuffer,
 						
-						y1:posneg["y2"]*diff/2 - yBuffer,
-						y2:yBuffer
+						y1:yBuffer,
+						y2:posneg["y2"]*diff/2 - yBuffer
 					});
 
 				}
