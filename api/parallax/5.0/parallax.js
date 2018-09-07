@@ -242,7 +242,6 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		var ph;
 		var ih;
 		var h;
-		var g;
 
 		var eqs;
 
@@ -319,14 +318,13 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 				// console.log("scroll height", $($options.elems[0])[0]);
 
-				g = (ph-$ih)/2;
 				h = $($options.elems[0]).height();
 
 				var posneg = {
-					"b":-1,
+					"b":1,
 					"y2":1
 				}
-				// console.log($scope.name, "sh:" + sh + " ph:" + ph + " ih:" + $ih + " g:" + g + " h:" + h);
+				// console.log($scope.name, "sh:", sh, "ph:", ph, "ih:", $ih, "h:", h);
 
 				var diff = Math.abs(ph-sh);
 
