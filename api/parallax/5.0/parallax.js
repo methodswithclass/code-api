@@ -333,11 +333,11 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 					// console.log("equation", $scope.name ? $scope.name : "", "is linear");
 
 					eqs = linear({
-						x1:xBuffer,
-						y1:yBuffer,
-
-						x2:h - xBuffer,
-						y2:posneg["y2"]*diff + yBuffer
+						x1:h - xBuffer,
+						x2:xBuffer,
+						
+						y1:posneg["y2"]*diff/2 - yBuffer,
+						y2:yBuffer
 					});
 
 				}
