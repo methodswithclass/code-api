@@ -488,7 +488,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		scope:{
 			name:"@", 	// identifier. 						optional. debugging
 			src:"@",	// image source. 					optional. required if inner is not defined, must be one, can't be both
-			imgID:"@", 	// parallax parent element id
+			imgId:"@", 	// parallax parent element id
 			inner:"@", 	// child element    id. 			optional. required if src is not defined, must be one, can't be both
 			scroll:"@", // overflow:scroll 	id.			 	required. 
 							// this module requires manual element overflow:scroll, 
