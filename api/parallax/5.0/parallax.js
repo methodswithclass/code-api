@@ -318,7 +318,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 			var getEqs = function ($ih) {
 
 				g = (ph-$ih)/2;
-				h = $($options.elems[0]).height();
+				h = $(window).height();
 
 				// console.log($scope.name, "sh:" + sh + " ph:" + ph + " ih:" + $ih + " g:" + g + " h:" + h);
 
@@ -340,7 +340,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 					eqs = {m:-0.99, b:-1*(ph-sh)/2};
 				}
 
-				// console.log($scope.name, "m:" + eqs.m + " b:" + eqs.b);
+				console.log($scope.name, "m:" + eqs.m + " b:" + eqs.b);
 
 			}
 
@@ -451,16 +451,16 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		var count = 0;
 		var paramsTimer;
 
-		console.log("parallax scope", [
-		            {"name": $scope.name}, 
-		            {"src": $scope.src},
-		            {"imgID": $scope.imgId},
-		            {"inner": $scope.inner},
-		            {"scroll": $scope.scroll},
-		            {"top": $scope.top},
-		            {"factor": $scope.factor},
-		            {"adjustinner": $scope.adjustinner}
-		])
+		// console.log("parallax scope", [
+		//             {"name": $scope.name}, 
+		//             {"src": $scope.src},
+		//             {"imgID": $scope.imgId},
+		//             {"inner": $scope.inner},
+		//             {"scroll": $scope.scroll},
+		//             {"top": $scope.top},
+		//             {"factor": $scope.factor},
+		//             {"adjustinner": $scope.adjustinner}
+		// ])
 
 		u.waitForElem({elems:"#" + $scope.scroll}, function (options) {
 
