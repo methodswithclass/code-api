@@ -444,10 +444,10 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 				scroll($options);
 			});
 
-			console.log("parallax options", $options, [
-			            {"scroll":$($options.elems[0])[0]},
-			            {"inner":$($options.elems[1])[0])}
-			]);
+			// console.log("parallax options", $options, [
+			//             {"scroll":$($options.elems[0])[0]},
+			//             {"inner":$($options.elems[1])[0])}
+			// ]);
 
 			$($options.elems[0]).scroll(function () {
 
