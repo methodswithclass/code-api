@@ -309,8 +309,8 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		// get parallax scroll parameters, solve linear equation for current values, called when loaded and anytime the window is resized
 		var reset = function ($options) {
 
-			var xBuffer = 100;
-			var yBuffer = 20;
+			var xBuffer = -100;
+			var yBuffer = -20;
 
 
 			var $inner = $options.elems[1];
@@ -332,8 +332,8 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 						x1:xBuffer,
 						y1:yBuffer,
 
-						x2:h + xBuffer,
-						y2:(sh-ph) + yBuffer
+						x2:h - xBuffer,
+						y2:(ph-sh) + yBuffer
 					});
 
 				}
