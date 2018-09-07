@@ -444,7 +444,10 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 				scroll($options);
 			});
 
-			$($options.elems[0]).bind('scroll', scroll);
+			$($options.elems[0]).bind('scroll', function () {
+
+				scroll($options);
+			});
 		}
 
 
