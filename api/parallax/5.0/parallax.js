@@ -472,7 +472,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 			runSetup(options, function () {
 					
-				u.waitForElem({elems:[options.elems, "#" + ($scope.inner ? + $scope.inner : $scope.imgId)]}, function ($options) {		
+				u.waitForElem({elems:[options.elems, "#" + ($scope.inner ? $scope.inner : $scope.imgId)]}, function ($options) {		
 					runResetAndScroll($options);
 				})
 
