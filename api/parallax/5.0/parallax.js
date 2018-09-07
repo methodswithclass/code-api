@@ -444,6 +444,8 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 			$($options.elems[0]).bind('scroll', function () {
 
+				console.log(options.elems[0], "scroll");
+
 				scroll($options);
 			});
 		}
