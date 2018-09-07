@@ -273,7 +273,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 				img = document.createElement("img");
 				img.src = $scope.src;
-				img.id = $options.imgID;
+				img.id = $scope.imgID;
 				$(inner).append(img);
 
 
@@ -313,6 +313,8 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 			var yBuffer = 20;
 
 
+			var $inner = $options.elems[1];
+
 			var getEqs = function ($ih) {
 
 				g = (ph-$ih)/2;
@@ -346,12 +348,12 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 				// u.waitForElem({elems:$options.elems[1]}, function (options) {
 
-					var $img = $options.elems[1];
+					// var $img = $options.elems[1];
 
 					var ed = fixInside({
 						inside:{
-							width:$img.width(), 
-							height:$img.height()
+							width:$inner.width(), 
+							height:$inner.height()
 						}, 
 						space:{
 							width:$(element).width(),
@@ -359,7 +361,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 						}
 					});
 
-					$($img).css({width:ed.width, height:ed.height});
+					$($inner).css({width:ed.width, height:ed.height});
 
 					getEqs(ed.height);
 
@@ -376,7 +378,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 					// u.waitForElem({elems:$options.elems[1]}, function (options) {
 
-						var $inner = $options.elems[1];
+						
 
 						// console.log("fix inside", $inner[0]);
 
@@ -467,11 +469,13 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		            {"adjustinner": $scope.adjustinner}
 		            ])
 
-		u.waitForElem({elems:[$scope.scroll, ($scope.inner ? ("#" + $scope.inner) : $scope.imgID)]}, function (options) {
+		u.waitForElem({elems:"#" + $scope.scroll]}, function (options) {
 
 			runSetup(options, function () {
-							
-				runResetAndScroll(options);
+					
+				u.waitForElem({elems:["#" + $scope.scroll, "#" + ($scope.inner ? + $scope.inner : $scope.imgID)]}, function ($options) {		
+					runResetAndScroll($options);
+				})
 
 			});
 
