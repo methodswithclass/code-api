@@ -346,9 +346,33 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 			if (img) {
 
-				// u.waitForElem({elems:$options.elems[1]}, function (options) {
+				// var $img = $options.elems[1];
 
-					// var $img = $options.elems[1];
+				var ed = fixInside({
+					inside:{
+						width:$($inner).width(), 
+						height:$($inner).height()
+					}, 
+					space:{
+						width:$(element).width(),
+						height:$(element).height()
+					}
+				});
+
+				$($inner).css({width:ed.width, height:ed.height});
+
+				getEqs(ed.height);
+				
+			}
+			else {
+
+				// console.log("adjust inner", $scope.adjustinner);
+
+				if ($scope.adjustinner) {
+
+					// console.log("adjust inner", $scope.inner);
+
+					// console.log("fix inside", $inner[0]);
 
 					var ed = fixInside({
 						inside:{
@@ -361,43 +385,9 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 						}
 					});
 
+					// console.log("inside fixed", ed.width, ed.height);
+
 					$($inner).css({width:ed.width, height:ed.height});
-
-					getEqs(ed.height);
-
-				// })
-				
-			}
-			else {
-
-				// console.log("adjust inner", $scope.adjustinner);
-
-				if ($scope.adjustinner) {
-
-					// console.log("adjust inner", $scope.inner);
-
-					// u.waitForElem({elems:$options.elems[1]}, function (options) {
-
-						
-
-						// console.log("fix inside", $inner[0]);
-
-						var ed = fixInside({
-							inside:{
-								width:$($inner).width(), 
-								height:$($inner).height()
-							}, 
-							space:{
-								width:$(element).width(),
-								height:$(element).height()
-							}
-						});
-
-						// console.log("inside fixed", ed.width, ed.height);
-
-						$($inner).css({width:ed.width, height:ed.height});
-
-					// });
 
 				}
 
