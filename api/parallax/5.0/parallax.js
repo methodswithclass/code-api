@@ -442,6 +442,8 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 				scroll($options);
 			});
 
+			console.log("parallax options", $options, "scroll", $($options.elems[0])[0], "inner", $($options.elems[1])[0]);
+
 			$($options.elems[0]).scroll(function () {
 
 				console.log(($($options.elems[0])[0] ? "parallax" : "no parallax"), "scroll");
@@ -454,7 +456,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		var count = 0;
 		var paramsTimer;
 
-		console.log("parallax scope", $scope, "options", $options)
+		console.log("parallax scope", $scope)
 
 		u.waitForElem({elems:[$scope.scroll, ($scope.inner ? ("#" + $scope.inner) : $scope.id)]}, function (options) {
 
