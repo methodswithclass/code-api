@@ -235,7 +235,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		var img;
 		var top;
 		var active = false;
-		var factor = $scope.params ? ($scope.params.factor ? $scope.params.factor : 1) : 1;
+		var factor = $scope.factor ? $scope.factor : 1;
 
 		var o;
 		var sh;
@@ -444,7 +444,10 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 				scroll($options);
 			});
 
-			console.log("parallax options", $options, "scroll", $($options.elems[0])[0], "inner", $($options.elems[1])[0]);
+			console.log("parallax options", $options, [
+			            {"scroll":$($options.elems[0])[0]},
+			            {"inner":$($options.elems[1])[0])}
+			]);
 
 			$($options.elems[0]).scroll(function () {
 
@@ -461,19 +464,19 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		console.log("parallax scope", [
 		            {"name": $scope.name}, 
 		            {"src": $scope.src},
-		            {"imgID": $scope.imgID},
+		            {"imgID": $scope.imgId},
 		            {"inner": $scope.inner},
 		            {"scroll": $scope.scroll},
 		            {"top": $scope.top},
 		            {"factor": $scope.factor},
 		            {"adjustinner": $scope.adjustinner}
-		            ])
+		])
 
 		u.waitForElem({elems:"#" + $scope.scroll}, function (options) {
 
 			runSetup(options, function () {
 					
-				u.waitForElem({elems:["#" + $scope.scroll, "#" + ($scope.inner ? + $scope.inner : $scope.imgId)]}, function ($options) {		
+				u.waitForElem({elems:[options.elems, "#" + ($scope.inner ? + $scope.inner : $scope.imgId)]}, function ($options) {		
 					runResetAndScroll($options);
 				})
 
