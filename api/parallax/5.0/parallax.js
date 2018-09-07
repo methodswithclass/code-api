@@ -456,7 +456,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		var count = 0;
 		var paramsTimer;
 
-		console.log("parallax scope", $scope.name, $scope.src, $scope.imgID, $scope.inner, $scope.scroll, $scope.top, $scope.factor, $scope.adjustinner)
+		console.log("parallax scope", "\nname:", $scope.name, "\nsrc:", $scope.src, "\nimgID:", $scope.imgID, "\ninner:", $scope.inner, "\nscroll:", $scope.scroll, "\ntop:", $scope.top, "\nfactor:", $scope.factor, "\nadjustinner:", $scope.adjustinner)
 
 		u.waitForElem({elems:[$scope.scroll, ($scope.inner ? ("#" + $scope.inner) : $scope.imgID)]}, function (options) {
 
