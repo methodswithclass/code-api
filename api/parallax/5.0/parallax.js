@@ -323,8 +323,8 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 				h = $($options.elems[0]).height();
 
 				var posneg = {
-					b:-1,
-					y2:1
+					"b":-1,
+					"y2":1
 				}
 				// console.log($scope.name, "sh:" + sh + " ph:" + ph + " ih:" + $ih + " g:" + g + " h:" + h);
 
@@ -337,13 +337,13 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 						y1:yBuffer,
 
 						x2:h - xBuffer,
-						y2:posneg.y2*Math.abs(ph-sh) + yBuffer
+						y2:posneg["y2"]*Math.abs(ph-sh) + yBuffer
 					});
 
 				}
 				else {
 					// console.log("equation", $scope.name ? $scope.name : "", "is simple");
-					eqs = {m:-0.99, b:posneg.b*Math.abs(ph-sh)/2};
+					eqs = {m:-0.99, b:posneg["b"]*Math.abs(ph-sh)/2};
 				}
 
 				console.log($scope.name, "m:" + eqs.m + " b:" + eqs.b);
