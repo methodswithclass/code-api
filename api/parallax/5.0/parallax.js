@@ -253,7 +253,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 				overflow:"hidden"
 			});
 
-			$inner = $options.elems[0];
+			$inner = $options.elems;
 
 			if ($scope.src && !$scope.inner) {
 
@@ -275,7 +275,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 				img = document.createElement("img");
 				img.src = $scope.src;
-				img.id = "parallax-img";
+				img.id = $options.elems;
 				$(inner).append(img);
 
 
@@ -361,7 +361,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 						}
 					});
 
-					$(img).css({width:ed.width, height:ed.height});
+					$($img).css({width:ed.width, height:ed.height});
 
 					getEqs(ed.height);
 
@@ -425,9 +425,9 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		}
 
 
-		var runSetup = function (complete) {
+		var runSetup = function ($options, complete) {
 
-			setup(complete);
+			setup($options, complete);
 		}
 
 		var runResetAndScroll = function ($options) {
@@ -453,11 +453,11 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 		u.waitForElem({elems:($scope.inner ? ("#" + $scope.inner) : "#parallax-img")}, function (options) {
 
-			runSetup(function () {
+			runSetup(options, function () {
 
-				u.waitForElem({elems:[$el, inner]}, function (options) {
+				u.waitForElem({elems:[$el, options.elems]}, function ($options) {
 							
-					runResetAndScroll(options);
+					runResetAndScroll($options);
 				})
 
 			});
