@@ -253,8 +253,6 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 				overflow:"hidden"
 			});
 
-			$inner = $options.elems;
-
 			if ($scope.src && !$scope.inner) {
 
 				active = true;
@@ -264,7 +262,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 				$(element).append(inner);
 
 				// container div is always 150% taller than parent to allow enough room to parallax scroll
-				$($inner).css({
+				$(inner).css({
 					position:"absolute", 
 					height:"150%", 
 					width:"100%", 
@@ -275,7 +273,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 				img = document.createElement("img");
 				img.src = $scope.src;
-				img.id = $options.elems;
+				img.id = $options.elems[1];
 				$(inner).append(img);
 
 
@@ -297,11 +295,11 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 			}
 			else if ($scope.inner && !$scope.src) {
 				active = true;
-				inner = $(element).find("#" + $scope.inner)[0];
+				inner = $(element).find($options.elems[1])[0];
 			}
 
 			sh = $(element).height();
-			ph = $($inner).height();
+			ph = $(inner).height();
 
 			if (typeof complete === "function") complete();
 		}
@@ -348,7 +346,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 				// u.waitForElem({elems:$options.elems[1]}, function (options) {
 
-					var $img = $options.elems;
+					var $img = $options.elems[1];
 
 					var ed = fixInside({
 						inside:{
@@ -378,7 +376,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 					// u.waitForElem({elems:$options.elems[1]}, function (options) {
 
-						var $inner = $options.elems;
+						var $inner = $options.elems[1];
 
 						// console.log("fix inside", $inner[0]);
 
