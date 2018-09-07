@@ -322,7 +322,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 				var posneg = {
 					"b":-1,
-					"y2":1
+					"y2":-1
 				}
 				// console.log($scope.name, "sh:", sh, "ph:", ph, "ih:", $ih, "h:", h);
 
@@ -333,11 +333,11 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 					// console.log("equation", $scope.name ? $scope.name : "", "is linear");
 
 					eqs = linear({
-						x1:h - xBuffer,
-						x2:xBuffer,
+						x1:xBuffer,
+						x2:h - xBuffer,
 						
 						y1:yBuffer,
-						y2:posneg["y2"]*diff/2 - yBuffer
+						y2:posneg["y2"]*diff - yBuffer
 					});
 
 				}
