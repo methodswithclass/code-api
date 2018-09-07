@@ -273,7 +273,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 				img = document.createElement("img");
 				img.src = $scope.src;
-				img.id = "parallax-img" + $options.imgID;
+				img.id = $options.imgID;
 				$(inner).append(img);
 
 
@@ -456,9 +456,9 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		var count = 0;
 		var paramsTimer;
 
-		console.log("parallax scope", $scope)
+		console.log("parallax scope", $scope.name, $scope.src, $scope.imgID, $scope.inner, $scope.scroll, $scope.top, $scope.factor, $scope.adjustinner)
 
-		u.waitForElem({elems:[$scope.scroll, ($scope.inner ? ("#" + $scope.inner) : $scope.id)]}, function (options) {
+		u.waitForElem({elems:[$scope.scroll, ($scope.inner ? ("#" + $scope.inner) : $scope.imgID)]}, function (options) {
 
 			runSetup(options, function () {
 							
