@@ -352,8 +352,8 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 					var ed = fixInside({
 						inside:{
-							width:$inner.width(), 
-							height:$inner.height()
+							width:$($inner).width(), 
+							height:$($inner).height()
 						}, 
 						space:{
 							width:$(element).width(),
@@ -384,8 +384,8 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 						var ed = fixInside({
 							inside:{
-								width:$inner.width(), 
-								height:$inner.height()
+								width:$($inner).width(), 
+								height:$($inner).height()
 							}, 
 							space:{
 								width:$(element).width(),
