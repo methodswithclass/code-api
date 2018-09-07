@@ -273,7 +273,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 				img = document.createElement("img");
 				img.src = $scope.src;
-				img.id = $options.elems[1];
+				img.id = "parallax-img" + $options.imgID;
 				$(inner).append(img);
 
 
@@ -452,7 +452,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		var count = 0;
 		var paramsTimer;
 
-		u.waitForElem({elems:[$scope.scroll, ($scope.inner ? ("#" + $scope.inner) : "#parallax-img")]}, function (options) {
+		u.waitForElem({elems:[$scope.scroll, ($scope.inner ? ("#" + $scope.inner) : $scope.id)]}, function (options) {
 
 			runSetup(options, function () {
 							
@@ -468,7 +468,8 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 	return {
 		scope:{
 			name:"@", 	// identifier. 						optional. debugging
-			src:"@", 	// image source. 					optional. required if inner is not defined, must be one, can't be both
+			src:"@",	// image source. 					optional. required if inner is not defined, must be one, can't be both
+			imgID:"@". 	// parallax parent element id
 			inner:"@", 	// child element    id. 			optional. required if src is not defined, must be one, can't be both
 			scroll:"@", // overflow:scroll 	id.			 	required. 
 							// this module requires manual element overflow:scroll, 
