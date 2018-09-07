@@ -306,7 +306,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 
 		// get parallax scroll parameters, solve linear equation for current values, called when loaded and anytime the window is resized
-		var reset = function () {
+		var reset = function ($options) {
 
 			var xBuffer = 100;
 			var yBuffer = 20;
@@ -315,7 +315,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 			var getEqs = function ($ih) {
 
 				g = (ph-$ih)/2;
-				h = $el.height();
+				h = $options.elems[0].height();
 
 				// console.log($scope.name, "sh:" + sh + " ph:" + ph + " ih:" + $ih + " g:" + g + " h:" + h);
 
@@ -343,9 +343,9 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 			if (img) {
 
-				u.waitForElem({elems:["#parallax-img", element]}, function () {
+				u.waitForElem({elems:$options.elems[1]}, function (options) {
 
-					var $img = $("#parallax-img");
+					var $img = options.elems;
 
 					var ed = fixInside({
 						inside:{
@@ -373,9 +373,9 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 					// console.log("adjust inner", $scope.inner);
 
-					u.waitForElem({elems:["#" + $scope.inner, element]}, function () {
+					u.waitForElem({elems:$options.elems[1]}, function (options) {
 
-						var $inner = $("#" + $scope.inner);
+						var $inner = options.elems;
 
 						// console.log("fix inside", $inner[0]);
 
@@ -392,7 +392,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 						// console.log("inside fixed", ed.width, ed.height);
 
-						$inner.css({width:ed.width, height:ed.height});
+						$($inner).css({width:ed.width, height:ed.height});
 
 					});
 
@@ -405,7 +405,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		}
 
 		// changes height of parallax scrolling element based on element offset compared to top of scrolling element
-		var scroll = function () {
+		var scroll = function ($options) {
 			// if device is desktop and a parallax scrolling element is defined
 			if (u.valid() && active) {
 
@@ -415,7 +415,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 				top = o*eqs.m*factor + eqs.b;
 
-				$(inner).css({top:top});
+				$options.elems[1].css({top:top});
 			}
 
 			//console.log("version 1 factor: " + factor);
@@ -427,34 +427,34 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 			setup(complete);
 		}
 
-		var runResetAndScroll = function () {
+		var runResetAndScroll = function ($options) {
 
 			if ($scope.getParams) {
-				$scope.params = $scope.getParams();
+				$scope.params = $scope.getParams($options);
 			}
 
-			reset();
-			scroll();
+			reset($options);
+			scroll($options);
 
 			angular.element($window).bind('resize', function () {
-				reset();
-				scroll();
+				reset($options);
+				scroll($options);
 			});
 
-			$el.bind('scroll', scroll);
+			$options.elems[0].bind('scroll', scroll);
 		}
 
 
 		var count = 0;
 		var paramsTimer;
 
-		u.waitForElem({elems:[($scope.inner ? ("#" + $scope.inner) : "#parallax-img"), element]}, function () {
+		u.waitForElem({elems:($scope.inner ? ("#" + $scope.inner) : "#parallax-img")}, function (options) {
 
 			runSetup(function () {
 
-				u.waitForElem({elems:[$el, element, inner]}, function () {
+				u.waitForElem({elems:[$el, inner]}, function (options) {
 							
-					runResetAndScroll();
+					runResetAndScroll(options);
 				})
 
 			});
