@@ -37,14 +37,24 @@ parallax.factory("util", function () {
 
 	var waitForElem = function (options, complete) {
 
+		var c = {
+			noexist:"noexist",
+			found:"found",
+			notfound:"notfound"
+		}
+
         var count = 0;
         var result = false;
-        var active = {}
+        var active = []
 
         var checkElements = function (array) {
 
-        	result = false;
-        	active = {};
+        	if (array === undefined || array === null) {
+        		return c.noexist;
+        	}
+
+        	result = c.found;
+        	active = [];
 
         	if (Array.isArray(array)) {
 
@@ -52,24 +62,21 @@ parallax.factory("util", function () {
 
         		for (var i in array) {
 
-	        		if ($(array[i])[0]) {
-	        			// console.log("multi element", i, array[i], "does exist");
-	        			active[i] = true;
-	        		}
-	        		else {
+        			// console.log("element", array[i], "does not exist");
 
-        				// console.log("multi element", i, array[i], "does not exist");
+	        		if ($(array[i])[0]) {
+	        			active.push(true);
 	        		}
 
         		}
 
 
-	        	if (Object.keys(active).length >= array.length) {
+	        	if (active.length >= array.length) {
 
-	        		result = true;
+	        		result = c.found;
 	        	}
 	        	else {
-	        		result = false;
+	        		result = c.notfound;
 	        	}
 
         	}
@@ -78,12 +85,11 @@ parallax.factory("util", function () {
         		// console.log("@@@@@@@@@@@@@@@@\n\n\n\n\n\n\n\n\array is single\n\n\n\n\n\n@@@@@@@@@@@@@@")
 
         		if ($(array)[0]) {
-        			// console.log("single element", array, "does exist");
-        			result = true;
+        			// console.log("element does not exist");
+        			result = c.found;
         		}
         		else {
-        			// console.log("single element", array, "does not exist");
-        			result = false;
+        			result = c.notfound;
         		}
 
         	}
@@ -91,18 +97,27 @@ parallax.factory("util", function () {
         	return result;
         }
 
+        var stopTimer = function () {
+
+        	clearInterval(waitTimer);
+            waitTimer = null;
+        }
+
         var waitTimer = setInterval(function () {
 
-            if (checkElements(options.elems) || count >= 500) {
+
+        	if (checkElements(options.elems) == c.noexist) {
+        		stopTimer();
+        	}
+			else if (checkElements(options.elems) == c.found || count >= 500) {
 
             	// console.log("clear interval");
 
-                clearInterval(waitTimer);
-                waitTimer = null;
+            	stopTimer();
 
                 if (count < 500) {
 
-                	// console.log("check complete");
+                	// console.log("run complete");
                     
                     if (typeof complete === "function") complete(options);
                 }
