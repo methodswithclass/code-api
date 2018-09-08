@@ -1,6 +1,6 @@
 /***********************************************************************************
   
-		Parallax Module v2.1
+		Parallax Module v5.0
 
 		AngularJS library with no other dependencies	
 
@@ -11,7 +11,7 @@
 		parallax scrolling directive
 
 
-		Methods with Class, LLC, 2015
+		Methods with Class, LLC, 2018
 
 
 ***********************************************************************************/
@@ -135,7 +135,87 @@ parallax.factory("util", function () {
         }, 30);
     }
 
+
+    // adjusts the size of the image (defined in the directive 'src') to always be bigger than the parent
+	var fixInside = function (params) {
+
+		var $i = params.inside;
+    	var $s = params.space;
+    	
+    	var $iw = $i.width;
+    	var $ih = $i.height;
+    	var $sw = $s.width;
+    	var $sh = $s.height;
+
+    	var $ar = $iw/$ih;
+
+		var goodAspect = function (width, height) {
+			if (Math.abs($iw/$ih - $ar) < 0.01) return true;
+			return false;
+		}
+
+		var checkHeight = function ($h) {
+	        if ($h < $sh) return "under";
+	        else if ($h > $sh*1.2) return "over";
+	        return "good";
+	    }
+
+	    var checkWidth = function ($w) {
+	        if ($w < $sw) return "under";
+	        else if ($w > $sw*1.2) return "over";
+	        return "good";
+	    }
+
+        var $h = $sh*1.2;
+        var $w = $h*$ar;
+        
+        if (checkWidth($w) != "good") {
+            $w = $sw*1.2;
+            $h = $w/$ar;
+            if (checkHeight($h) == "under") {
+                $h = $sh*1.2;
+                $w = $h*$ar;
+            }
+        }
+
+        // console.log("adjust image", $w, $h);
+
+        return {
+        	width:$w,
+        	height:$h
+        }
+
+    }
+
+    // generally solves a system of two linear equations 
+    var linear = function (params) {
+
+		var y1 = params.y1;
+		var y2 = params.y2;
+		var x1 = params.x1;
+		var x2 = params.x2;
+		var m;
+		var b;
+
+		if (y2 - y1 != 0) {
+			m = (x2-x1)/(y2-y1);
+			b = y1 - x1*m;
+		}
+		else {
+			m = 0;
+			b = 0;
+		}
+
+		return {
+			m:m,
+			b:b
+		}
+
+	}
+
 	return {
+		fixInside:fixInside,
+		linear:linear,
 		valid:valid,
 		waitForElem:waitForElem
 	}
@@ -145,108 +225,36 @@ parallax.factory("util", function () {
 
 
 // add this directive to the element you want to add a parallax scrolling element too
-parallax.directive('parallax', ['util', '$window', function (u, $window) {
+parallax.directive('parallax', ['util', function (u) {
+
 
 
 	// link function, see below for parameters
 	var link = function ($scope, element, attr) {
 
 
-		// adjusts the size of the image (defined in the directive 'src') to always be bigger than the parent
-		var fixInside = function (params) {
 
-			var $i = params.inside;
-	    	var $s = params.space;
-	    	
-	    	var $iw = $i.width;
-	    	var $ih = $i.height;
-	    	var $sw = $s.width;
-	    	var $sh = $s.height;
-
-	    	var $ar = $iw/$ih;
-
-			var goodAspect = function (width, height) {
-				if (Math.abs($iw/$ih - $ar) < 0.01) return true;
-				return false;
-			}
-
-			var checkHeight = function ($h) {
-		        if ($h < $sh) return "under";
-		        else if ($h > $sh*1.2) return "over";
-		        return "good";
-		    }
-
-		    var checkWidth = function ($w) {
-		        if ($w < $sw) return "under";
-		        else if ($w > $sw*1.2) return "over";
-		        return "good";
-		    }
-
-	        var $h = $sh*1.2;
-	        var $w = $h*$ar;
-	        
-	        if (checkWidth($w) != "good") {
-	            $w = $sw*1.2;
-	            $h = $w/$ar;
-	            if (checkHeight($h) == "under") {
-	                $h = $sh*1.2;
-	                $w = $h*$ar;
-	            }
-	        }
-
-	        // console.log("adjust image", $w, $h);
-
-	        return {
-	        	width:$w,
-	        	height:$h
-	        }
-
-	    }
-
-	    // generally solves a system of two linear equations 
-	    var linear = function (params) {
-
-			var y1 = params.y1;
-			var y2 = params.y2;
-			var x1 = params.x1;
-			var x2 = params.x2;
-			var m;
-			var b;
-
-			if (x2 != x1) {
-				m = (y2-y1)/(x2-x1);
-				b = x1*m + y1;
-			}
-			else {
-				m = 0;
-				b = 0;
-			}
-
-			return {
-				m:m,
-				b:b
-			}
-
-		}
-
-
-	    var $el = $("#" + $scope.scroll);
 		var inner;
 		var img;
 		var top;
 		var active = false;
-		var factor = $scope.factor ? $scope.factor : 1;
+		var factor = 1;
 
 		var o;
-		var sh;
-		var ph;
-		var ih;
-		var h;
+		var elemheight;
+		var innerheight;
+		var imageheight;
+		var bodyheight;
 
 		var eqs;
 
 		// if src is defined, add the image to the parent div dynamically, called when loaded
-		var setup = function ($options, complete) {
+		var setup = function (options, complete) {
+
+			var $scope = options.$scope;
+			var element = options.element;
+			var attr = options.attr;
+			var $options = options.$options;
 
 			$(element).css({
 				overflow:"hidden"
@@ -285,128 +293,148 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 					left:"50%",
 					"margin-right":"-50%",
 					transform: 'translate(-50%, -50%)',
- 					MozTransform: 'translate(-50%, -50%)',
- 					WebkitTransform: 'translate(-50%, -50%)',
- 					msTransform: 'translate(-50%, -50%)'
+						MozTransform: 'translate(-50%, -50%)',
+						WebkitTransform: 'translate(-50%, -50%)',
+						msTransform: 'translate(-50%, -50%)'
 					
 				});
 
 			}
 			else if ($scope.inner && !$scope.src) {
 				active = true;
-				inner = $(element).find($options.elems[1])[0];
+
+				// console.log("inner", $options.elems[1]);
+				inner = $(element).find("#" + $scope.inner)[0];
 			}
 
-			sh = $(element).height();
-			ph = $(inner).height();
+			elemheight = $(element).height();
+			innerheight = $(inner).height();
 
 			if (typeof complete === "function") complete();
 		}
 
 
+		var getEqs = function (options, $ih) {
 
-		// get parallax scroll parameters, solve linear equation for current values, called when loaded and anytime the window is resized
-		var reset = function ($options) {
+			var $scope = options.$scope;
+			var element = options.element;
+			var attr = options.attr;
+			var $options = options.$options;
 
-			var xBuffer = -100;
-			var yBuffer = -20;
+			// console.log("scroll height", $($options.elems[0])[0]);
 
 
-			var $inner = $options.elems[1];
+			var xBuffer = 2;
+			var yBuffer = 0;
 
-			var getEqs = function ($ih) {
 
-				// console.log("scroll height", $($options.elems[0])[0]);
-
-				h = $($options.elems[0]).height();
-
-				var posneg = {
-					"b":-1,
-					"y2":-1
-				}
-				// console.log($scope.name, "sh:", sh, "ph:", ph, "ih:", $ih, "h:", h);
-
-				var diff = Math.abs(ph-sh);
-
-				if (!$scope.top) {
-
-					// console.log("equation", $scope.name ? $scope.name : "", "is linear");
-
-					eqs = linear({
-						x1:xBuffer,
-						x2:h - xBuffer,
-						
-						y1:yBuffer,
-						y2:posneg["y2"]*diff - yBuffer
-					});
-
-				}
-				else {
-					// console.log("equation", $scope.name ? $scope.name : "", "is simple");
-					eqs = {m:-0.99, b:posneg["b"]*diff/4};
-				}
-
-				console.log($scope.name, "m:" + eqs.m + " b:" + eqs.b);
-
+			var posneg = {
+				"g":-1,
+				"btop":-1,
+				"belse":1,
+				"x1":1,
+				"x2":1,
+				"y1":-1,
+				"y2":-1
 			}
 
-			if (img) {
 
-				// var $img = $options.elems[1];
+			bodyheight = $($options.elems[0]).height();
 
-				var ed = fixInside({
-					inside:{
-						width:$($inner).width(), 
-						height:$($inner).height()
-					}, 
-					space:{
-						width:$(element).width(),
-						height:$(element).height()
-					}
+
+			if ($scope.top) {
+				eqs = {m:-0.99, b:-1*($ih-elemheight)/2}
+			}
+			else if ($ih <= bodyheight) {
+
+
+
+				eqs = u.linear({
+
+					x1: bodyheight-elemheight + xBuffer,
+
+					x2: (-1)*xBuffer,
+
+
+
+					y1: (-1)*(elemheight-$ih)/2 - yBuffer,
+
+					y2: (elemheight-$ih)/2 + yBuffer
+
 				});
-
-				$($inner).css({width:ed.width, height:ed.height});
-
-				getEqs(ed.height);
-				
 			}
 			else {
+				
+				// eqs = {m:-0.99, b:(ih-h)};
 
-				// console.log("adjust inner", $scope.adjustinner);
+				// console.log("values", bodyheight, innerheight, $ih);
 
-				if ($scope.adjustinner) {
+				eqs = u.linear({
 
-					// console.log("adjust inner", $scope.inner);
+					x1: bodyheight + xBuffer,
 
-					// console.log("fix inside", $inner[0]);
+					x2: (-1)*xBuffer,
 
-					var ed = fixInside({
-						inside:{
-							width:$($inner).width(), 
-							height:$($inner).height()
-						}, 
-						space:{
-							width:$(element).width(),
-							height:$(element).height()
-						}
-					});
 
-					// console.log("inside fixed", ed.width, ed.height);
+					y1: (-1)*(innerheight - $ih)/2 - yBuffer,
 
-					$($inner).css({width:ed.width, height:ed.height});
+					y2: elemheight + (innerheight - $ih)/2 + yBuffer
 
-				}
-
-				getEqs(ph*0.8);
-
+				});
 			}
+
+			
+
+		}
+
+
+		// get parallax scroll parameters, solve linear equation for current values, called when loaded and anytime the window is resized
+		var reset = function (options) {
+
+			var $scope = options.$scope;
+			var element = options.element;
+			var attr = options.attr;
+			var $options = options.$options;
+
+			var $inner = options.elems[1];
+
+			// console.log("options", $options.elems);
+
+			var ed = u.fixInside({
+				inside:{
+					width:$($inner).width(), 
+					height:$($inner).height()
+				}, 
+				space:{
+					width:$(element).width(),
+					height:$(element).height()
+				}
+			});
+
+
+			if ($scope.adjustinner) {
+				$($inner).css({width:ed.width, height:ed.height});
+			}
+
+			getEqs(options, (img ? ed.height : innerheight));
 			
 		}
 
 		// changes height of parallax scrolling element based on element offset compared to top of scrolling element
-		var scroll = function ($options) {
+		var scroll = function (options) {
+			
+
+			var $scope = options.$scope;
+			var element = options.element;
+			var attr = options.attr;
+			var $options = options.$options;
+
 			// if device is desktop and a parallax scrolling element is defined
 			if (u.valid() && active) {
+
+				// getEqs(options, (img ? $(img).height() : ih));
+
+				// if ($scope.name == "evolve" || $scope.name == "top") console.log($scope.name, "m:" + eqs.m + " b:" + eqs.b);
 
 				o = $(element).offset().top;
 
@@ -420,24 +448,17 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 			//console.log("version 1 factor: " + factor);
 		}
 
+		var runResetAndScroll = function (options) {
 
-		var runSetup = function ($options, complete) {
 
-			setup($options, complete);
-		}
+			var $options = options.$options;
 
-		var runResetAndScroll = function ($options) {
-
-			if ($scope.getParams) {
-				$scope.params = $scope.getParams($options);
-			}
-
-			reset($options);
-			scroll($options);
+			reset(options);
+			scroll(options);
 
 			$(window).resize(function () {
-				reset($options);
-				scroll($options);
+				reset(options);
+				scroll(options);
 			});
 
 			// console.log("parallax options", $options, [
@@ -447,15 +468,12 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 			$($options.elems[0]).scroll(function () {
 
-				console.log(($($options.elems[0])[0] ? "parallax" : "no parallax"), "scroll");
-
-				scroll($options);
+				// console.log(($($options.elems[0])[0] ? "parallax" : "no parallax"), "scroll");
+				// reset(options);
+				scroll(options);
 			});
 		}
 
-
-		var count = 0;
-		var paramsTimer;
 
 		// console.log("parallax scope", [
 		//             {"name": $scope.name}, 
@@ -468,12 +486,19 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 		//             {"adjustinner": $scope.adjustinner}
 		// ])
 
-		u.waitForElem({elems:"#" + $scope.scroll}, function (options) {
+		factor = $scope.factor ? $scope.factor : factor;
 
-			runSetup(options, function () {
+		u.waitForElem({elems:["#" + $scope.scroll]}, function (options) {
+
+			options.$scope = $scope;
+			options.element = element;
+			options.attr = attr;
+
+			setup(options, function () {
 					
-				u.waitForElem({elems:[options.elems, "#" + ($scope.inner ? $scope.inner : $scope.imgId)]}, function ($options) {		
-					runResetAndScroll($options);
+				u.waitForElem({elems:["#" + $scope.scroll, "#" + ($scope.inner ? $scope.inner : $scope.imgId)]}, function ($options) {
+					options.$options = $options;
+					runResetAndScroll(options);
 				})
 
 			});
