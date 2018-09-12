@@ -117,7 +117,7 @@ app.directive("doc", ['data', "general", function (data, general) {
 	            });
 
 
-	            states.go("variable", {module:$stateParams.module, variable:variable, variableData:{misc:$scope.misc, data:variableData}})
+	            states.go("variable", {module:$stateParams.module, variable:variable.name, variableData:{misc:$scope.misc, data:variableData}})
 
 			}
 
