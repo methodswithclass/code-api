@@ -27,11 +27,11 @@ const config = require("./config.js");
 var minify = {
 	main:{
 		full:{
-			make:false,
+			make:true,
 			inject:true
 		},
 		min:{
-			make:true,
+			make:false,
 			inject:true
 		}
 	},

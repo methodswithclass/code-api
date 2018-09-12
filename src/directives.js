@@ -77,14 +77,16 @@ app.directive("doc", ['data', "general", function (data, general) {
 		        }
 		        else if ($scope.data.id == "functions" || $scope.parent.id == "functions") {
 
+		        	console.log("parent", $scope.data);
 
+		        	var inputoutput = ($scope.data.name.text == "returns" ? "output" : $scope.data.name.text.slice(0, $scope.data.name.text.length-1)) + ".items";
 
 		        	objectKeys = [
 		                "doc",
 		                "items",
 		                "sets",
 		                "items",
-		                "input.items"
+		                inputoutput
 		            ]
 
 		        	dataKeys = [
@@ -103,9 +105,11 @@ app.directive("doc", ['data', "general", function (data, general) {
 		                variable.name
 		            ]
 
+
 		        }
 
-	            variableData = data.getItem({
+
+		        variableData = data.getItem({
 	                module:$stateParams.module, 
 	                dataKeys:dataKeys, 
 	                objectKeys:objectKeys, 
@@ -113,7 +117,8 @@ app.directive("doc", ['data', "general", function (data, general) {
 	            });
 
 
-				states.go("variable", {module:$stateParams.module, variable:variable, variableData:{misc:$scope.misc, data:variableData}})
+	            states.go("variable", {module:$stateParams.module, variable:variable, variableData:{misc:$scope.misc, data:variableData}})
+
 			}
 
 			$scope.trustHtml = function (html) {
