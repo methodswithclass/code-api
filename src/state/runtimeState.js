@@ -38,7 +38,7 @@ stateModule.provider("runtime.state", ["$stateProvider", function ($stateProvide
     {
         name:"variable",
         url:"/docs/:module/variable/:variable",
-        params:{module:null, variable:null},
+        params:{module:null, variable:null, variableData:null},
         templateUrl:"assets/views/variable.html",
         controller:["$scope", "data", "general", "$stateParams", 'states', function ($scope, data, general, $stateParams, states) {
 
@@ -46,35 +46,9 @@ stateModule.provider("runtime.state", ["$stateProvider", function ($stateProvide
 
             $("#body").scrollTo(0);
 
-            var dataKeys = [
-                "name",
-                "id",
-                "id",
-                "name"
-            ]
+            $scope.data = $stateParams.variableData.data;
 
-            var objectKeys = [
-                "doc",
-                "items",
-                "sets",
-                "items"
-            ]
-
-            var values = [
-                "modules", 
-                $stateParams.module, 
-                "variables", 
-                $stateParams.variable
-            ]
-
-            $scope.data = data.getItem({
-                module:$stateParams.module, 
-                dataKeys:dataKeys, 
-                objectKeys:objectKeys, 
-                values:values
-            });
-
-            console.log("data", $scope.data);
+            // console.log("data", $scope.data);
 
             $scope.backToModule = function () {
 
@@ -84,7 +58,7 @@ stateModule.provider("runtime.state", ["$stateProvider", function ($stateProvide
 
             $scope.moduleName = function () {
 
-                return $stateParams.module;
+                return $stateParams.module + ($stateParams.variableData.misc ? ($stateParams.variableData.misc.function ? (": " + $stateParams.variableData.misc.parent.name) : "") : "");
             }
 
             $scope.trustHtml = function (html) {

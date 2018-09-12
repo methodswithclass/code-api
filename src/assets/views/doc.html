@@ -22,7 +22,7 @@
 					<div class="relative width padding-v-20 font-20" ng-bind-html="trustHtml(mod.body)"></div>
 
 					<div ng-repeat="block in mod.sets">
-						<block type="{{block.id}}" data="block"></block>
+						<block type="{{block.id}}" data="block" parent="mod"></block>
 					</div>
 
 				</div>

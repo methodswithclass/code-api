@@ -30,38 +30,26 @@
 
 	</div>
 
-	<div class="relative width black-back height-1000">
+	<div class="relative width black-back min-height-1000">
 
 
 		<div class="relative width80 hcenter white">
 
 			<div class="relative width">
 
-				<!-- <div class="relative width {{data.name.size}}">
-					{{data.name.text}}
-				</div> -->
-
 				<div class="relative width font-20">
 					
-					<div class="relative width border-bottom-white padding-v-20">
-						<!-- <div class="absolute width20 vcenter green3 font-25 font-typewriter">
-							{{data.name}}
-						</div> -->
-						<div class="absolute width20 vcenter {{data.type.color}}">
+					<div class="flex flex-row flex-align-center padding-v-20 border-bottom-white">
+						
+						<div class="width10 {{data.type.color}}">
 							{{data.type.value}}
 						</div>
-						<div class="relative width20 left20">
-							<div class="relative width50">
-								<div ng-repeat="valid in data.valid">
-
-									<div class="relative width">
-										{{valid.value}}
-									</div>
-
-								</div>
+						<div class="width20">
+							<div ng-repeat="valid in data.valid">
+								{{valid.value}}
 							</div>
 						</div>
-						<div class="absolute width20 left40 vcenter {{data.required.color}}">
+						<div class="width20 {{data.required.color}}">
 							{{data.required.value}}
 						</div>
 					</div>

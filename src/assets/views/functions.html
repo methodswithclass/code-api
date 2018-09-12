@@ -6,20 +6,22 @@
 
 	<div ng-repeat="function in data.items">
 
-		<div class="relative width80 hcenter">
+		<div class="relative width hcenter">
 
 			<div class="relative width padding-top-50 border-bottom-white purple font-25 font-typewriter">
 				{{function.name}}
 			</div>
 
-			<div class="relative width padding-v-20">
+			<!-- <div class="relative width padding-v-20">
 				<p data="function.d"></p>
-			</div>
+			</div> -->
+
+			<div class="relative width padding-v-20" ng-bind-html="trustHtml(function.d)"></div>
 
 			<div class="relative width80 hcenter">
 				
-				<block type="variables" data="function.input"></block>
-				<block type="variables" data="function.output"></block>
+				<block type="variables" data="function.input" parent="data" misc="{parent, function}"></block>
+				<block type="variables" data="function.output" parent="data" misc="{parent, function}"></block>
 				
 			</div>
 

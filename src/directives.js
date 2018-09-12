@@ -20,17 +20,24 @@ app.directive("doc", ['data', "general", function (data, general) {
 }])
 
 
-.directive("block", ["$stateParams", "states", function ($stateParams, states) {
+.directive("block", ["$stateParams", "states", "general", "data", function ($stateParams, states, general, data) {
 
 	return {
 		resrict:"E",
 		scope:{
 			type:"@",
-			data:"="
+			data:"=",
+			parent:"=",
+			misc:"="
 		},
 		replace:true,
 		template:"<div ng-include='getContentUrl()'></div>",
 		link:function ($scope, element, attr) {
+
+			var dataKeys;
+			var objectKeys;
+			var values;
+			var variableData;
 
 			$scope.getContentUrl = function () {
 
@@ -40,11 +47,80 @@ app.directive("doc", ['data', "general", function (data, general) {
 
 			$scope.openVariable = function (variable) {
 
-				if ($scope.type == "variables") {
+				// var $mod = getModule(mod.id);
 
-					states.go("variable", {module:$stateParams.module, variable:variable})
-				}
+				// console.log("open variable\ndata:\n", $scope.data, "\nparent:\n", $scope.parent);
+
+				if ($scope.data.id == "variables" || $scope.parent.id == "variables") {
+
+					objectKeys = [
+		                "doc",
+		                "items",
+		                "sets",
+		                "items"
+		            ]
+
+					dataKeys = [
+		                "name",
+		                "id",
+		                "id",
+		                "name"
+		            ]
+
+		            values = [
+		                "modules", 
+		                $stateParams.module,
+		                "variables", 
+		                variable.name
+		            ]
+
+		        }
+		        else if ($scope.data.id == "functions" || $scope.parent.id == "functions") {
+
+
+
+		        	objectKeys = [
+		                "doc",
+		                "items",
+		                "sets",
+		                "items",
+		                "input.items"
+		            ]
+
+		        	dataKeys = [
+		                "name",
+		                "id",
+		                "id",
+		                "name",
+		                "name"
+		            ]
+
+		            values = [
+		                "modules",
+		                $scope.misc.parent.name,
+		                "functions",
+		                $scope.misc.function.name,
+		                variable.name
+		            ]
+
+		        }
+
+	            variableData = data.getItem({
+	                module:$stateParams.module, 
+	                dataKeys:dataKeys, 
+	                objectKeys:objectKeys, 
+	                values:values
+	            });
+
+
+				states.go("variable", {module:$stateParams.module, variable:variable, variableData:{misc:$scope.misc, data:variableData}})
 			}
+
+			$scope.trustHtml = function (html) {
+
+				return general.renderHtml(html)
+			}
+
 
 		}
 	}

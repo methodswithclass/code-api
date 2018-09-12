@@ -5,37 +5,43 @@
 	</div>
 
 	<div ng-repeat="variable in data.items">
+		
+
 		<div class="relative width font-20">
 			
-			<div class="relative width border-bottom-white padding-v-20">
-				<div class="absolute width20 vcenter green3 font-25 font-typewriter pointer" ng-click="openVariable(variable.name)">
+
+			<div class="flex flex-row flex-align-center padding-v-20 border-bottom-white pointer" ng-click="openVariable(variable)">
+				
+
+				<div class="width20 green3 font-25 font-typewriter">
 					{{variable.name}}
 				</div>
-				<div class="absolute width20 left20 vcenter {{variable.type.color}}">
+
+				<div class="width10 margin-h-10 {{variable.type.color}}">
 					{{variable.type.value}}
 				</div>
-				<div class="relative width40 left40">
-					<div class="relative width50">
-						<div ng-repeat="valid in variable.valid">
-
-							<div class="relative width">
-								{{valid.value}}
-							</div>
-
-						</div>
+				
+				<div class="width20 margin-h-10">
+					
+					<div ng-repeat="valid in variable.valid">
+						{{valid.value}}
 					</div>
+				
 				</div>
-				<div class="absolute width20 left60 vcenter {{variable.required.color}}">
+				
+				<div class="width10 margin-h-10 {{variable.required.color}}">
 					{{variable.required.value}}
 				</div>
-			</div>
-			<!-- <div class="relative width60 left40">
-				<p data="variable.d"></p>
-			</div> -->
 
-			<!-- <div class="relative width60 left40" ng-bind-html="trustHtml(variable.d)"></div> -->
+				<div class="width50 font-typewriter" ng-bind-html="trustHtml(variable.d)"></div>
+
+			</div>
+
+
 
 		</div>
+
+
 	</div>
 
 </div>

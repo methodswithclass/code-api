@@ -58,6 +58,16 @@ var vartypes = {
 		value:"object",
 		color:"green4",
 		back:"blue-back"
+	},
+	array:{
+		value:"array",
+		color:"purple",
+		back:"blue-back"
+	},
+	function:{
+		value:"function",
+		color:"blue",
+		back:"blue-back"
 	}
 };
 
@@ -185,9 +195,9 @@ app.factory("data", function () {
 						valid:[
 							{value:"element id"}
 						],
-						d:[
-							"this is the element id of the image given by the 'src' directive. required when 'src' provided."
-						]
+						d:`
+							this is the element id of the image given by the 'src' directive. required when 'src' provided.
+						`
 					},
 					{
 						name:"src",
@@ -207,9 +217,9 @@ app.factory("data", function () {
 						valid:[
 							{value:"element id"}
 						],
-						d:[
-							"'inner' is the child element that will be parallax scrolled. must be larger than parent to work properly. must define one of 'src' or 'inner', but not both."
-						]
+						d:`
+							'inner' is the child element that will be parallax scrolled. must be larger than parent to work properly. must define one of 'src' or 'inner', but not both.
+						`
 					},
 					{
 						name:"top",
@@ -232,19 +242,19 @@ app.factory("data", function () {
 						],
 						d:`
 
-							this is a multiplier on scroll rate of the child to be added on a per case basis. it is a percentage given as a number between 0 and 1.<br><br>
-							
+							this is a multiplier on scroll rate of the child to be added on a per case basis. it is a percentage given as a number recommended to be between 0 and 1.<br><br>
 
 							==1, this value defaults to 1 if absent. changes nothing.<br><br>
+
+							==0, turns off parallax. child will be left vertically centered in parent element and will scroll with element.<br><br>
 							
+							between 0 and 1 will slow the parallax effect relative to the scroll speed <br><br>
 
-							>1, for every pixel that the document scrolls, the child will scroll more than a pixel. will cause the edges of an image to show.<br><br>
+							> 1 will speed it up <br><br>
 
+							< 0 will reverse it relative to scroll direction <br><br>
 
-							==0, turns off parallax. child will be left vertically centered in parent element.<br><br>
-
-
-							<0, the child will be scrolled in the opposite direction of the document. less than -1 will cause the edges of an image to show.
+							the only recommended values for an intended effect are between 0 and 1, leave absent for best effect			
 
 						`
 					}
@@ -260,7 +270,7 @@ app.factory("data", function () {
 		name:"classes",
 		copy:{
 			s:"the last css library you'll ever need",
-			l:"a flat css library that provides individual classes for each style point. this allows for an element to carry whatever classes it needs and reduces the burden on extensive singleton classes or heavy-duty css document engineering.",
+			l:"a semantic css library that provides individual classes for each style point. this allows for an element to carry whatever classes it needs and reduces the burden on extensive singleton classes or heavy-duty css document engineering.",
 			full:`
 				This css library contains single style css classes that are added in combination to each element to complete the total syling. It allows more development for the layout and less development on the css structures that will make the layout work. Doing classes this way allows for quick changes to be made without having to think about how to make the changes within the css hiearchical structure already put in place. It is a continuously expanding set, and will have very seldom retractions, so you can use this and all future versions without fear of anything you have breaking.
 			`
@@ -361,10 +371,15 @@ app.factory("data", function () {
 		{
 			number:"4.0",
 			src:"shared.js",
+			status:depricated
+		},
+		{
+			number:"4.6.1",
+			src:"shared.js",
 			status:production
 		}
 		],
-		current:"4.0",
+		current:"4.6.1",
 		doc:[
 		{
 			name:"modules",
@@ -394,6 +409,7 @@ app.factory("data", function () {
 							items:[
 							{
 								name:"na",
+								type:vartypes["na"],
 								d:`
 									this function takes no input.
 								`
@@ -407,6 +423,7 @@ app.factory("data", function () {
 							},
 							items:[
 							{
+								name:"isMobile",
 								type:vartypes["bool"],
 								d:`
 									if device is mobile, this will return true.
@@ -417,11 +434,14 @@ app.factory("data", function () {
 					},
 					{
 						name:"isPortrait",
-						d:[
-							"compares window width and height. useful to check orientation of mobile device."
-						],
+						d:`
+							compares window width and height. useful to check orientation of mobile device.
+						`,
 						input:{
-							name:"inputs",
+							name:{
+								text:"inputs",
+								size:"font-20"
+							},
 							items:[
 							{
 								name:"na",
@@ -433,9 +453,13 @@ app.factory("data", function () {
 							]
 						},
 						output:{
-							name:"returns",
+							name:{
+								text:"returns",
+								size:"font-20"
+							},
 							items:[
 							{
+								name:"isPortrait",
 								type:vartypes["bool"],
 								d:`
 									if width is less than height, returns true
@@ -452,19 +476,104 @@ app.factory("data", function () {
 				type:modtypes["factory"],
 				id:"events",
 				name:"events",
-				body:[
-					"the service manages callbacks"
-				],
+				body:`
+					the service manages callbacks
+				`,
 				sets:[
 				{
 					id:"functions",
 					name:"functions",
 					items:[
 					{
-						name:"on"
+						name:"on",
+						d:`
+							sets an event to be fired later
+						`,
+						input:{
+							name:{
+								text:"inputs",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"name",
+								type:vartypes["string"],
+								required:reqtypes["required"],
+								valid:[
+									{value:"registration string"}
+								],
+								d:`
+									name
+								`
+							},
+							{
+								name:"callback",
+								type:vartypes["function"],
+								required:reqtypes["required"],
+								valid:[
+									{value:"callback"}
+								],
+								d:`
+									function to be called at later time with 'dispatch'
+								`
+							}
+							]
+						},
+						output:{
+							name:{
+								text:"returns",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"na",
+								type:vartypes["na"],
+								d:`
+									returns no value
+								`
+							}
+							]
+						}
 					},
 					{
-						name:"dispatch"
+						name:"dispatch",
+						d:`
+							dispatches the event registered with 'on'
+						`,
+						input:{
+							name:{
+								text:"inputs",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"name",
+								type:vartypes["string"],
+								required:reqtypes["required"],
+								valid:[
+									{value:"registration string"}
+								],
+								d:`
+									name (matching that registered with 'on')
+								`
+							}
+							]
+						},
+						output:{
+							name:{
+								text:"returns",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"any",
+								type:vartypes["object"],
+								d:`
+									returns any value
+								`
+							}
+							]
+						}
 					}
 					]
 				}
@@ -483,10 +592,310 @@ app.factory("data", function () {
 					name:"functions",
 					items:[
 					{
-						name:"setup"
+						name:"back",
+						d:`
+							for global data sharing when you need to backfill data with an accumulator
+						`
 					},
 					{
-						name:"retreive"
+						name:"back.setup()",
+						d:`
+							sets up the receiver
+						`,
+						input:{
+							name:{
+								text:"inputs",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"options",
+								type:vartypes["object"],
+								required:reqtypes["required"],
+								valid:[
+									{value:"options input"}
+								],
+								d:`
+									this function takes a single object as input, with the keys: "name" and "receiver"<br><br>
+
+									"name" is a registration string and "receiver" is an empty object {} to later be key/value pair assigned with data
+
+								`
+							}
+							]
+						},
+						output:{
+							name:{
+								text:"returns",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"na",
+								type:vartypes["na"],
+								d:`
+									this function returns no value
+								`
+							}
+							]
+						}
+					},
+					{
+						name:"back.add()",
+						d:`
+							adds data to the receiver
+						`,
+						input:{
+							name:{
+								text:"inputs",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"options",
+								type:vartypes["object"],
+								required:reqtypes["required"],
+								valid:[
+									{value:"options input"}
+								],
+								d:`
+									this function takes a single object as input, with the keys: "name", "id", and "data"<br><br>
+
+									"name" is the reference to the registration name, "id" is a an object key, and "data" is the data is the value in the key/value pair
+
+
+								`
+							}
+							]
+						},
+						output:{
+							name:{
+								text:"returns",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"na",
+								type:vartypes["na"],
+								d:`
+									this function returns no value
+								`
+							}
+							]
+						}
+					},
+					{
+						name:"save",
+						d:`
+							for global data sharing when you simply need to save data to an array and retrieve it later from elsewhere
+						`,
+					},
+					{
+						name:"save.add()",
+						d:`
+							this function adds data to an array to be retrieved later
+						`,
+						input:{
+							name:{
+								text:"inputs",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"options",
+								type:vartypes["object"],
+								required:reqtypes["required"],
+								valid:[
+									{value:"options input"}
+								],
+								d:`
+									this function takes a single object as input, with the keys: "name" and "data"<br><br>
+
+									"name" is a registration string and "data" is the data to be saved in the array
+
+
+								`
+							}
+							]
+						},
+						output:{
+							name:{
+								text:"returns",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"na",
+								type:vartypes["na"],
+								d:`
+									this function returns no value
+								`
+							}
+							]
+						}
+					},
+					{
+						name:"save.get()",
+						d:`
+							this function retrieves the data array up to that point of accumulation
+						`,
+						input:{
+							name:{
+								text:"inputs",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"options",
+								type:vartypes["object"],
+								required:reqtypes["required"],
+								valid:[
+									{value:"options input"}
+								],
+								d:`
+									this function takes a single object as input with a "name" key<br><br>
+
+									"name" is a reference to the registration name
+
+
+								`
+							}
+							]
+						},
+						output:{
+							name:{
+								text:"returns",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"array",
+								type:vartypes["array"],
+								d:`
+									this function returns the array of data
+								`
+							}
+							]
+						}
+					}
+					]
+				}
+				]	
+			},
+			{
+				type:modtypes["factory"],
+				id:"react",
+				name:"react",
+				body:`
+					this service is a stripped down observables package, very simple subscribe and push data functions
+				`,
+				sets:[
+				{
+					id:"functions",
+					name:"functions",
+					items:[
+					{
+						name:"subscribe",
+						d:`
+							this function subscribes a callback to a registration name
+						`,
+						input:{
+							name:{
+								text:"inputs",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"options",
+								type:vartypes["object"],
+								required:reqtypes["required"],
+								valid:[
+									{value:"options input"}
+								],
+								d:`
+									this function takes a single object as input, with two key/value pairs<br><br>
+
+									a registration "name" and a function "callback"<br><b>
+
+									the callback takes a single input that all data during 'push' will be attached to, it can be retrieved here in the callback in any manner you see fit<br><br>
+
+									like any Observable pattern, you may register as many different callbacks to the same name as you like throughout your application, and all subscribers of the same name receive whatever data is pushed<br><br>
+
+									subscribers should be registered at application load time. Push calls should be made during appication run-time.<br><br>
+
+									you may subscribe the callback after the 'push' has been fired. If no subscribers exist at the time data is attempted to be pushed, the data will be saved and will be pushed to your subscribers at the time of their subscription<br><br>
+
+									this reverse functionality is a fallback. It is not for intended use. It is best practice to register your subscribers before you make the push calls
+
+
+								`
+							}
+							]
+						},
+						output:{
+							name:{
+								text:"returns",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"na",
+								type:vartypes["na"],
+								d:`
+									this function returns no value
+								`
+							}
+							]
+						}
+					},
+					{
+						name:"push",
+						d:`
+							this function pushes data to all subscribers of a given name
+						`,
+						input:{
+							name:{
+								text:"inputs",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"options",
+								type:vartypes["object"],
+								required:reqtypes["required"],
+								valid:[
+									{value:"options input"}
+								],
+								d:`
+									this function takes a single object as input, with two key/value pairs<br><br>
+
+									a reference to the subscribed "name" and "state" that refers to the data being pushed<br><br>
+
+									subscribers should be registered at application load time. Push calls should be made during appication run-time.<br><br>
+
+									if no subscribers exist at the time of push, the data in "state" is saved internally until a subscriber of "name" is registered, then that subscriber's callback is immediately fired with the corresponding "state" data<br><br>
+
+									this reverse functionality is a fallback. Otherwise, it is best practice to subscribe the callback before firing the push function
+
+								`
+							}
+							]
+						},
+						output:{
+							name:{
+								text:"returns",
+								size:"font-20"
+							},
+							items:[
+							{
+								name:"na",
+								type:vartypes["na"],
+								d:`
+									this function returns no value
+								`
+							}
+							]
+						}
 					}
 					]
 				}
@@ -560,7 +969,7 @@ app.factory("data", function () {
 
 			value.versions.sort(function (a, b) {
 
-				return b.number - a.number;
+				return parseFloat(b.number) - parseFloat(a.number);
 			});
 		})
 	}
@@ -598,11 +1007,15 @@ app.factory("data", function () {
 		}
 
 
-		var findObj = function (obj, key, value) {
+		var findObj = function (obj, objectKey, dataKey, value) {
 
-			return obj.find(function (p) {
 
-				var searchValue = parseKey(key, p);
+			var findObject = parseKey(objectKey, obj);
+
+
+			return findObject.find(function (p) {
+
+				var searchValue = parseKey(dataKey, p);
 
 				return searchValue == value;
 			})
@@ -616,13 +1029,13 @@ app.factory("data", function () {
 
 		var mod = getModuleByName(moduleValue);
 
-		var found = findObj(mod[objectKeys[0]], dataKeys[0], values[0]);
+		var found = findObj(mod, objectKeys[0], dataKeys[0], values[0]);
 
 		for (var i = 1, k1 = 1, k2 = 1; i < values.length && k1 < dataKeys.length && k2 < objectKeys.length; i++, k1++, k2++) {
 
 			// console.log("option", options[i], "key", keys1[k1], keys2[k2], found);
 
-			var found = findObj(found[objectKeys[k2]], dataKeys[k1], values[i]);
+			var found = findObj(found, objectKeys[k2], dataKeys[k1], values[i]);
 
 		}
 

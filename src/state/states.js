@@ -10,7 +10,7 @@ stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', 
 
 		prevState = $trans.$from().name;
 
-		console.log("to state", $trans.$to());
+		// console.log("to state", $trans.$to());
 	});
 
 	$transitions.onSuccess({}, function($trans) {
