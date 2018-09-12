@@ -58,7 +58,7 @@ stateModule.provider("runtime.state", ["$stateProvider", function ($stateProvide
 
             $scope.moduleName = function () {
 
-                return $stateParams.module + ($stateParams.variableData.misc ? ($stateParams.variableData.misc.function ? (": " + $stateParams.variableData.misc.parent.name) : "") : "");
+                return $stateParams.module + ($stateParams.variableData.misc ? ($stateParams.variableData.misc.function ? (": " + $stateParams.variableData.misc.parent.name + ": " + $stateParams.variableData.misc.function.name) : "") : "");
             }
 
             $scope.trustHtml = function (html) {

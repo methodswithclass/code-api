@@ -77,7 +77,7 @@ app.directive("doc", ['data', "general", function (data, general) {
 		        }
 		        else if ($scope.data.id == "functions" || $scope.parent.id == "functions") {
 
-		        	console.log("parent", $scope.data);
+		        	// console.log("parent", $scope.data);
 
 		        	var inputoutput = ($scope.data.name.text == "returns" ? "output" : $scope.data.name.text.slice(0, $scope.data.name.text.length-1)) + ".items";
 

@@ -108,7 +108,7 @@ stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', 
 	}
 
 	var go = function (state, data) {
-		console.log("go to", state, data);
+		// console.log("go to", state, data);
 
 		if (state == "home") {
 			$state.go(state);
