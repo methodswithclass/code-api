@@ -166,23 +166,44 @@ parallax.factory("util", function () {
 	        return "good";
 	    }
 
-        var $h = $sh*1.2;
-        var $w = $h*$ar;
-        
-        if (checkWidth($w) != "good") {
-            $w = $sw*1.2;
-            $h = $w/$ar;
-            if (checkHeight($h) == "under") {
-                $h = $sh*1.2;
-                $w = $h*$ar;
+
+	    var fixHeight = function ($w, $h) {
+
+	    	$h = $sh*1.2;
+            $w = $h*$ar;
+
+            return {
+            	width:$w,
+            	height:$h
             }
+	    }
+
+
+	    var fixWidth = function ($w, $h) {
+
+	    	$w = $sw*1.2;
+            $h = $w/$ar;
+
+            if (checkHeight($h) == "under") {
+               return fixHeight($w, $h)
+            }
+
+            return {
+            	width:$w,
+            	height:$h
+            }
+	    }
+
+
+        if (checkWidth($iw) == "under") {
+            return fixWidth($iw, $ih);
         }
 
         // console.log("adjust image", $w, $h);
 
         return {
-        	width:$w,
-        	height:$h
+        	width:$iw,
+        	height:$ih
         }
 
     }
@@ -197,9 +218,11 @@ parallax.factory("util", function () {
 		var m;
 		var b;
 
-		if (y2 - y1 != 0) {
-			m = (x2-x1)/(y2-y1);
+		if (x2 - x1 != 0) {
+			
+			m = (y2-y1)/(x2-x1);
 			b = y1 - x1*m;
+
 		}
 		else {
 			m = 0;
@@ -273,7 +296,7 @@ parallax.directive('parallax', ['util', function (u) {
 					position:"absolute", 
 					height:"150%", 
 					width:"100%", 
-					backgroundColor:"black", 
+					backgroundColor:"white", 
 					zIndex:-50, 
 					opacity:0.99
 				});
@@ -287,15 +310,13 @@ parallax.directive('parallax', ['util', function (u) {
 				// image is centered with in container, this is what is adjusted by fix()
 				$(img).css({
 					position:"absolute", 
-					height:"80%", 
-					width:"auto", 
 					top:"50%", 
 					left:"50%",
-					"margin-right":"-50%",
+					// "margin-right":"-50%",
 					transform: 'translate(-50%, -50%)',
-						MozTransform: 'translate(-50%, -50%)',
-						WebkitTransform: 'translate(-50%, -50%)',
-						msTransform: 'translate(-50%, -50%)'
+					MozTransform: 'translate(-50%, -50%)',
+					WebkitTransform: 'translate(-50%, -50%)',
+					msTransform: 'translate(-50%, -50%)'
 					
 				});
 
@@ -345,42 +366,8 @@ parallax.directive('parallax', ['util', function (u) {
 			if ($scope.top) {
 				eqs = {m:-0.99, b:-1*($ih-elemheight)/2}
 			}
-			else if ($ih <= bodyheight) {
-
-
-
-				eqs = u.linear({
-
-					x1: bodyheight-elemheight + xBuffer,
-
-					x2: (-1)*xBuffer,
-
-
-
-					y1: (-1)*(elemheight-$ih)/2 - yBuffer,
-
-					y2: (elemheight-$ih)/2 + yBuffer
-
-				});
-			}
 			else {
-				
-				// eqs = {m:-0.99, b:(ih-h)};
-
-				// console.log("values", bodyheight, innerheight, $ih);
-
-				eqs = u.linear({
-
-					x1: bodyheight + xBuffer,
-
-					x2: (-1)*xBuffer,
-
-
-					y1: (-1)*(innerheight - $ih)/2 - yBuffer,
-
-					y2: elemheight + (innerheight - $ih)/2 + yBuffer
-
-				});
+				eqs = {m:-0.99, b:(innerheight-bodyheight)};
 			}
 
 			
@@ -396,9 +383,9 @@ parallax.directive('parallax', ['util', function (u) {
 			var attr = options.attr;
 			var $options = options.$options;
 
-			var $inner = options.elems[1];
+			var $inner = $options.elems[1];
 
-			// console.log("options", $options.elems);
+			// console.log("options", $options.elems, inner);
 
 			var ed = u.fixInside({
 				inside:{
@@ -413,6 +400,7 @@ parallax.directive('parallax', ['util', function (u) {
 
 
 			if ($scope.adjustinner) {
+			// if (true) {
 				$($inner).css({width:ed.width, height:ed.height});
 			}
 
@@ -469,7 +457,7 @@ parallax.directive('parallax', ['util', function (u) {
 			$($options.elems[0]).scroll(function () {
 
 				// console.log(($($options.elems[0])[0] ? "parallax" : "no parallax"), "scroll");
-				// reset(options);
+				reset(options);
 				scroll(options);
 			});
 		}
@@ -486,7 +474,16 @@ parallax.directive('parallax', ['util', function (u) {
 		//             {"adjustinner": $scope.adjustinner}
 		// ])
 
-		factor = $scope.factor ? $scope.factor : factor;
+		
+		factor = $scope.factor ? parseFloat($scope.factor) : factor;
+		
+		if (factor < 0 || factor >= 0) {
+			// console.log("factor is", factor);
+		}
+		else {
+			console.log("factor is indeterminate for", $scope.name + ",", "set factor to 1");
+			factor = 1;
+		}
 
 		u.waitForElem({elems:["#" + $scope.scroll]}, function (options) {
 

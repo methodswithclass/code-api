@@ -70,9 +70,11 @@
 
 		<div class="relative width80 hcenter white">
 
-			<div class="relative width font-25">
+			<!-- <div class="relative width font-25">
 				<p data="module.copy.full"></p>
-			</div>
+			</div> -->
+
+			<div class="relative width font-25" ng-bind-html="trustHtml(module.copy.full)"></div>
 
 			<div class="relative width padding-v-50 font-25">
 				<div class="absolute vcenter">current v{{module.current}}</div>

@@ -6,21 +6,21 @@ stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', 
 
 	$transitions.onStart({}, function($trans) {
 
-			//console.log(toState);	  
+		//console.log(toState);	  
 
-			prevState = $trans.$from().name;
+		prevState = $trans.$from().name;
 
-			console.log("to state", $trans.$to());
+		console.log("to state", $trans.$to());
 	});
 
 	$transitions.onSuccess({}, function($trans) {
 
-			console.log("successfully changed to state", $trans.$to());
+		console.log("successfully changed to state", $trans.$to());
 	});
 
 
 
-	getVersionExt = function (str) {
+	var getVersionExt = function (str) {
 
 		var versionArray = str.split(".");
 		var version;
@@ -53,20 +53,20 @@ stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', 
 
 
 		var urlArray = $location.url().split("/");
-		var package;
-		var packageName;
+		var pack;
+		var packName;
 		var version;
 		var ext;
 
-		packageName = urlArray[1];
+		packName = urlArray[1];
 		
-		var dashIndex = packageName.search("-");
-		var periodIndex = packageName.search(".");
+		var dashIndex = packName.search("-");
+		var periodIndex = packName.search(".");
 
 		if (dashIndex != -1) {
 
 
-			var str = packageName.split("-")[1];
+			var str = packName.split("-")[1];
 
 			if (periodIndex != -1) {
 
@@ -81,24 +81,24 @@ stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', 
 
 
 		if (dashIndex != -1 && periodIndex >= dashIndex) {
-			package = packageName.split("-")[0];
+			pack = packName.split("-")[0];
 		}
 		else if (periodIndex != -1) {
-			package = packageName.split(".")[0];
+			pack = packName.split(".")[0];
 		}
 		else {
-			package = urlArray[1];
+			pack = urlArray[1];
 		}
 
 
-		if (package == "classes") {
+		if (pack == "classes") {
 
 			version == "2.0";
 			ext = "css";
 		}
 
 
-		window.open("https://code.methodswithclass.com/" + package + "/" + version + "/" + package + "." + ext);
+		window.open("https://code.methodswithclass.com/" + pack + "/" + version + "/" + pack + "." + ext);
 
 	}
 
@@ -107,8 +107,17 @@ stateModule.factory("states", ['$q', 'runtime.state', '$state', '$transitions', 
 		return $state.current.name;
 	}
 
-	var go = function (state) {
-		$state.go(state);
+	var go = function (state, data) {
+		console.log("go to", state, data);
+
+		if (state == "home") {
+			$state.go(state);
+		}
+		else {
+			$state.go(state, data)
+		}
+
+		
 	}
 	
 

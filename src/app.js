@@ -12,10 +12,15 @@ var app = angular.module("app", ['parallaxModule', 'stateModule'])
 	}
 }])
 
-.run(function (states) {
+.run(["states",function (states) {
 
 	
 	// states.getPackage();
 
 	states.go("home");
-});
+}]);
+
+
+
+
+getAngularModules(app);

@@ -70,10 +70,14 @@ app.factory("data", function () {
 		copy:{
 			s:"parallax scrolls an image or HTML element",
 			l:"angular module that scrolls an image or DOM element at reduced rate compared to document scroll. Takes image source or child element as input.",
-			full:[
-				"Parallax scrolling gives the impression that a website has depth, it allows elements to scroll at different rates than the document itself. This module is designed for images and any other html element. It is an AngularJS directive that can be added to any div in an Angular project. jQuery is a dependency.",
-				"Parallax changes the scroll rate of the element in question from the scroll rate of the document. That rate difference is calculated based on a number of factors in real time. The default is to move the child in the same direction as the document scroll, but at a reduced rate. Use the 'factor' directive (see below) to adjust the quantity of this rate difference."
-			],
+			full:`
+
+				Parallax scrolling gives the impression that a website has depth, it allows elements to scroll at different rates than the document iself. This module is designed for images and any other html element. It is an AngularJS directive that can be added to any div in an Angular project. jQuery is a dependency.<br><br>
+				
+
+				Parallax changes the scroll rate of the element in question from the scroll rate of the document. That rate difference is calculated based on a number of factors in real time. The default is to move the child in the same direction as the document scroll, but at a reduced rate. Use the 'factor' directive (see below) to adjust the quantity of this rate difference.
+
+			`
 		},
 		versions:[
 		{
@@ -89,10 +93,25 @@ app.factory("data", function () {
 		{
 			number:"2.2",
 			src:"parallax.js",
+			status:depricated
+		},
+		{
+			number:"3.0",
+			src:"parallax.js",
+			status:depricated
+		},
+		{
+			number:"4.0",
+			src:"parallax.js",
+			status:depricated
+		},
+		{
+			number:"5.0",
+			src:"parallax.js",
 			status:production
 		}
 		],
-		current:"2.1",
+		current:"5.0",
 		doc:[
 		{
 			name:"modules",
@@ -101,12 +120,20 @@ app.factory("data", function () {
 				type:modtypes["directive"],
 				id:"parallax",
 				name:"parallax",
-				body:[
-					"To use this directive, scrolling must be handled by a parent element with the overflow-y set to scroll, body scrolling alone will not work. The reason is that the a primary mechanism is to measure the position of the parallax element compared to the window. Currently the way to acheive this is to maintain an element as a reference. Making it the scrolled element is a convenenience.",
-					"Images are handled automatically, there is no need for an <img> tag within the parent object. This is the main use of parallax. Simply add the source to the 'src' directive. If you want to apply parallax scrolling to a specified child element, add it's id to the 'inner' directive. Only one child element can have the parallax effect applied at a time, 'src' or 'inner'.",
-					"The parallax directive will handle resizing images when the window is resized so your content will always be shown correctly. It will also adjust the rate difference of scrolling to keep the edges of images from showing.",
-					"This module is under development, check back regularly for the most current version."
-				],
+				body:`
+					
+					To use this directive, scrolling must be handled by a parent element with the overflow-y set to scroll, body scrolling alone will not work. The reason is that the a primary mechanism is to measure the position of the parallax element compared to the window. Currently the way to acheive this is to maintain an element as a reference. Making it the scrolled element is a convenenience.<br><br>
+					
+
+					Images are handled automatically, there is no need for an <img> tag within the parent object. This is the main use of parallax. Simply add the source to the 'src' directive. If you want to apply parallax scrolling to a specified child element, add it's id to the 'inner' directive. Only one child element can have the parallax effect applied at a time, 'src' or 'inner'.<br><br>
+					
+
+					The parallax directive will handle resizing images when the window is resized so your content will always be shown correctly. It will also adjust the rate difference of scrolling to keep the edges of images from showing.<br><br>
+					
+
+					This module is under development, check back regularly for the most current version.
+
+				`,
 				sets:[
 				{
 					id:"variables",
@@ -116,14 +143,50 @@ app.factory("data", function () {
 					},
 					items:[
 					{
+						name:"name",
+						type:vartypes["string"],
+						required:reqtypes["optional"],
+						valid:[
+							{value:"descriptor"}
+						],
+						d:`
+							for debugging purposes
+						`
+					},
+					{
 						name:"scroll",
 						type:vartypes["string"],
 						required:reqtypes["required"],
 						valid:[
 							{value:"element id"}
 						],
+						d:`
+							the parallax module works only by using a parent element with css 'overflow-y' set to 'scroll'. It does not use the native window scroll feature. This allows more flexibility with the module. That element id is input here.
+						`
+					},
+					{
+						name:"adjustinner",
+						type:vartypes["bool"],
+						required:reqtypes["required"],
+						valid:[
+							{value:"true"},
+							{value:"false"}
+						],
+						d:`
+							
+							this determines whether the image given by 'src' is adjusted for size to fit the element or not. Set this to 'true' to ensure that your image is always larger than the parent element and therefore it's edges will not show
+
+						`
+					},
+					{
+						name:"imgId",
+						type:vartypes["string"],
+						required:reqtypes["required"],
+						valid:[
+							{value:"element id"}
+						],
 						d:[
-							"refers to element with overflow-y set to scroll. parallax functionality is bound to this element's scroll event. can't guarentee good result if 'scroll' is not an ancestor of parallax element."
+							"this is the element id of the image given by the 'src' directive. required when 'src' provided."
 						]
 					},
 					{
@@ -133,9 +196,9 @@ app.factory("data", function () {
 						valid:[
 							{value:"img source"}
 						],
-						d:[
-							"image is automatically added to parallax element. required if inner not defined, can only define one."
-						]
+						d:`
+							image is automatically added to parallax element. required if 'inner' not defined, can only define one of either.
+						`
 					},
 					{
 						name:"inner",
@@ -156,25 +219,34 @@ app.factory("data", function () {
 							{value:"true"},
 							{value:"false"}
 						],
-						d:[
-							"intended to be used for element with zero offset from scroll element on page load. if true, parallax child will not scroll with page, but be moved down opposite of scrolling. appears stationary. has the effect that a top element is being covered by the rest of the document when scrolling down."
-						]
+						d:`
+							set this to 'true' for an element that is at the very top of the page with zero offset from scroll element on page load. if true, parallax child will not scroll with page, but be moved down opposite of scrolling. appears stationary. has the effect that a top element is being covered by the rest of the document when scrolling down.
+						`
 					},
 					{
 						name:"factor",
 						type:vartypes["number"],
 						required:reqtypes["optional"],
 						valid:[
-							{value:">=0"},
-							{value:"<=1"}
+							{value:"numerical, any"}
 						],
-						d:[
-							"this is a multiplier on scroll rate of the child to be added on a per case basis. it is a percentage given as a number between 0 and 1.",
-							"==1, if absent, this value defaults to 1. changes nothing.",
-							">1, for every pixel that the document scrolls, the child will scroll more than a pixel. will cause the edges of an image to show.",
-							"==0, turns off parallax. child will be left vertically centered in parent element.",
-							"<0, the child will be scrolled in the opposite direction of the document. less than -1 will cause the edges of an image to show."
-						]
+						d:`
+
+							this is a multiplier on scroll rate of the child to be added on a per case basis. it is a percentage given as a number between 0 and 1.<br><br>
+							
+
+							==1, this value defaults to 1 if absent. changes nothing.<br><br>
+							
+
+							>1, for every pixel that the document scrolls, the child will scroll more than a pixel. will cause the edges of an image to show.<br><br>
+
+
+							==0, turns off parallax. child will be left vertically centered in parent element.<br><br>
+
+
+							<0, the child will be scrolled in the opposite direction of the document. less than -1 will cause the edges of an image to show.
+
+						`
 					}
 					]
 				}
@@ -189,23 +261,23 @@ app.factory("data", function () {
 		copy:{
 			s:"the last css library you'll ever need",
 			l:"a flat css library that provides individual classes for each style point. this allows for an element to carry whatever classes it needs and reduces the burden on extensive singleton classes or heavy-duty css document engineering.",
-			full:[
-				"This css library contains single style css classes that are added in combination to each element to complete the total syling. It allows more development for the layout and less development on the css structures that will make the layout work. Doing classes this way allows for quick changes to be made without having to think about how to make the changes within the css hiearchical structure already put in place. It is a continuously expanding set, and will have very seldom retractions, so you can use this and all future versions without fear of anything you have breaking."
-			]
+			full:`
+				This css library contains single style css classes that are added in combination to each element to complete the total syling. It allows more development for the layout and less development on the css structures that will make the layout work. Doing classes this way allows for quick changes to be made without having to think about how to make the changes within the css hiearchical structure already put in place. It is a continuously expanding set, and will have very seldom retractions, so you can use this and all future versions without fear of anything you have breaking.
+			`
 		},
 		versions:[
 		{
 			number:"1.0",
 			src:"classes.css",
-			status:production
+			status:depricated
 		},
 		{
 			number:"2.0",
 			src:"classes.css",
-			status:development
+			status:production
 		}
 		],
-		current:"1.0",
+		current:"2.0",
 		doc:[
 		{
 			name:"modules",
@@ -214,21 +286,48 @@ app.factory("data", function () {
 				type:modtypes["css"],
 				id:"classes",
 				name:"classes",
-				body:[
-					".absolute {position:absolute;}",
-					".relative {position:relative;}",
-					".width {width:100%;}",
-					".width-100 {width:100px;}",
-					".top50 {top:50%;}",
-					".top-50 {top:50px;}",
-					".rounded10 {border-radius:10px}",
-					".border {border:1px solid black;}",
-					".border-white {border:1px solid white;}",
-					".center -> centers div inside parent, works on divs with no defined width or height",
-					".hcenter -> horizontally centers div inside parent, works on divs with no defined width or height",
-					".golden -> aligns center of child 30% from top of parent, can be combined with hcenter",
-					"in addition to countless positioning, colors, fonts, borders, and more."
-				]
+				body:`
+					
+
+					.absolute {position:absolute;}<br><br>
+					
+
+					.relative {position:relative;}<br><br>
+					
+
+					.width {width:100%;}<br><br>
+					
+
+					.width-100 {width:100px;}<br><br>
+					
+
+					.top50 {top:50%;}<br><br>
+					
+
+					.top-50 {top:50px;}<br><br>
+					
+
+					.rounded10 {border-radius:10px}<br><br>
+					
+
+					.border {border:1px solid black;}<br><br>
+					
+
+					.border-white {border:1px solid white;}<br><br>
+					
+
+					.center -> centers div inside parent, works on divs with no defined width or height<br><br>
+					
+
+					.hcenter -> horizontally centers div inside parent, works on divs with no defined width or height<br><br>
+					
+
+					.golden -> aligns center of child 30% from top of parent, can be combined with hcenter<br><br>
+					
+
+					in addition to countless positioning, colors, fonts, borders, and more
+
+				`
 			}
 			]
 		}
@@ -239,9 +338,9 @@ app.factory("data", function () {
 		copy:{
 			s:"general utility for a web app",
 			l:"contains several services for any generic javascript app, unopinionated toward fraework (compatibable with Angular, React, Backbone, etc). Provides an events service to call functions from other parts of an app, a service to send and receive objects and data across an app, and more",
-			full:[
-				"this module offers several services that can used globally in a project. services for chekcing device state, declaring a function and then firing it to locally from where it was delcared from a different point in the app at a later time, accumulating several callbacks that can fired in succession in the order you dictate, and saving data at runtime to a central location to be retrieved from anywhere in the app at a later time, among others."
-			]
+			full:`
+				this module offers several services that can used globally in a project. services for chekcing device state, declaring a function and then firing it to locally from where it was delcared from a different point in the app at a later time, accumulating several callbacks that can fired in succession in the order you dictate, and saving data at runtime to a central location to be retrieved from anywhere in the app at a later time, among others.
+			`
 		},
 		versions:[
 		{
@@ -274,9 +373,9 @@ app.factory("data", function () {
 				type:modtypes["factory"],
 				id:"global",
 				name:"global",
-				body:[
-					"this service deals with device state and some other global functions."
-				],
+				body:`
+					this service deals with device state and some other global functions.
+				`,
 				sets:[
 				{
 					id:"functions",
@@ -284,9 +383,9 @@ app.factory("data", function () {
 					items:[
 					{
 						name:"isMobile",
-						d:[
-							"checks if the device is a mobile device."
-						],
+						d:`
+							checks if the device is a mobile device.
+						`,
 						input:{
 							name:{
 								text:"inputs",
@@ -295,9 +394,9 @@ app.factory("data", function () {
 							items:[
 							{
 								name:"na",
-								d:[
-									"this function takes no input."
-								]
+								d:`
+									this function takes no input.
+								`
 							}
 							]
 						},
@@ -309,9 +408,9 @@ app.factory("data", function () {
 							items:[
 							{
 								type:vartypes["bool"],
-								d:[
-									"if device is mobile, this will return true."
-								]
+								d:`
+									if device is mobile, this will return true.
+								`
 							}
 							]
 						}
@@ -327,9 +426,9 @@ app.factory("data", function () {
 							{
 								name:"na",
 								type:vartypes["na"],
-								d:[
-									"this function takes no input."
-								]
+								d:`
+									this function takes no input.
+								`
 							}
 							]
 						},
@@ -338,9 +437,9 @@ app.factory("data", function () {
 							items:[
 							{
 								type:vartypes["bool"],
-								d:[
-									"if width is less than height, returns true"
-								]
+								d:`
+									if width is less than height, returns true
+								`
 							}
 							]
 						}
@@ -375,9 +474,9 @@ app.factory("data", function () {
 				type:modtypes["factory"],
 				id:"send",
 				name:"send",
-				body:[
-					"this service centralizes runtime data that can be retrieved anywhere in the app."
-				],
+				body:`
+					this service centralizes runtime data that can be retrieved anywhere in the app.
+				`,
 				sets:[
 				{
 					id:"functions",
@@ -402,9 +501,9 @@ app.factory("data", function () {
 		copy:{
 			s:"debug on mobile",
 			l:"prints out the console to a visible area on screen. designed for mobile debugging. output is scrollable",
-			full:[
-				"Debugging for mobile devices can be difficult because reading console logs is difficult. This module places console logs squarly in your view when viewing a development site on a mobile device. Entries made with javascript, and some native error messages will show in a black box in the lower third of the screen. The logs are scrollable. Only a 1000 messages are kept in the history to maintain performance. The directive can be easily shown or hidden with an HTML parameter, no need to use comments or flush the cache."
-			]
+			full:`
+				Debugging for mobile devices can be difficult because reading console logs is difficult. This module places console logs squarly in your view when viewing a development site on a mobile device. Entries made with javascript, and some native error messages will show in a black box in the lower third of the screen. The logs are scrollable. Only a 1000 messages are kept in the history to maintain performance. The directive can be easily shown or hidden with an HTML parameter, no need to use comments or flush the cache.
+			`
 		},
 		versions:[
 		{
@@ -422,9 +521,9 @@ app.factory("data", function () {
 				type:modtypes["directive"],
 				id:"console",
 				name:"console",
-				body:[
-					"Place this directive in your root body tag below your content. The element is absolutly positioned at the bottom of the screen with a high z-index so that it remains visible."
-				],
+				body:`
+					Place this directive in your root body tag below your content. The element is absolutly positioned at the bottom of the screen with a high z-index so that it remains visible.
+				`,
 				sets:[
 				{
 					id:"variables",
@@ -438,9 +537,9 @@ app.factory("data", function () {
 							{value:"true"},
 							{value:"false"}
 						],
-						d:[
-							"shows and hides the console"
-						]
+						d:`
+							shows and hides the console
+						`
 
 					}
 					]
@@ -454,22 +553,88 @@ app.factory("data", function () {
 	}
 	]
 
+
+	var sortVersions = function () {
+
+		modules.forEach(function (value, index) {
+
+			value.versions.sort(function (a, b) {
+
+				return b.number - a.number;
+			});
+		})
+	}
+
 	var getModuleByName = function (name) {
 
-		for (i in modules) {
 
-			if (name == modules[i].name) {
+		var found = modules.find(function (p) {
 
-				return modules[i];
+			return p.name == name;
+		})
+
+		return found ? found : {name:"none"};
+	}
+
+	var getItem = function (options) {
+
+		var parseKey = function (key, p) {
+
+
+			if (key.indexOf(".") != -1) {
+
+				var keyArray = key.split(".");
+
+				for (var i in keyArray) {
+
+					p = p[keyArray[i]]
+				}
 			}
+			else {
+				p = p[key];
+			}
+
+			return p;
 		}
 
-		return {name:"none"};
+
+		var findObj = function (obj, key, value) {
+
+			return obj.find(function (p) {
+
+				var searchValue = parseKey(key, p);
+
+				return searchValue == value;
+			})
+		}
+
+
+		var moduleValue = options.module;
+		var dataKeys = options.dataKeys;
+		var objectKeys = options.objectKeys;
+		var values = options.values;
+
+		var mod = getModuleByName(moduleValue);
+
+		var found = findObj(mod[objectKeys[0]], dataKeys[0], values[0]);
+
+		for (var i = 1, k1 = 1, k2 = 1; i < values.length && k1 < dataKeys.length && k2 < objectKeys.length; i++, k1++, k2++) {
+
+			// console.log("option", options[i], "key", keys1[k1], keys2[k2], found);
+
+			var found = findObj(found[objectKeys[k2]], dataKeys[k1], values[i]);
+
+		}
+
+		return found;
 	}
+
+	sortVersions();
 
 	return {
 		modules:modules,
-		getModuleByName:getModuleByName
+		getModuleByName:getModuleByName,
+		getItem:getItem
 	}
 
 });

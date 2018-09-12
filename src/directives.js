@@ -1,5 +1,5 @@
 
-app.directive("doc", ['data', function (data) {
+app.directive("doc", ['data', "general", function (data, general) {
 
 	return {
 		restrict:"E",
@@ -8,13 +8,19 @@ app.directive("doc", ['data', function (data) {
 		templateUrl:"assets/views/doc.html",
 		link:function ($scope, element, attr) {
 
+
+			$scope.trustHtml = function (html) {
+
+				return general.renderHtml(html)
+			}
+
 		}
 	}
 
 }])
 
 
-.directive("block", function () {
+.directive("block", ["$stateParams", "states", function ($stateParams, states) {
 
 	return {
 		resrict:"E",
@@ -31,27 +37,19 @@ app.directive("doc", ['data', function (data) {
 				return "assets/views/" + $scope.type + ".html";
 			}
 
+
+			$scope.openVariable = function (variable) {
+
+				if ($scope.type == "variables") {
+
+					states.go("variable", {module:$stateParams.module, variable:variable})
+				}
+			}
+
 		}
 	}
 
-})
-
-.directive("p", function () {
-
-	return {
-
-		restrict:"E",
-		scope:{
-			data:"="
-		},
-		replace:true,
-		templateUrl:"assets/views/paragraph.html",
-		link:function ($scope, element, attr) {
-
-			
-		}
-	}
-})
+}])
 
 .directive("mainPage", function () {
 
@@ -87,7 +85,7 @@ app.directive("doc", ['data', function (data) {
 
 })
 
-.directive("open", function (states) {
+.directive("open", ["states", function (states) {
 
 	return {
 
@@ -96,16 +94,16 @@ app.directive("doc", ['data', function (data) {
 
 			$(element).on("click", function () {
 
-				states.go($scope.module.name);
+				states.go("module", {module:$scope.module.name});
 
 				$("#body").scrollTo(0);
 
 			})
 		}
 	}
-})
+}])
 
-.directive("home", function (states) {
+.directive("home", ["states", function (states) {
 
 	return {
 
@@ -122,4 +120,4 @@ app.directive("doc", ['data', function (data) {
 		}
 	}
 
-});
+}]);

@@ -1,4 +1,4 @@
-stateModule.provider("runtime.state", function ($stateProvider) {
+stateModule.provider("runtime.state", ["$stateProvider", function ($stateProvider) {
   // runtime dependencies for the service can be injected here, at the provider.$get() function.
 
     var provider = {};
@@ -18,44 +18,81 @@ stateModule.provider("runtime.state", function ($stateProvider) {
         controllerAs:"main"
     },
     {
-        name:"parallax",
-        url:"/docs/parallax",
+        name:"module",
+        url:"/docs/:module",
+        params:{module:null},
         templateUrl:"assets/views/module.html",
-        controller:function ($scope, data) {
+        controller:["$scope", "data", "general", "$stateParams", function ($scope, data, general, $stateParams) {
 
-            $scope.module = data.getModuleByName("parallax");
+            console.log("controller for module");
 
-        }
+            $scope.module = data.getModuleByName($stateParams.module);
+
+            $scope.trustHtml = function (html) {
+
+                return general.renderHtml(html)
+            }
+
+        }]
     },
     {
-        name:"classes",
-        url:"/docs/classes",
-        templateUrl:"assets/views/module.html",
-        controller:function ($scope, data) {
+        name:"variable",
+        url:"/docs/:module/variable/:variable",
+        params:{module:null, variable:null},
+        templateUrl:"assets/views/variable.html",
+        controller:["$scope", "data", "general", "$stateParams", 'states', function ($scope, data, general, $stateParams, states) {
 
-            $scope.module = data.getModuleByName("classes");
+            console.log("controller for module variable");
 
-        }
-    },
-    {
-        name:"shared",
-        url:"/docs/shared",
-        templateUrl:"assets/views/module.html",
-        controller:function ($scope, data) {
+            $("#body").scrollTo(0);
 
-            $scope.module = data.getModuleByName("shared");
+            var dataKeys = [
+                "name",
+                "id",
+                "id",
+                "name"
+            ]
 
-        }
-    },
-    {
-        name:"console",
-        url:"/docs/console",
-        templateUrl:"assets/views/module.html",
-        controller:function ($scope, data) {
+            var objectKeys = [
+                "doc",
+                "items",
+                "sets",
+                "items"
+            ]
 
-            $scope.module = data.getModuleByName("console");
+            var values = [
+                "modules", 
+                $stateParams.module, 
+                "variables", 
+                $stateParams.variable
+            ]
 
-        }
+            $scope.data = data.getItem({
+                module:$stateParams.module, 
+                dataKeys:dataKeys, 
+                objectKeys:objectKeys, 
+                values:values
+            });
+
+            console.log("data", $scope.data);
+
+            $scope.backToModule = function () {
+
+                states.go("module", {module:$stateParams.module});
+            }
+
+
+            $scope.moduleName = function () {
+
+                return $stateParams.module;
+            }
+
+            $scope.trustHtml = function (html) {
+
+                return general.renderHtml(html)
+            }
+
+        }]
     }
     ];
 
@@ -84,4 +121,4 @@ stateModule.provider("runtime.state", function ($stateProvider) {
     provider.states = states;
 
     return provider;
-});
+}]);
