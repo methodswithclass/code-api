@@ -209,11 +209,6 @@ var images = function() {
 	.pipe(gulp.dest('dist/assets/img'));
 };
 
-var data = function() {
-	return gulp.src('src/assets/data/kaggle/**/*.csv')
-	.pipe(gulp.dest('dist/assets/data/kaggle'));
-};
-
 var fonts = function () {
 
 	var mainFonts = gulp.src("src/assets/fonts/**/*.*")
@@ -289,7 +284,7 @@ var serveFunc = function (done) {
 	
 }
 
-var copy = gulp.parallel(data, misc, index, html, images, fonts)
+var copy = gulp.parallel(misc, index, html, images, fonts)
 
 var compile = gulp.parallel(gulp.series(tempVendor, vendor), scripts);
 

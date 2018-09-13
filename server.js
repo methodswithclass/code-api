@@ -38,12 +38,16 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 
 
 
-app.use(require('connect-livereload')({
-	port: PORTS.livereload
-}));
+if  (process.env.NODE_ENV != "production") {
+	app.use(require('connect-livereload')({
+		port: PORTS.livereload
+	}));
+}
 
 
-app.use("/api", apiRouter);
+// app.use("/api", apiRouter);
+
+app.use("/api", express.static(path.join(__dirname, "api")));
 
 app.use("/", express.static(path.join(__dirname, "dist")));
 

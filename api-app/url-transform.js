@@ -16,6 +16,12 @@ var packagesOnFile = [
 	versions:[
 	{
 		ver:"1.0"
+	},
+	{
+		ver:"1.1"
+	},
+	{
+		ver:"1.2"
 	}
 	]
 },
@@ -28,6 +34,16 @@ var packagesOnFile = [
 	},
 	{
 		ver:"2.0"
+	}
+	]
+
+},
+{
+	name:"evolve",
+	ext:"js",
+	versions:[
+	{
+		ver:"1.0"
 	}
 	]
 
@@ -59,6 +75,12 @@ var packagesOnFile = [
 	},
 	{
 		ver:"3.0"
+	},
+	{
+		ver:"4.0"
+	},
+	{
+		ver:"5.0"
 	}
 	]
 },
@@ -77,6 +99,15 @@ var packagesOnFile = [
 	},
 	{
 		ver:"3.0"
+	},
+	{
+		ver:"4.0"
+	},
+	{
+		ver:"4.6.1"
+	},
+	{
+		ver:"5.0"
 	}
 	]
 },
@@ -184,14 +215,14 @@ var forwardAddress = function (req) {
 
 	var urlArray = req.url.split("/");
 	
-	var package;
+	var pack;
 	var version;
 	var ext;
 
-	var fileName = urlArray[1];
+	var fileName = urlArray[2];
 	var fileArray = fileName.split((fileName.indexOf("-") > -1) ? "-" : ".")
 
-	// console.log("url array", urlArray);
+	console.log("fileName", urlArray, fileName, fileArray);
 
 
 	if (fileName.indexOf(".") > -1) {
@@ -203,7 +234,7 @@ var forwardAddress = function (req) {
 
 			
 
-			package = fileArray[0];
+			pack = fileArray[0];
 
 			var temp = getDataFromString(fileArray[1]);
 			version = temp.version;
@@ -215,19 +246,19 @@ var forwardAddress = function (req) {
 
 			console.log("no dash");
 
-			package = fileArray[0];
+			pack = fileArray[0];
 
 			ext = "." + fileArray[1];
-			var temp = getDataFromArray(package);
+			var temp = getDataFromArray(pack);
 			version = temp.version;
 
 		}
 
 
 		return {
-			package:package,
+			package:pack,
 			version:version,
-			file:package + ext,
+			file:pack + ext,
 			order:["package", "version", "file"]
 		};
 	}
