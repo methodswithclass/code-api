@@ -299,7 +299,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 
 			var getEqs = function ($ih) {
 
-				g = (ph-$ih)/2;
+				
 				h = $el.height();
 
 				console.log("version 4", $scope.name, "sh:", sh, " ph:", ph, " ih:", $ih, " h:", h);

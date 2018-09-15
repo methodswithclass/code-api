@@ -136,7 +136,7 @@ parallax.factory("util", function () {
     }
 
 
-    // adjusts the size of the image (defined in the directive 'src') to always be bigger than the parent
+ //    // adjusts the size of the image (defined in the directive 'src') to always be bigger than the parent
 	var fixInside = function (params) {
 
 		var $i = params.inside;
@@ -218,7 +218,7 @@ parallax.factory("util", function () {
 		var m;
 		var b;
 
-		if (x2 - x1 != 0) {
+		if (x2 != x1) {
 			
 			m = (y2-y1)/(x2-x1);
 			b = y1 - x1*m;
@@ -335,46 +335,6 @@ parallax.directive('parallax', ['util', function (u) {
 		}
 
 
-		// var getEqs = function (options, $ih) {
-
-		// 	var $scope = options.$scope;
-		// 	var element = options.element;
-		// 	var attr = options.attr;
-		// 	var $options = options.$options;
-
-		// 	// console.log("scroll height", $($options.elems[0])[0]);
-
-
-		// 	var xBuffer = 2;
-		// 	var yBuffer = 0;
-
-
-		// 	// var posneg = {
-		// 	// 	"g":-1,
-		// 	// 	"btop":-1,
-		// 	// 	"belse":1,
-		// 	// 	"x1":1,
-		// 	// 	"x2":1,
-		// 	// 	"y1":-1,
-		// 	// 	"y2":-1
-		// 	// }
-
-
-		// 	bodyheight = $($options.elems[0]).height();
-
-
-		// 	if ($scope.top) {
-		// 		eqs = {m:-0.99, b:-1*($ih-elemheight)/2}
-		// 	}
-		// 	else {
-		// 		eqs = {m:-0.99, b:(innerheight-bodyheight)};
-		// 	}
-
-			
-
-		// }
-
-
 		var getEqs = function (options, $ih) {
 
 			var $scope = options.$scope;
@@ -385,19 +345,18 @@ parallax.directive('parallax', ['util', function (u) {
 			var xBuffer = 100;
 			var yBuffer = 20;
 
-			g = (innerheight-$ih)/2;
-			bodyheight = $($options.elems[0]).height();
-			// h = $el.height();
 
-			// console.log($scope.name, "sh:" + sh + " ph:" + ph + " ih:" + $ih + " g:" + g + " h:" + h);
+			var bodyheight = $($options.elems[0]).height();
+
+			console.log("version 5", $scope.name, "sh:", elemheight, " ph:", innerheight, " ih:", $ih, " h:", bodyheight);
 
 			if (!$scope.top) {
 
 				// console.log("equation", $scope.name ? $scope.name : "", "is linear");
 
-				eqs = linear({
-					x1:xBuffer,
-					y1:yBuffer,
+				eqs = u.linear({
+					x1:(-1)*xBuffer,
+					y1:(-1)*yBuffer,
 
 					x2:bodyheight + xBuffer,
 					y2:(elemheight-innerheight) + yBuffer
@@ -406,7 +365,7 @@ parallax.directive('parallax', ['util', function (u) {
 			}
 			else {
 				// console.log("equation", $scope.name ? $scope.name : "", "is simple");
-				eqs = {m:-0.99, b:-1*(elemheight-innerheight)/2};
+				eqs = {m:-0.99, b:(elemheight-innerheight)/2};
 			}
 
 			// console.log($scope.name, "m:" + eqs.m + " b:" + eqs.b);
@@ -496,7 +455,7 @@ parallax.directive('parallax', ['util', function (u) {
 			$($options.elems[0]).scroll(function () {
 
 				// console.log(($($options.elems[0])[0] ? "parallax" : "no parallax"), "scroll");
-				reset(options);
+				// reset(options);
 				scroll(options);
 			});
 		}
