@@ -348,7 +348,7 @@ parallax.directive('parallax', ['util', function (u) {
 
 			var bodyheight = $($options.elems[0]).height();
 
-			console.log("version 5", $scope.name, "sh:", elemheight, " ph:", innerheight, " ih:", $ih, " h:", bodyheight);
+			// console.log("version 5", $scope.name, "sh:", elemheight, " ph:", innerheight, " ih:", $ih, " h:", bodyheight);
 
 			if (!$scope.top) {
 
