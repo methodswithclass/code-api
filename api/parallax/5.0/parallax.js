@@ -335,6 +335,46 @@ parallax.directive('parallax', ['util', function (u) {
 		}
 
 
+		// var getEqs = function (options, $ih) {
+
+		// 	var $scope = options.$scope;
+		// 	var element = options.element;
+		// 	var attr = options.attr;
+		// 	var $options = options.$options;
+
+		// 	// console.log("scroll height", $($options.elems[0])[0]);
+
+
+		// 	var xBuffer = 2;
+		// 	var yBuffer = 0;
+
+
+		// 	// var posneg = {
+		// 	// 	"g":-1,
+		// 	// 	"btop":-1,
+		// 	// 	"belse":1,
+		// 	// 	"x1":1,
+		// 	// 	"x2":1,
+		// 	// 	"y1":-1,
+		// 	// 	"y2":-1
+		// 	// }
+
+
+		// 	bodyheight = $($options.elems[0]).height();
+
+
+		// 	if ($scope.top) {
+		// 		eqs = {m:-0.99, b:-1*($ih-elemheight)/2}
+		// 	}
+		// 	else {
+		// 		eqs = {m:-0.99, b:(innerheight-bodyheight)};
+		// 	}
+
+			
+
+		// }
+
+
 		var getEqs = function (options, $ih) {
 
 			var $scope = options.$scope;
@@ -342,35 +382,34 @@ parallax.directive('parallax', ['util', function (u) {
 			var attr = options.attr;
 			var $options = options.$options;
 
-			// console.log("scroll height", $($options.elems[0])[0]);
+			var xBuffer = 100;
+			var yBuffer = 20;
 
-
-			var xBuffer = 2;
-			var yBuffer = 0;
-
-
-			var posneg = {
-				"g":-1,
-				"btop":-1,
-				"belse":1,
-				"x1":1,
-				"x2":1,
-				"y1":-1,
-				"y2":-1
-			}
-
-
+			g = (innerheight-$ih)/2;
 			bodyheight = $($options.elems[0]).height();
+			// h = $el.height();
 
+			// console.log($scope.name, "sh:" + sh + " ph:" + ph + " ih:" + $ih + " g:" + g + " h:" + h);
 
-			if ($scope.top) {
-				eqs = {m:-0.99, b:-1*($ih-elemheight)/2}
+			if (!$scope.top) {
+
+				// console.log("equation", $scope.name ? $scope.name : "", "is linear");
+
+				eqs = linear({
+					x1:xBuffer,
+					y1:yBuffer,
+
+					x2:bodyheight + xBuffer,
+					y2:(elemheight-innerheight) + yBuffer
+				});
+
 			}
 			else {
-				eqs = {m:-0.99, b:(innerheight-bodyheight)};
+				// console.log("equation", $scope.name ? $scope.name : "", "is simple");
+				eqs = {m:-0.99, b:-1*(elemheight-innerheight)/2};
 			}
 
-			
+			// console.log($scope.name, "m:" + eqs.m + " b:" + eqs.b);
 
 		}
 

@@ -302,7 +302,7 @@ parallax.directive('parallax', ['util', '$window', function (u, $window) {
 				g = (ph-$ih)/2;
 				h = $el.height();
 
-				// console.log($scope.name, "sh:" + sh + " ph:" + ph + " ih:" + $ih + " g:" + g + " h:" + h);
+				console.log($scope.name, "sh:" + sh + " ph:" + ph + " ih:" + $ih + " h:" + h);
 
 				if (!$scope.top) {
 
