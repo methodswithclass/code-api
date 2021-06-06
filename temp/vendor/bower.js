@@ -9210,8 +9210,8 @@ return jQuery;
 }));
 
 /**
- * @license AngularJS v1.7.4
- * (c) 2010-2018 Google, Inc. http://angularjs.org
+ * @license AngularJS v1.8.2
+ * (c) 2010-2020 Google LLC. http://angularjs.org
  * License: MIT
  */
 (function(window) {'use strict';
@@ -9248,7 +9248,7 @@ var minErrConfig = {
  *   non-positive or non-numeric value, removes the max depth limit.
  *   Default: 5
  *
- * * `urlErrorParamsEnabled`  **{Boolean}** - Specifies wether the generated error url will
+ * * `urlErrorParamsEnabled`  **{Boolean}** - Specifies whether the generated error url will
  *   contain the parameters of the thrown error. Disabling the parameters can be useful if the
  *   generated error url is very long.
  *
@@ -9298,7 +9298,7 @@ function isValidObjectMaxDepth(maxDepth) {
  * Since data will be parsed statically during a build step, some restrictions
  * are applied with respect to how minErr instances are created and called.
  * Instances should have names of the form namespaceMinErr for a minErr created
- * using minErr('namespace') . Error codes, namespaces and template strings
+ * using minErr('namespace'). Error codes, namespaces and template strings
  * should all be static strings, not variables or general expressions.
  *
  * @param {string} module The namespace to use for the new minErr instance.
@@ -9310,7 +9310,7 @@ function isValidObjectMaxDepth(maxDepth) {
 function minErr(module, ErrorConstructor) {
   ErrorConstructor = ErrorConstructor || Error;
 
-  var url = 'https://errors.angularjs.org/1.7.4/';
+  var url = 'https://errors.angularjs.org/1.8.2/';
   var regex = url.replace('.', '\\.') + '[\\s\\S]*';
   var errRegExp = new RegExp(regex, 'g');
 
@@ -9443,6 +9443,7 @@ function minErr(module, ErrorConstructor) {
   hasOwnProperty,
   createMap,
   stringify,
+  UNSAFE_restoreLegacyJqLiteXHTMLReplacement,
 
   NODE_TYPE_ELEMENT,
   NODE_TYPE_ATTRIBUTE,
@@ -9692,8 +9693,10 @@ function baseExtend(dst, objs, deep) {
         } else if (isElement(src)) {
           dst[key] = src.clone();
         } else {
-          if (!isObject(dst[key])) dst[key] = isArray(src) ? [] : {};
-          baseExtend(dst[key], [src], true);
+          if (key !== '__proto__') {
+            if (!isObject(dst[key])) dst[key] = isArray(src) ? [] : {};
+            baseExtend(dst[key], [src], true);
+          }
         }
       } else {
         dst[key] = src;
@@ -9746,8 +9749,8 @@ function extend(dst) {
 * sinceVersion="1.6.5"
 * This function is deprecated, but will not be removed in the 1.x lifecycle.
 * There are edge cases (see {@link angular.merge#known-issues known issues}) that are not
-* supported by this function. We suggest
-* using [lodash's merge()](https://lodash.com/docs/4.17.4#merge) instead.
+* supported by this function. We suggest using another, similar library for all-purpose merging,
+* such as [lodash's merge()](https://lodash.com/docs/4.17.4#merge).
 *
 * @knownIssue
 * This is a list of (known) object types that are not handled correctly by this function:
@@ -9755,6 +9758,8 @@ function extend(dst) {
 * - [`MediaStream`](https://developer.mozilla.org/docs/Web/API/MediaStream)
 * - [`CanvasGradient`](https://developer.mozilla.org/docs/Web/API/CanvasGradient)
 * - AngularJS {@link $rootScope.Scope scopes};
+*
+* `angular.merge` also does not support merging objects with circular references.
 *
 * @param {Object} dst Destination object.
 * @param {...Object} src Source object(s).
@@ -10133,7 +10138,9 @@ function arrayRemove(array, value) {
  * @kind function
  *
  * @description
- * Creates a deep copy of `source`, which should be an object or an array.
+ * Creates a deep copy of `source`, which should be an object or an array. This functions is used
+ * internally, mostly in the change-detection code. It is not intended as an all-purpose copy
+ * function, and has several limitations (see below).
  *
  * * If no destination is supplied, a copy of the object or array is created.
  * * If a destination is provided, all of its elements (for arrays) or properties (for objects)
@@ -10147,6 +10154,25 @@ function arrayRemove(array, value) {
  *   Only enumerable properties are taken into account. Non-enumerable properties (both on `source`
  *   and on `destination`) will be ignored.
  * </div>
+ *
+ * <div class="alert alert-warning">
+ *   `angular.copy` does not check if destination and source are of the same type. It's the
+ *   developer's responsibility to make sure they are compatible.
+ * </div>
+ *
+ * @knownIssue
+ * This is a non-exhaustive list of object types / features that are not handled correctly by
+ * `angular.copy`. Note that since this functions is used by the change detection code, this
+ * means binding or watching objects of these types (or that include these types) might not work
+ * correctly.
+ * - [`File`](https://developer.mozilla.org/docs/Web/API/File)
+ * - [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)
+ * - [`ImageData`](https://developer.mozilla.org/docs/Web/API/ImageData)
+ * - [`MediaStream`](https://developer.mozilla.org/docs/Web/API/MediaStream)
+ * - [`Set`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)
+ * - [`WeakMap`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WeakMap)
+ * - [`getter`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get)/
+ *   [`setter`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set)
  *
  * @param {*} source The source that will be used to make a copy. Can be any type, including
  *     primitives, `null`, and `undefined`.
@@ -10856,7 +10882,7 @@ function allowAutoBootstrap(document) {
     link.href = src.value;
 
     if (document.location.origin === link.origin) {
-      // Same-origin resources are always allowed, even for non-whitelisted schemes.
+      // Same-origin resources are always allowed, even for banned URL schemes.
       return true;
     }
     // Disabled bootstrapping unless angular.js was loaded from a known scheme used on the web.
@@ -11046,13 +11072,8 @@ function angularInit(element, bootstrap) {
   });
   if (appElement) {
     if (!isAutoBootstrapAllowed) {
-      try {
-        window.console.error('AngularJS: disabling automatic bootstrap. <script> protocol indicates ' +
+      window.console.error('AngularJS: disabling automatic bootstrap. <script> protocol indicates ' +
           'an extension, document.location.href does not match.');
-      } catch (e) {
-        // Support: Safari 11 w/ Webdriver
-        // The console.error will throw and make the test fail
-      }
       return;
     }
     config.strictDi = getNgAttribute(appElement, 'strict-di') !== null;
@@ -11277,6 +11298,26 @@ function bindJQuery() {
 
   // Prevent double-proxying.
   bindJQueryFired = true;
+}
+
+/**
+ * @ngdoc function
+ * @name angular.UNSAFE_restoreLegacyJqLiteXHTMLReplacement
+ * @module ng
+ * @kind function
+ *
+ * @description
+ * Restores the pre-1.8 behavior of jqLite that turns XHTML-like strings like
+ * `<div /><span />` to `<div></div><span></span>` instead of `<div><span></span></div>`.
+ * The new behavior is a security fix. Thus, if you need to call this function, please try to adjust
+ * your code for this change and remove your use of this function as soon as possible.
+
+ * Note that this only patches jqLite. If you use jQuery 3.5.0 or newer, please read the
+ * [jQuery 3.5 upgrade guide](https://jquery.com/upgrade-guide/3.5/) for more details
+ * about the workarounds.
+ */
+function UNSAFE_restoreLegacyJqLiteXHTMLReplacement() {
+  JQLite.legacyXHTMLReplacement = true;
 }
 
 /**
@@ -11886,7 +11927,7 @@ function toDebugString(obj, maxDepth) {
 
   htmlAnchorDirective,
   inputDirective,
-  inputDirective,
+  hiddenInputBrowserCacheDirective,
   formDirective,
   scriptDirective,
   selectDirective,
@@ -11998,11 +12039,11 @@ function toDebugString(obj, maxDepth) {
 var version = {
   // These placeholder strings will be replaced by grunt's `build` task.
   // They need to be double- or single-quoted.
-  full: '1.7.4',
+  full: '1.8.2',
   major: 1,
-  minor: 7,
-  dot: 4,
-  codeName: 'interstellar-exploration'
+  minor: 8,
+  dot: 2,
+  codeName: 'meteoric-mining'
 };
 
 
@@ -12035,6 +12076,7 @@ function publishExternalAPI(angular) {
     'callbacks': {$$counter: 0},
     'getTestability': getTestability,
     'reloadWithDebugInfo': reloadWithDebugInfo,
+    'UNSAFE_restoreLegacyJqLiteXHTMLReplacement': UNSAFE_restoreLegacyJqLiteXHTMLReplacement,
     '$$minErr': minErr,
     '$$csp': csp,
     '$$encodeUriSegment': encodeUriSegment,
@@ -12100,7 +12142,8 @@ function publishExternalAPI(angular) {
             ngModelOptions: ngModelOptionsDirective
         }).
         directive({
-          ngInclude: ngIncludeFillContentDirective
+          ngInclude: ngIncludeFillContentDirective,
+          input: hiddenInputBrowserCacheDirective
         }).
         directive(ngAttributeAliasDirectives).
         directive(ngEventDirectives);
@@ -12151,7 +12194,7 @@ function publishExternalAPI(angular) {
       });
     }
   ])
-  .info({ angularVersion: '1.7.4' });
+  .info({ angularVersion: '1.8.2' });
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -12244,6 +12287,16 @@ function publishExternalAPI(angular) {
  * - [`val()`](http://api.jquery.com/val/)
  * - [`wrap()`](http://api.jquery.com/wrap/)
  *
+ * jqLite also provides a method restoring pre-1.8 insecure treatment of XHTML-like tags.
+ * This legacy behavior turns input like `<div /><span />` to `<div></div><span></span>`
+ * instead of `<div><span></span></div>` like version 1.8 & newer do. To restore it, invoke:
+ * ```js
+ * angular.UNSAFE_restoreLegacyJqLiteXHTMLReplacement();
+ * ```
+ * Note that this only patches jqLite. If you use jQuery 3.5.0 or newer, please read the
+ * [jQuery 3.5 upgrade guide](https://jquery.com/upgrade-guide/3.5/) for more details
+ * about the workarounds.
+ *
  * ## jQuery/jqLite Extras
  * AngularJS also provides the following additional methods and events to both jQuery and jqLite:
  *
@@ -12323,20 +12376,36 @@ var HTML_REGEXP = /<|&#?\w+;/;
 var TAG_NAME_REGEXP = /<([\w:-]+)/;
 var XHTML_TAG_REGEXP = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:-]+)[^>]*)\/>/gi;
 
+// Table parts need to be wrapped with `<table>` or they're
+// stripped to their contents when put in a div.
+// XHTML parsers do not magically insert elements in the
+// same way that tag soup parsers do, so we cannot shorten
+// this by omitting <tbody> or other required elements.
 var wrapMap = {
-  'option': [1, '<select multiple="multiple">', '</select>'],
-
-  'thead': [1, '<table>', '</table>'],
-  'col': [2, '<table><colgroup>', '</colgroup></table>'],
-  'tr': [2, '<table><tbody>', '</tbody></table>'],
-  'td': [3, '<table><tbody><tr>', '</tr></tbody></table>'],
-  '_default': [0, '', '']
+  thead: ['table'],
+  col: ['colgroup', 'table'],
+  tr: ['tbody', 'table'],
+  td: ['tr', 'tbody', 'table']
 };
 
-wrapMap.optgroup = wrapMap.option;
 wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
 wrapMap.th = wrapMap.td;
 
+// Support: IE <10 only
+// IE 9 requires an option wrapper & it needs to have the whole table structure
+// set up in advance; assigning `"<td></td>"` to `tr.innerHTML` doesn't work, etc.
+var wrapMapIE9 = {
+  option: [1, '<select multiple="multiple">', '</select>'],
+  _default: [0, '', '']
+};
+
+for (var key in wrapMap) {
+  var wrapMapValueClosing = wrapMap[key];
+  var wrapMapValue = wrapMapValueClosing.slice().reverse();
+  wrapMapIE9[key] = [wrapMapValue.length, '<' + wrapMapValue.join('><') + '>', '</' + wrapMapValueClosing.join('></') + '>'];
+}
+
+wrapMapIE9.optgroup = wrapMapIE9.option;
 
 function jqLiteIsTextNode(html) {
   return !HTML_REGEXP.test(html);
@@ -12357,7 +12426,7 @@ function jqLiteHasData(node) {
 }
 
 function jqLiteBuildFragment(html, context) {
-  var tmp, tag, wrap,
+  var tmp, tag, wrap, finalHtml,
       fragment = context.createDocumentFragment(),
       nodes = [], i;
 
@@ -12368,13 +12437,30 @@ function jqLiteBuildFragment(html, context) {
     // Convert html into DOM nodes
     tmp = fragment.appendChild(context.createElement('div'));
     tag = (TAG_NAME_REGEXP.exec(html) || ['', ''])[1].toLowerCase();
-    wrap = wrapMap[tag] || wrapMap._default;
-    tmp.innerHTML = wrap[1] + html.replace(XHTML_TAG_REGEXP, '<$1></$2>') + wrap[2];
+    finalHtml = JQLite.legacyXHTMLReplacement ?
+      html.replace(XHTML_TAG_REGEXP, '<$1></$2>') :
+      html;
 
-    // Descend through wrappers to the right content
-    i = wrap[0];
-    while (i--) {
-      tmp = tmp.lastChild;
+    if (msie < 10) {
+      wrap = wrapMapIE9[tag] || wrapMapIE9._default;
+      tmp.innerHTML = wrap[1] + finalHtml + wrap[2];
+
+      // Descend through wrappers to the right content
+      i = wrap[0];
+      while (i--) {
+        tmp = tmp.firstChild;
+      }
+    } else {
+      wrap = wrapMap[tag] || [];
+
+      // Create wrappers & descend into them
+      i = wrap.length;
+      while (--i > -1) {
+        tmp.appendChild(window.document.createElement(wrap[i]));
+        tmp = tmp.firstChild;
+      }
+
+      tmp.innerHTML = finalHtml;
     }
 
     nodes = concat(nodes, tmp.childNodes);
@@ -15802,6 +15888,9 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
     if (url) {
       var sameState = lastHistoryState === state;
 
+      // Normalize the inputted URL
+      url = urlResolve(url).href;
+
       // Don't change anything if previous and current URLs and states match. This also prevents
       // IE<10 from getting into redirect loop when in LocationHashbangInHtml5Url mode.
       // See https://github.com/angular/angular.js/commit/ffb2701
@@ -16649,7 +16738,7 @@ function $TemplateCacheProvider() {
  *
  * This example show how you might use `$doCheck` to trigger changes in your component's inputs even if the
  * actual identity of the component doesn't change. (Be aware that cloning and deep equality checks on large
- * arrays or objects can have a negative impact on your application performance)
+ * arrays or objects can have a negative impact on your application performance.)
  *
  * <example name="doCheckArrayExample" module="do-check-module">
  *   <file name="index.html">
@@ -16972,7 +17061,7 @@ function $TemplateCacheProvider() {
  * would result in the whole app "stalling" until all templates are loaded asynchronously - even in the
  * case when only one deeply nested directive has `templateUrl`.
  *
- * Template loading is asynchronous even if the template has been preloaded into the {@link $templateCache}
+ * Template loading is asynchronous even if the template has been preloaded into the {@link $templateCache}.
  *
  * You can specify `templateUrl` as a string representing the URL or as a function which takes two
  * arguments `tElement` and `tAttrs` (described in the `compile` function api below) and returns
@@ -17033,7 +17122,7 @@ function $TemplateCacheProvider() {
  * own templates or compile functions. Compiling these directives results in an infinite loop and
  * stack overflow errors.
  *
- * This can be avoided by manually using $compile in the postLink function to imperatively compile
+ * This can be avoided by manually using `$compile` in the postLink function to imperatively compile
  * a directive's template instead of relying on automatic template compilation via `template` or
  * `templateUrl` declaration or manual compilation inside the compile function.
  * </div>
@@ -17137,17 +17226,17 @@ function $TemplateCacheProvider() {
  *
  * * `true` - transclude the content (i.e. the child nodes) of the directive's element.
  * * `'element'` - transclude the whole of the directive's element including any directives on this
- *   element that defined at a lower priority than this directive. When used, the `template`
+ *   element that are defined at a lower priority than this directive. When used, the `template`
  *   property is ignored.
  * * **`{...}` (an object hash):** - map elements of the content onto transclusion "slots" in the template.
  *
- * **Mult-slot transclusion** is declared by providing an object for the `transclude` property.
+ * **Multi-slot transclusion** is declared by providing an object for the `transclude` property.
  *
  * This object is a map where the keys are the name of the slot to fill and the value is an element selector
  * used to match the HTML to the slot. The element selector should be in normalized form (e.g. `myElement`)
  * and will match the standard element variants (e.g. `my-element`, `my:element`, `data-my-element`, etc).
  *
- * For further information check out the guide on {@link guide/directive#matching-directives Matching Directives}
+ * For further information check out the guide on {@link guide/directive#matching-directives Matching Directives}.
  *
  * If the element selector is prefixed with a `?` then that slot is optional.
  *
@@ -17172,7 +17261,7 @@ function $TemplateCacheProvider() {
  * </div>
  *
  * If you want to manually control the insertion and removal of the transcluded content in your directive
- * then you must use this transclude function. When you call a transclude function it returns a a jqLite/JQuery
+ * then you must use this transclude function. When you call a transclude function it returns a jqLite/JQuery
  * object that contains the compiled DOM, which is linked to the correct transclusion scope.
  *
  * When you call a transclusion function you can pass in a **clone attach function**. This function accepts
@@ -17257,8 +17346,8 @@ function $TemplateCacheProvider() {
  * The {@link ng.$compile.directive.Attributes Attributes} object - passed as a parameter in the
  * `link()` or `compile()` functions. It has a variety of uses.
  *
- * * *Accessing normalized attribute names:* Directives like 'ngBind' can be expressed in many ways:
- *   'ng:bind', `data-ng-bind`, or 'x-ng-bind'. The attributes object allows for normalized access
+ * * *Accessing normalized attribute names:* Directives like `ngBind` can be expressed in many ways:
+ *   `ng:bind`, `data-ng-bind`, or `x-ng-bind`. The attributes object allows for normalized access
  *   to the attributes.
  *
  * * *Directive inter-communication:* All directives share the same instance of the attributes
@@ -17299,25 +17388,24 @@ function $TemplateCacheProvider() {
    <file name="index.html">
     <script>
       angular.module('compileExample', [], function($compileProvider) {
-        // configure new 'compile' directive by passing a directive
-        // factory function. The factory function injects the '$compile'
+        // Configure new 'compile' directive by passing a directive
+        // factory function. The factory function injects '$compile'.
         $compileProvider.directive('compile', function($compile) {
-          // directive factory creates a link function
+          // The directive factory creates a link function.
           return function(scope, element, attrs) {
             scope.$watch(
               function(scope) {
-                 // watch the 'compile' expression for changes
+                // Watch the 'compile' expression for changes.
                 return scope.$eval(attrs.compile);
               },
               function(value) {
-                // when the 'compile' expression changes
-                // assign it into the current DOM
+                // When the 'compile' expression changes
+                // assign it into the current DOM.
                 element.html(value);
 
-                // compile the new DOM and link it to the current
-                // scope.
-                // NOTE: we only compile .childNodes so that
-                // we don't get into infinite loop compiling ourselves
+                // Compile the new DOM and link it to the current scope.
+                // NOTE: we only compile '.childNodes' so that we
+                // don't get into an infinite loop compiling ourselves.
                 $compile(element.contents())(scope);
               }
             );
@@ -17390,13 +17478,13 @@ function $TemplateCacheProvider() {
  *        }
  *        ```
  *      * `futureParentElement` - defines the parent to which the `cloneAttachFn` will add
- *        the cloned elements; only needed for transcludes that are allowed to contain non html
- *        elements (e.g. SVG elements). See also the directive.controller property.
+ *        the cloned elements; only needed for transcludes that are allowed to contain non HTML
+ *        elements (e.g. SVG elements). See also the `directive.controller` property.
  *
  * Calling the linking function returns the element of the template. It is either the original
  * element passed in, or the clone of the element if the `cloneAttachFn` is provided.
  *
- * After linking the view is not updated until after a call to $digest which typically is done by
+ * After linking the view is not updated until after a call to `$digest`, which typically is done by
  * AngularJS automatically.
  *
  * If you need access to the bound view, there are two ways to do it:
@@ -17404,21 +17492,23 @@ function $TemplateCacheProvider() {
  * - If you are not asking the linking function to clone the template, create the DOM element(s)
  *   before you send them to the compiler and keep this reference around.
  *   ```js
- *     var element = $compile('<p>{{total}}</p>')(scope);
+ *     var element = angular.element('<p>{{total}}</p>');
+ *     $compile(element)(scope);
  *   ```
  *
  * - if on the other hand, you need the element to be cloned, the view reference from the original
  *   example would not point to the clone, but rather to the original template that was cloned. In
- *   this case, you can access the clone via the cloneAttachFn:
+ *   this case, you can access the clone either via the `cloneAttachFn` or the value returned by the
+ *   linking function:
  *   ```js
- *     var templateElement = angular.element('<p>{{total}}</p>'),
- *         scope = ....;
- *
+ *     var templateElement = angular.element('<p>{{total}}</p>');
  *     var clonedElement = $compile(templateElement)(scope, function(clonedElement, scope) {
- *       //attach the clone to DOM document at the right place
+ *       // Attach the clone to DOM document at the right place.
  *     });
  *
- *     //now we have reference to the cloned DOM via `clonedElement`
+ *     // Now we have reference to the cloned DOM via `clonedElement`.
+ *     // NOTE: The `clonedElement` returned by the linking function is the same as the
+ *     //       `clonedElement` passed to `cloneAttachFn`.
  *   ```
  *
  *
@@ -17469,7 +17559,7 @@ function $TemplateCacheProvider() {
  *
  * When the original node and the replace template declare the same directive(s), they will be
  * {@link guide/compiler#double-compilation-and-how-to-avoid-it compiled twice} because the compiler
- * does not deduplicate them. In many cases, this is not noticable, but e.g. {@link ngModel} will
+ * does not deduplicate them. In many cases, this is not noticeable, but e.g. {@link ngModel} will
  * attach `$formatters` and `$parsers` twice.
  *
  * See issue [#2573](https://github.com/angular/angular.js/issues/2573).
@@ -17549,8 +17639,8 @@ function $TemplateCacheProvider() {
  *
  * Based on the context, other options may exist to mark a value as trusted / configure the behavior
  * of {@link ng.$sce}. For example, to restrict the `RESOURCE_URL` context to specific origins, use
- * the {@link $sceDelegateProvider#resourceUrlWhitelist resourceUrlWhitelist()}
- * and {@link $sceDelegateProvider#resourceUrlBlacklist resourceUrlBlacklist()}.
+ * the {@link $sceDelegateProvider#trustedResourceUrlList trustedResourceUrlList()}
+ * and {@link $sceDelegateProvider#bannedResourceUrlList bannedResourceUrlList()}.
  *
  * {@link ng.$sce#what-trusted-context-types-are-supported- Find out more about the different context types}.
  *
@@ -17559,7 +17649,7 @@ function $TemplateCacheProvider() {
  * By default, `$sce` will throw an error if it detects untrusted HTML content, and will not bind the
  * content.
  * However, if you include the {@link ngSanitize ngSanitize module}, it will try to sanitize the
- * potentially dangerous HTML, e.g. strip non-whitelisted tags and attributes when binding to
+ * potentially dangerous HTML, e.g. strip non-trusted tags and attributes when binding to
  * `innerHTML`.
  *
  * @example
@@ -17944,9 +18034,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
    * @description
    * Register a new directive with the compiler.
    *
-   * @param {string|Object} name Name of the directive in camel-case (i.e. <code>ngBind</code> which
-   *    will match as <code>ng-bind</code>), or an object map of directives where the keys are the
-   *    names and the values are the factories.
+   * @param {string|Object} name Name of the directive in camel-case (i.e. `ngBind` which will match
+   *    as `ng-bind`), or an object map of directives where the keys are the names and the values
+   *    are the factories.
    * @param {Function|Array} directiveFactory An injectable directive factory function. See the
    *    {@link guide/directive directive guide} and the {@link $compile compile API} for more info.
    * @returns {ng.$compileProvider} Self for chaining.
@@ -18141,30 +18231,81 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
   /**
    * @ngdoc method
-   * @name $compileProvider#aHrefSanitizationWhitelist
+   * @name $compileProvider#aHrefSanitizationTrustedUrlList
    * @kind function
    *
    * @description
-   * Retrieves or overrides the default regular expression that is used for whitelisting of safe
+   * Retrieves or overrides the default regular expression that is used for determining trusted safe
    * urls during a[href] sanitization.
    *
    * The sanitization is a security measure aimed at preventing XSS attacks via html links.
    *
    * Any url about to be assigned to a[href] via data-binding is first normalized and turned into
-   * an absolute url. Afterwards, the url is matched against the `aHrefSanitizationWhitelist`
+   * an absolute url. Afterwards, the url is matched against the `aHrefSanitizationTrustedUrlList`
    * regular expression. If a match is found, the original url is written into the dom. Otherwise,
    * the absolute url is prefixed with `'unsafe:'` string and only then is it written into the DOM.
    *
-   * @param {RegExp=} regexp New regexp to whitelist urls with.
+   * @param {RegExp=} regexp New regexp to trust urls with.
    * @returns {RegExp|ng.$compileProvider} Current RegExp if called without value or self for
    *    chaining otherwise.
    */
-  this.aHrefSanitizationWhitelist = function(regexp) {
+  this.aHrefSanitizationTrustedUrlList = function(regexp) {
     if (isDefined(regexp)) {
-      $$sanitizeUriProvider.aHrefSanitizationWhitelist(regexp);
+      $$sanitizeUriProvider.aHrefSanitizationTrustedUrlList(regexp);
       return this;
     } else {
-      return $$sanitizeUriProvider.aHrefSanitizationWhitelist();
+      return $$sanitizeUriProvider.aHrefSanitizationTrustedUrlList();
+    }
+  };
+
+
+  /**
+   * @ngdoc method
+   * @name $compileProvider#aHrefSanitizationWhitelist
+   * @kind function
+   *
+   * @deprecated
+   * sinceVersion="1.8.1"
+   *
+   * This method is deprecated. Use {@link $compileProvider#aHrefSanitizationTrustedUrlList
+   * aHrefSanitizationTrustedUrlList} instead.
+   */
+  Object.defineProperty(this, 'aHrefSanitizationWhitelist', {
+    get: function() {
+      return this.aHrefSanitizationTrustedUrlList;
+    },
+    set: function(value) {
+      this.aHrefSanitizationTrustedUrlList = value;
+    }
+  });
+
+
+  /**
+   * @ngdoc method
+   * @name $compileProvider#imgSrcSanitizationTrustedUrlList
+   * @kind function
+   *
+   * @description
+   * Retrieves or overrides the default regular expression that is used for determining trusted safe
+   * urls during img[src] sanitization.
+   *
+   * The sanitization is a security measure aimed at prevent XSS attacks via html links.
+   *
+   * Any url about to be assigned to img[src] via data-binding is first normalized and turned into
+   * an absolute url. Afterwards, the url is matched against the `imgSrcSanitizationTrustedUrlList`
+   * regular expression. If a match is found, the original url is written into the dom. Otherwise,
+   * the absolute url is prefixed with `'unsafe:'` string and only then is it written into the DOM.
+   *
+   * @param {RegExp=} regexp New regexp to trust urls with.
+   * @returns {RegExp|ng.$compileProvider} Current RegExp if called without value or self for
+   *    chaining otherwise.
+   */
+  this.imgSrcSanitizationTrustedUrlList = function(regexp) {
+    if (isDefined(regexp)) {
+      $$sanitizeUriProvider.imgSrcSanitizationTrustedUrlList(regexp);
+      return this;
+    } else {
+      return $$sanitizeUriProvider.imgSrcSanitizationTrustedUrlList();
     }
   };
 
@@ -18174,29 +18315,20 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
    * @name $compileProvider#imgSrcSanitizationWhitelist
    * @kind function
    *
-   * @description
-   * Retrieves or overrides the default regular expression that is used for whitelisting of safe
-   * urls during img[src] sanitization.
+   * @deprecated
+   * sinceVersion="1.8.1"
    *
-   * The sanitization is a security measure aimed at prevent XSS attacks via html links.
-   *
-   * Any url about to be assigned to img[src] via data-binding is first normalized and turned into
-   * an absolute url. Afterwards, the url is matched against the `imgSrcSanitizationWhitelist`
-   * regular expression. If a match is found, the original url is written into the dom. Otherwise,
-   * the absolute url is prefixed with `'unsafe:'` string and only then is it written into the DOM.
-   *
-   * @param {RegExp=} regexp New regexp to whitelist urls with.
-   * @returns {RegExp|ng.$compileProvider} Current RegExp if called without value or self for
-   *    chaining otherwise.
+   * This method is deprecated. Use {@link $compileProvider#imgSrcSanitizationTrustedUrlList
+   * imgSrcSanitizationTrustedUrlList} instead.
    */
-  this.imgSrcSanitizationWhitelist = function(regexp) {
-    if (isDefined(regexp)) {
-      $$sanitizeUriProvider.imgSrcSanitizationWhitelist(regexp);
-      return this;
-    } else {
-      return $$sanitizeUriProvider.imgSrcSanitizationWhitelist();
+  Object.defineProperty(this, 'imgSrcSanitizationWhitelist', {
+    get: function() {
+      return this.imgSrcSanitizationTrustedUrlList;
+    },
+    set: function(value) {
+      this.imgSrcSanitizationTrustedUrlList = value;
     }
-  };
+  });
 
   /**
    * @ngdoc method
@@ -18675,7 +18807,16 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             this.$$element.removeAttr(attrName);
           } else {
             if (SIMPLE_ATTR_NAME.test(attrName)) {
-              this.$$element.attr(attrName, value);
+              // jQuery skips special boolean attrs treatment in XML nodes for
+              // historical reasons and hence AngularJS cannot freely call
+              // `.attr(attrName, false) with such attributes. To avoid issues
+              // in XHTML, call `removeAttr` in such cases instead.
+              // See https://github.com/jquery/jquery/issues/4249
+              if (booleanKey && value === false) {
+                this.$$element.removeAttr(attrName);
+              } else {
+                this.$$element.attr(attrName, value);
+              }
             } else {
               setSpecialAttr(this.$$element[0], attrName, value);
             }
@@ -20272,7 +20413,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             pre: function ngPropPreLinkFn(scope, $element) {
               function applyPropValue() {
                 var propValue = ngPropGetter(scope);
-                $element.prop(propName, sanitizer(propValue));
+                $element[0][propName] = sanitizer(propValue);
               }
 
               applyPropValue();
@@ -21439,7 +21580,7 @@ function $HttpProvider() {
 
   /**
    * @ngdoc property
-   * @name $httpProvider#xsrfWhitelistedOrigins
+   * @name $httpProvider#xsrfTrustedOrigins
    * @description
    *
    * Array containing URLs whose origins are trusted to receive the XSRF token. See the
@@ -21453,7 +21594,7 @@ function $HttpProvider() {
    * Examples: `http://example.com`, `https://api.example.com:9876`
    *
    * <div class="alert alert-warning">
-   *   It is not possible to whitelist specific URLs/paths. The `path`, `query` and `fragment` parts
+   *   It is not possible to trust specific URLs/paths. The `path`, `query` and `fragment` parts
    *   of a URL will be ignored. For example, `https://foo.com/path/bar?query=baz#fragment` will be
    *   treated as `https://foo.com`, meaning that **all** requests to URLs starting with
    *   `https://foo.com/` will include the XSRF token.
@@ -21464,9 +21605,9 @@ function $HttpProvider() {
    * ```js
    * // App served from `https://example.com/`.
    * angular.
-   *   module('xsrfWhitelistedOriginsExample', []).
+   *   module('xsrfTrustedOriginsExample', []).
    *   config(['$httpProvider', function($httpProvider) {
-   *     $httpProvider.xsrfWhitelistedOrigins.push('https://api.example.com');
+   *     $httpProvider.xsrfTrustedOrigins.push('https://api.example.com');
    *   }]).
    *   run(['$http', function($http) {
    *     // The XSRF token will be sent.
@@ -21477,7 +21618,27 @@ function $HttpProvider() {
    *   }]);
    * ```
    */
-  var xsrfWhitelistedOrigins = this.xsrfWhitelistedOrigins = [];
+  var xsrfTrustedOrigins = this.xsrfTrustedOrigins = [];
+
+  /**
+   * @ngdoc property
+   * @name $httpProvider#xsrfWhitelistedOrigins
+   * @description
+   *
+   * @deprecated
+   * sinceVersion="1.8.1"
+   *
+   * This property is deprecated. Use {@link $httpProvider#xsrfTrustedOrigins xsrfTrustedOrigins}
+   * instead.
+   */
+  Object.defineProperty(this, 'xsrfWhitelistedOrigins', {
+    get: function() {
+      return this.xsrfTrustedOrigins;
+    },
+    set: function(origins) {
+      this.xsrfTrustedOrigins = origins;
+    }
+  });
 
   this.$get = ['$browser', '$httpBackend', '$$cookieReader', '$cacheFactory', '$rootScope', '$q', '$injector', '$sce',
       function($browser, $httpBackend, $$cookieReader, $cacheFactory, $rootScope, $q, $injector, $sce) {
@@ -21505,7 +21666,7 @@ function $HttpProvider() {
     /**
      * A function to check request URLs against a list of allowed origins.
      */
-    var urlIsAllowedOrigin = urlIsAllowedOriginFactory(xsrfWhitelistedOrigins);
+    var urlIsAllowedOrigin = urlIsAllowedOriginFactory(xsrfTrustedOrigins);
 
     /**
      * @ngdoc service
@@ -21879,16 +22040,16 @@ function $HttpProvider() {
      * The header will &mdash; by default &mdash; **not** be set for cross-domain requests. This
      * prevents unauthorized servers (e.g. malicious or compromised 3rd-party APIs) from gaining
      * access to your users' XSRF tokens and exposing them to Cross Site Request Forgery. If you
-     * want to, you can whitelist additional origins to also receive the XSRF token, by adding them
-     * to {@link ng.$httpProvider#xsrfWhitelistedOrigins xsrfWhitelistedOrigins}. This might be
+     * want to, you can trust additional origins to also receive the XSRF token, by adding them
+     * to {@link ng.$httpProvider#xsrfTrustedOrigins xsrfTrustedOrigins}. This might be
      * useful, for example, if your application, served from `example.com`, needs to access your API
      * at `api.example.com`.
-     * See {@link ng.$httpProvider#xsrfWhitelistedOrigins $httpProvider.xsrfWhitelistedOrigins} for
+     * See {@link ng.$httpProvider#xsrfTrustedOrigins $httpProvider.xsrfTrustedOrigins} for
      * more details.
      *
      * <div class="alert alert-danger">
      *   **Warning**<br />
-     *   Only whitelist origins that you have control over and make sure you understand the
+     *   Only trusted origins that you have control over and make sure you understand the
      *   implications of doing so.
      * </div>
      *
@@ -22015,8 +22176,8 @@ function $HttpProvider() {
 <file name="script.js">
   angular.module('httpExample', [])
     .config(['$sceDelegateProvider', function($sceDelegateProvider) {
-      // We must whitelist the JSONP endpoint that we are using to show that we trust it
-      $sceDelegateProvider.resourceUrlWhitelist([
+      // We must add the JSONP endpoint that we are using to the trusted list to show that we trust it
+      $sceDelegateProvider.trustedResourceUrlList([
         'self',
         'https://angularjs.org/**'
       ]);
@@ -22273,8 +22434,8 @@ function $HttpProvider() {
      *
      * Note that, since JSONP requests are sensitive because the response is given full access to the browser,
      * the url must be declared, via {@link $sce} as a trusted resource URL.
-     * You can trust a URL by adding it to the whitelist via
-     * {@link $sceDelegateProvider#resourceUrlWhitelist  `$sceDelegateProvider.resourceUrlWhitelist`} or
+     * You can trust a URL by adding it to the trusted resource URL list via
+     * {@link $sceDelegateProvider#trustedResourceUrlList  `$sceDelegateProvider.trustedResourceUrlList`} or
      * by explicitly trusting the URL via {@link $sce#trustAsResourceUrl `$sce.trustAsResourceUrl(url)`}.
      *
      * You should avoid generating the URL for the JSONP request from user provided data.
@@ -23061,7 +23222,7 @@ function $InterpolateProvider() {
 
       // Provide a quick exit and simplified result function for text with no interpolation
       if (!text.length || text.indexOf(startSymbol) === -1) {
-        if (mustHaveExpression && !contextAllowsConcatenation) return;
+        if (mustHaveExpression) return;
 
         var unescapedText = unescapeText(text);
         if (contextAllowsConcatenation) {
@@ -27449,7 +27610,13 @@ function markQStateExceptionHandled(state) {
   state.pur = true;
 }
 function markQExceptionHandled(q) {
-  markQStateExceptionHandled(q.$$state);
+  // Built-in `$q` promises will always have a `$$state` property. This check is to allow
+  // overwriting `$q` with a different promise library (e.g. Bluebird + angular-bluebird-promises).
+  // (Currently, this is the only method that might be called with a promise, even if it is not
+  // created by the built-in `$q`.)
+  if (q.$$state) {
+    markQStateExceptionHandled(q.$$state);
+  }
 }
 
 /** @this */
@@ -29004,12 +29171,12 @@ function $RootScopeProvider() {
  */
 function $$SanitizeUriProvider() {
 
-  var aHrefSanitizationWhitelist = /^\s*(https?|s?ftp|mailto|tel|file):/,
-    imgSrcSanitizationWhitelist = /^\s*((https?|ftp|file|blob):|data:image\/)/;
+  var aHrefSanitizationTrustedUrlList = /^\s*(https?|s?ftp|mailto|tel|file):/,
+    imgSrcSanitizationTrustedUrlList = /^\s*((https?|ftp|file|blob):|data:image\/)/;
 
   /**
    * @description
-   * Retrieves or overrides the default regular expression that is used for whitelisting of safe
+   * Retrieves or overrides the default regular expression that is used for determining trusted safe
    * urls during a[href] sanitization.
    *
    * The sanitization is a security measure aimed at prevent XSS attacks via HTML anchor links.
@@ -29018,27 +29185,27 @@ function $$SanitizeUriProvider() {
    * the $sce.URL security context. When interpolation occurs a call is made to `$sce.trustAsUrl(url)`
    * which in turn may call `$$sanitizeUri(url, isMedia)` to sanitize the potentially malicious URL.
    *
-   * If the URL matches the `aHrefSanitizationWhitelist` regular expression, it is returned unchanged.
+   * If the URL matches the `aHrefSanitizationTrustedUrlList` regular expression, it is returned unchanged.
    *
    * If there is no match the URL is returned prefixed with `'unsafe:'` to ensure that when it is written
    * to the DOM it is inactive and potentially malicious code will not be executed.
    *
-   * @param {RegExp=} regexp New regexp to whitelist urls with.
+   * @param {RegExp=} regexp New regexp to trust urls with.
    * @returns {RegExp|ng.$compileProvider} Current RegExp if called without value or self for
    *    chaining otherwise.
    */
-  this.aHrefSanitizationWhitelist = function(regexp) {
+  this.aHrefSanitizationTrustedUrlList = function(regexp) {
     if (isDefined(regexp)) {
-      aHrefSanitizationWhitelist = regexp;
+      aHrefSanitizationTrustedUrlList = regexp;
       return this;
     }
-    return aHrefSanitizationWhitelist;
+    return aHrefSanitizationTrustedUrlList;
   };
 
 
   /**
    * @description
-   * Retrieves or overrides the default regular expression that is used for whitelisting of safe
+   * Retrieves or overrides the default regular expression that is used for determining trusted safe
    * urls during img[src] sanitization.
    *
    * The sanitization is a security measure aimed at prevent XSS attacks via HTML image src links.
@@ -29048,27 +29215,28 @@ function $$SanitizeUriProvider() {
    * `$sce.trustAsMediaUrl(url)` which in turn may call `$$sanitizeUri(url, isMedia)` to sanitize
    * the potentially malicious URL.
    *
-   * If the URL matches the `aImgSanitizationWhitelist` regular expression, it is returned unchanged.
+   * If the URL matches the `imgSrcSanitizationTrustedUrlList` regular expression, it is returned
+   * unchanged.
    *
    * If there is no match the URL is returned prefixed with `'unsafe:'` to ensure that when it is written
    * to the DOM it is inactive and potentially malicious code will not be executed.
    *
-   * @param {RegExp=} regexp New regexp to whitelist urls with.
+   * @param {RegExp=} regexp New regexp to trust urls with.
    * @returns {RegExp|ng.$compileProvider} Current RegExp if called without value or self for
    *    chaining otherwise.
    */
-  this.imgSrcSanitizationWhitelist = function(regexp) {
+  this.imgSrcSanitizationTrustedUrlList = function(regexp) {
     if (isDefined(regexp)) {
-      imgSrcSanitizationWhitelist = regexp;
+      imgSrcSanitizationTrustedUrlList = regexp;
       return this;
     }
-    return imgSrcSanitizationWhitelist;
+    return imgSrcSanitizationTrustedUrlList;
   };
 
   this.$get = function() {
     return function sanitizeUri(uri, isMediaUrl) {
       // if (!uri) return uri;
-      var regex = isMediaUrl ? imgSrcSanitizationWhitelist : aHrefSanitizationWhitelist;
+      var regex = isMediaUrl ? imgSrcSanitizationTrustedUrlList : aHrefSanitizationTrustedUrlList;
       var normalizedVal = urlResolve(uri && uri.trim()).href;
       if (normalizedVal !== '' && !normalizedVal.match(regex)) {
         return 'unsafe:' + normalizedVal;
@@ -29196,10 +29364,10 @@ function adjustMatchers(matchers) {
  * The default instance of `$sceDelegate` should work out of the box with little pain.  While you
  * can override it completely to change the behavior of `$sce`, the common case would
  * involve configuring the {@link ng.$sceDelegateProvider $sceDelegateProvider} instead by setting
- * your own whitelists and blacklists for trusting URLs used for loading AngularJS resources such as
- * templates.  Refer {@link ng.$sceDelegateProvider#resourceUrlWhitelist
- * $sceDelegateProvider.resourceUrlWhitelist} and {@link
- * ng.$sceDelegateProvider#resourceUrlBlacklist $sceDelegateProvider.resourceUrlBlacklist}
+ * your own trusted and banned resource lists for trusting URLs used for loading AngularJS resources
+ * such as templates.  Refer {@link ng.$sceDelegateProvider#trustedResourceUrlList
+ * $sceDelegateProvider.trustedResourceUrlList} and {@link
+ * ng.$sceDelegateProvider#bannedResourceUrlList $sceDelegateProvider.bannedResourceUrlList}
  */
 
 /**
@@ -29212,12 +29380,12 @@ function adjustMatchers(matchers) {
  * The `$sceDelegateProvider` provider allows developers to configure the {@link ng.$sceDelegate
  * $sceDelegate service}, used as a delegate for {@link ng.$sce Strict Contextual Escaping (SCE)}.
  *
- * The `$sceDelegateProvider` allows one to get/set the whitelists and blacklists used to ensure
- * that the URLs used for sourcing AngularJS templates and other script-running URLs are safe (all
- * places that use the `$sce.RESOURCE_URL` context). See
- * {@link ng.$sceDelegateProvider#resourceUrlWhitelist $sceDelegateProvider.resourceUrlWhitelist}
- * and
- * {@link ng.$sceDelegateProvider#resourceUrlBlacklist $sceDelegateProvider.resourceUrlBlacklist},
+ * The `$sceDelegateProvider` allows one to get/set the `trustedResourceUrlList` and
+ * `bannedResourceUrlList` used to ensure that the URLs used for sourcing AngularJS templates and
+ * other script-running URLs are safe (all places that use the `$sce.RESOURCE_URL` context). See
+ * {@link ng.$sceDelegateProvider#trustedResourceUrlList
+ * $sceDelegateProvider.trustedResourceUrlList} and
+ * {@link ng.$sceDelegateProvider#bannedResourceUrlList $sceDelegateProvider.bannedResourceUrlList},
  *
  * For the general details about this service in AngularJS, read the main page for {@link ng.$sce
  * Strict Contextual Escaping (SCE)}.
@@ -29233,64 +29401,117 @@ function adjustMatchers(matchers) {
  *
  * ```
  *  angular.module('myApp', []).config(function($sceDelegateProvider) {
- *    $sceDelegateProvider.resourceUrlWhitelist([
+ *    $sceDelegateProvider.trustedResourceUrlList([
  *      // Allow same origin resource loads.
  *      'self',
  *      // Allow loading from our assets domain.  Notice the difference between * and **.
  *      'http://srv*.assets.example.com/**'
  *    ]);
  *
- *    // The blacklist overrides the whitelist so the open redirect here is blocked.
- *    $sceDelegateProvider.resourceUrlBlacklist([
+ *    // The banned resource URL list overrides the trusted resource URL list so the open redirect
+ *    // here is blocked.
+ *    $sceDelegateProvider.bannedResourceUrlList([
  *      'http://myapp.example.com/clickThru**'
  *    ]);
  *  });
  * ```
- * Note that an empty whitelist will block every resource URL from being loaded, and will require
+ * Note that an empty trusted resource URL list will block every resource URL from being loaded, and will require
  * you to manually mark each one as trusted with `$sce.trustAsResourceUrl`. However, templates
  * requested by {@link ng.$templateRequest $templateRequest} that are present in
  * {@link ng.$templateCache $templateCache} will not go through this check. If you have a mechanism
  * to populate your templates in that cache at config time, then it is a good idea to remove 'self'
- * from that whitelist. This helps to mitigate the security impact of certain types of issues, like
- * for instance attacker-controlled `ng-includes`.
+ * from the trusted resource URL lsit. This helps to mitigate the security impact of certain types
+ * of issues, like for instance attacker-controlled `ng-includes`.
  */
 
 function $SceDelegateProvider() {
   this.SCE_CONTEXTS = SCE_CONTEXTS;
 
   // Resource URLs can also be trusted by policy.
-  var resourceUrlWhitelist = ['self'],
-      resourceUrlBlacklist = [];
+  var trustedResourceUrlList = ['self'],
+      bannedResourceUrlList = [];
+
+  /**
+   * @ngdoc method
+   * @name $sceDelegateProvider#trustedResourceUrlList
+   * @kind function
+   *
+   * @param {Array=} trustedResourceUrlList When provided, replaces the trustedResourceUrlList with
+   *     the value provided.  This must be an array or null.  A snapshot of this array is used so
+   *     further changes to the array are ignored.
+   *     Follow {@link ng.$sce#resourceUrlPatternItem this link} for a description of the items
+   *     allowed in this array.
+   *
+   * @return {Array} The currently set trusted resource URL array.
+   *
+   * @description
+   * Sets/Gets the list trusted of resource URLs.
+   *
+   * The **default value** when no `trustedResourceUrlList` has been explicitly set is `['self']`
+   * allowing only same origin resource requests.
+   *
+   * <div class="alert alert-warning">
+   * **Note:** the default `trustedResourceUrlList` of 'self' is not recommended if your app shares
+   * its origin with other apps! It is a good idea to limit it to only your application's directory.
+   * </div>
+   */
+  this.trustedResourceUrlList = function(value) {
+    if (arguments.length) {
+      trustedResourceUrlList = adjustMatchers(value);
+    }
+    return trustedResourceUrlList;
+  };
 
   /**
    * @ngdoc method
    * @name $sceDelegateProvider#resourceUrlWhitelist
    * @kind function
    *
-   * @param {Array=} whitelist When provided, replaces the resourceUrlWhitelist with the value
-   *     provided.  This must be an array or null.  A snapshot of this array is used so further
-   *     changes to the array are ignored.
-   *     Follow {@link ng.$sce#resourceUrlPatternItem this link} for a description of the items
-   *     allowed in this array.
+   * @deprecated
+   * sinceVersion="1.8.1"
    *
-   * @return {Array} The currently set whitelist array.
+   * This method is deprecated. Use {@link $sceDelegateProvider#trustedResourceUrlList
+   * trustedResourceUrlList} instead.
+   */
+  Object.defineProperty(this, 'resourceUrlWhitelist', {
+    get: function() {
+      return this.trustedResourceUrlList;
+    },
+    set: function(value) {
+      this.trustedResourceUrlList = value;
+    }
+  });
+
+  /**
+   * @ngdoc method
+   * @name $sceDelegateProvider#bannedResourceUrlList
+   * @kind function
+   *
+   * @param {Array=} bannedResourceUrlList When provided, replaces the `bannedResourceUrlList` with
+   *     the value provided. This must be an array or null. A snapshot of this array is used so
+   *     further changes to the array are ignored.</p><p>
+   *     Follow {@link ng.$sce#resourceUrlPatternItem this link} for a description of the items
+   *     allowed in this array.</p><p>
+   *     The typical usage for the `bannedResourceUrlList` is to **block
+   *     [open redirects](http://cwe.mitre.org/data/definitions/601.html)** served by your domain as
+   *     these would otherwise be trusted but actually return content from the redirected domain.
+   *     </p><p>
+   *     Finally, **the banned resource URL list overrides the trusted resource URL list** and has
+   *     the final say.
+   *
+   * @return {Array} The currently set `bannedResourceUrlList` array.
    *
    * @description
-   * Sets/Gets the whitelist of trusted resource URLs.
+   * Sets/Gets the `bannedResourceUrlList` of trusted resource URLs.
    *
-   * The **default value** when no whitelist has been explicitly set is `['self']` allowing only
-   * same origin resource requests.
-   *
-   * <div class="alert alert-warning">
-   * **Note:** the default whitelist of 'self' is not recommended if your app shares its origin
-   * with other apps! It is a good idea to limit it to only your application's directory.
-   * </div>
+   * The **default value** when no trusted resource URL list has been explicitly set is the empty
+   * array (i.e. there is no `bannedResourceUrlList`.)
    */
-  this.resourceUrlWhitelist = function(value) {
+  this.bannedResourceUrlList = function(value) {
     if (arguments.length) {
-      resourceUrlWhitelist = adjustMatchers(value);
+      bannedResourceUrlList = adjustMatchers(value);
     }
-    return resourceUrlWhitelist;
+    return bannedResourceUrlList;
   };
 
   /**
@@ -29298,32 +29519,20 @@ function $SceDelegateProvider() {
    * @name $sceDelegateProvider#resourceUrlBlacklist
    * @kind function
    *
-   * @param {Array=} blacklist When provided, replaces the resourceUrlBlacklist with the value
-   *     provided.  This must be an array or null.  A snapshot of this array is used so further
-   *     changes to the array are ignored.</p><p>
-   *     Follow {@link ng.$sce#resourceUrlPatternItem this link} for a description of the items
-   *     allowed in this array.</p><p>
-   *     The typical usage for the blacklist is to **block
-   *     [open redirects](http://cwe.mitre.org/data/definitions/601.html)** served by your domain as
-   *     these would otherwise be trusted but actually return content from the redirected domain.
-   *     </p><p>
-   *     Finally, **the blacklist overrides the whitelist** and has the final say.
+   * @deprecated
+   * sinceVersion="1.8.1"
    *
-   * @return {Array} The currently set blacklist array.
-   *
-   * @description
-   * Sets/Gets the blacklist of trusted resource URLs.
-   *
-   * The **default value** when no whitelist has been explicitly set is the empty array (i.e. there
-   * is no blacklist.)
+   * This method is deprecated. Use {@link $sceDelegateProvider#bannedResourceUrlList
+   * bannedResourceUrlList} instead.
    */
-
-  this.resourceUrlBlacklist = function(value) {
-    if (arguments.length) {
-      resourceUrlBlacklist = adjustMatchers(value);
+  Object.defineProperty(this, 'resourceUrlBlacklist', {
+    get: function() {
+      return this.bannedResourceUrlList;
+    },
+    set: function(value) {
+      this.bannedResourceUrlList = value;
     }
-    return resourceUrlBlacklist;
-  };
+  });
 
   this.$get = ['$injector', '$$sanitizeUri', function($injector, $$sanitizeUri) {
 
@@ -29348,17 +29557,17 @@ function $SceDelegateProvider() {
     function isResourceUrlAllowedByPolicy(url) {
       var parsedUrl = urlResolve(url.toString());
       var i, n, allowed = false;
-      // Ensure that at least one item from the whitelist allows this url.
-      for (i = 0, n = resourceUrlWhitelist.length; i < n; i++) {
-        if (matchUrl(resourceUrlWhitelist[i], parsedUrl)) {
+      // Ensure that at least one item from the trusted resource URL list allows this url.
+      for (i = 0, n = trustedResourceUrlList.length; i < n; i++) {
+        if (matchUrl(trustedResourceUrlList[i], parsedUrl)) {
           allowed = true;
           break;
         }
       }
       if (allowed) {
-        // Ensure that no item from the blacklist blocked this url.
-        for (i = 0, n = resourceUrlBlacklist.length; i < n; i++) {
-          if (matchUrl(resourceUrlBlacklist[i], parsedUrl)) {
+        // Ensure that no item from the banned resource URL list has blocked this url.
+        for (i = 0, n = bannedResourceUrlList.length; i < n; i++) {
+          if (matchUrl(bannedResourceUrlList[i], parsedUrl)) {
             allowed = false;
             break;
           }
@@ -29479,9 +29688,9 @@ function $SceDelegateProvider() {
      * The contexts that can be sanitized are $sce.MEDIA_URL, $sce.URL and $sce.HTML. The first two are available
      * by default, and the third one relies on the `$sanitize` service (which may be loaded through
      * the `ngSanitize` module). Furthermore, for $sce.RESOURCE_URL context, a plain string may be
-     * accepted if the resource url policy defined by {@link ng.$sceDelegateProvider#resourceUrlWhitelist
-     * `$sceDelegateProvider.resourceUrlWhitelist`} and {@link ng.$sceDelegateProvider#resourceUrlBlacklist
-     * `$sceDelegateProvider.resourceUrlBlacklist`} accepts that resource.
+     * accepted if the resource url policy defined by {@link ng.$sceDelegateProvider#trustedResourceUrlList
+     * `$sceDelegateProvider.trustedResourceUrlList`} and {@link ng.$sceDelegateProvider#bannedResourceUrlList
+     * `$sceDelegateProvider.bannedResourceUrlList`} accepts that resource.
      *
      * This function will throw if the safe type isn't appropriate for this context, or if the
      * value given cannot be accepted in the context (which might be caused by sanitization not
@@ -29575,9 +29784,9 @@ function $SceDelegateProvider() {
  *
  * To systematically block XSS security bugs, AngularJS treats all values as untrusted by default in
  * HTML or sensitive URL bindings. When binding untrusted values, AngularJS will automatically
- * run security checks on them (sanitizations, whitelists, depending on context), or throw when it
- * cannot guarantee the security of the result. That behavior depends strongly on contexts: HTML
- * can be sanitized, but template URLs cannot, for instance.
+ * run security checks on them (sanitizations, trusted URL resource, depending on context), or throw
+ * when it cannot guarantee the security of the result. That behavior depends strongly on contexts:
+ * HTML can be sanitized, but template URLs cannot, for instance.
  *
  * To illustrate this, consider the `ng-bind-html` directive. It renders its value directly as HTML:
  * we call that the *context*. When given an untrusted input, AngularJS will attempt to sanitize it
@@ -29656,8 +29865,8 @@ function $SceDelegateProvider() {
  * By default, AngularJS only loads templates from the same domain and protocol as the application
  * document.  This is done by calling {@link ng.$sce#getTrustedResourceUrl
  * $sce.getTrustedResourceUrl} on the template URL.  To load templates from other domains and/or
- * protocols, you may either {@link ng.$sceDelegateProvider#resourceUrlWhitelist whitelist
- * them} or {@link ng.$sce#trustAsResourceUrl wrap it} into a trusted value.
+ * protocols, you may either add them to the {@link ng.$sceDelegateProvider#trustedResourceUrlList
+ * trustedResourceUrlList} or {@link ng.$sce#trustAsResourceUrl wrap them} into trusted values.
  *
  * *Please note*:
  * The browser's
@@ -29685,8 +29894,8 @@ function $SceDelegateProvider() {
  * templates in `ng-include` from your application's domain without having to even know about SCE.
  * It blocks loading templates from other domains or loading templates over http from an https
  * served document.  You can change these by setting your own custom {@link
- * ng.$sceDelegateProvider#resourceUrlWhitelist whitelists} and {@link
- * ng.$sceDelegateProvider#resourceUrlBlacklist blacklists} for matching such URLs.
+ * ng.$sceDelegateProvider#trustedResourceUrlList trusted resource URL list} and {@link
+ * ng.$sceDelegateProvider#bannedResourceUrlList banned resource URL list} for matching such URLs.
  *
  * This significantly reduces the overhead.  It is far easier to pay the small overhead and have an
  * application that's secure and can be audited to verify that with much more ease than bolting
@@ -29701,7 +29910,7 @@ function $SceDelegateProvider() {
  * | `$sce.CSS`          | For CSS that's safe to source into the application.  Currently unused.  Feel free to use it in your own directives. |
  * | `$sce.MEDIA_URL`    | For URLs that are safe to render as media. Is automatically converted from string by sanitizing when needed. |
  * | `$sce.URL`          | For URLs that are safe to follow as links. Is automatically converted from string by sanitizing when needed. Note that `$sce.URL` makes a stronger statement about the URL than `$sce.MEDIA_URL` does and therefore contexts requiring values trusted for `$sce.URL` can be used anywhere that values trusted for `$sce.MEDIA_URL` are required.|
- * | `$sce.RESOURCE_URL` | For URLs that are not only safe to follow as links, but whose contents are also safe to include in your application.  Examples include `ng-include`, `src` / `ngSrc` bindings for tags other than `IMG` (e.g. `IFRAME`, `OBJECT`, etc.)  <br><br>Note that `$sce.RESOURCE_URL` makes a stronger statement about the URL than `$sce.URL` or `$sce.MEDIA_URL` do and therefore contexts requiring values trusted for `$sce.RESOURCE_URL` can be used anywhere that values trusted for `$sce.URL` or `$sce.MEDIA_URL` are required. <br><br> The {@link $sceDelegateProvider#resourceUrlWhitelist $sceDelegateProvider#resourceUrlWhitelist()} and {@link $sceDelegateProvider#resourceUrlBlacklist $sceDelegateProvider#resourceUrlBlacklist()} can be used to restrict trusted origins for `RESOURCE_URL` |
+ * | `$sce.RESOURCE_URL` | For URLs that are not only safe to follow as links, but whose contents are also safe to include in your application.  Examples include `ng-include`, `src` / `ngSrc` bindings for tags other than `IMG` (e.g. `IFRAME`, `OBJECT`, etc.)  <br><br>Note that `$sce.RESOURCE_URL` makes a stronger statement about the URL than `$sce.URL` or `$sce.MEDIA_URL` do and therefore contexts requiring values trusted for `$sce.RESOURCE_URL` can be used anywhere that values trusted for `$sce.URL` or `$sce.MEDIA_URL` are required. <br><br> The {@link $sceDelegateProvider#trustedResourceUrlList $sceDelegateProvider#trustedResourceUrlList()} and {@link $sceDelegateProvider#bannedResourceUrlList $sceDelegateProvider#bannedResourceUrlList()} can be used to restrict trusted origins for `RESOURCE_URL` |
  * | `$sce.JS`           | For JavaScript that is safe to execute in your application's context.  Currently unused.  Feel free to use it in your own directives. |
  *
  *
@@ -29719,7 +29928,7 @@ function $SceDelegateProvider() {
  * There are no CSS or JS context bindings in AngularJS currently, so their corresponding `$sce.trustAs`
  * functions aren't useful yet. This might evolve.
  *
- * ### Format of items in {@link ng.$sceDelegateProvider#resourceUrlWhitelist resourceUrlWhitelist}/{@link ng.$sceDelegateProvider#resourceUrlBlacklist Blacklist} <a name="resourceUrlPatternItem"></a>
+ * ### Format of items in {@link ng.$sceDelegateProvider#trustedResourceUrlList trustedResourceUrlList}/{@link ng.$sceDelegateProvider#bannedResourceUrlList bannedResourceUrlList} <a name="resourceUrlPatternItem"></a>
  *
  *  Each element in these arrays must be one of the following:
  *
@@ -29733,7 +29942,7 @@ function $SceDelegateProvider() {
  *      match themselves.
  *    - `*`: matches zero or more occurrences of any character other than one of the following 6
  *      characters: '`:`', '`/`', '`.`', '`?`', '`&`' and '`;`'.  It's a useful wildcard for use
- *      in a whitelist.
+ *      for matching resource URL lists.
  *    - `**`: matches zero or more occurrences of *any* character.  As such, it's not
  *      appropriate for use in a scheme, domain, etc. as it would match too much.  (e.g.
  *      http://**.example.com/ would match http://evil.com/?ignore=.example.com/ and that might
@@ -30537,10 +30746,10 @@ function $TemplateRequestProvider() {
         handleRequestFn.totalPendingRequests++;
 
         // We consider the template cache holds only trusted templates, so
-        // there's no need to go through whitelisting again for keys that already
-        // are included in there. This also makes AngularJS accept any script
-        // directive, no matter its name. However, we still need to unwrap trusted
-        // types.
+        // there's no need to go through adding the template again to the trusted
+        // resources for keys that already are included in there. This also makes
+        // AngularJS accept any script directive, no matter its name. However, we
+        // still need to unwrap trusted types.
         if (!isString(tpl) || isUndefined($templateCache.get(tpl))) {
           tpl = $sce.getTrustedResourceUrl(tpl);
         }
@@ -30830,6 +31039,12 @@ var urlParsingNode = window.document.createElement('a');
 var originUrl = urlResolve(window.location.href);
 var baseUrlParsingNode;
 
+urlParsingNode.href = 'http://[::1]';
+
+// Support: IE 9-11 only, Edge 16-17 only (fixed in 18 Preview)
+// IE/Edge don't wrap IPv6 addresses' hostnames in square brackets
+// when parsed out of an anchor element.
+var ipv6InBrackets = urlParsingNode.hostname === '[::1]';
 
 /**
  *
@@ -30892,13 +31107,19 @@ function urlResolve(url) {
 
   urlParsingNode.setAttribute('href', href);
 
+  var hostname = urlParsingNode.hostname;
+
+  if (!ipv6InBrackets && hostname.indexOf(':') > -1) {
+    hostname = '[' + hostname + ']';
+  }
+
   return {
     href: urlParsingNode.href,
     protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
     host: urlParsingNode.host,
     search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
     hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
-    hostname: urlParsingNode.hostname,
+    hostname: hostname,
     port: urlParsingNode.port,
     pathname: (urlParsingNode.pathname.charAt(0) === '/')
       ? urlParsingNode.pathname
@@ -30933,20 +31154,20 @@ function urlIsSameOriginAsBaseUrl(requestUrl) {
 }
 
 /**
- * Create a function that can check a URL's origin against a list of allowed/whitelisted origins.
+ * Create a function that can check a URL's origin against a list of allowed/trusted origins.
  * The current location's origin is implicitly trusted.
  *
- * @param {string[]} whitelistedOriginUrls - A list of URLs (strings), whose origins are trusted.
+ * @param {string[]} trustedOriginUrls - A list of URLs (strings), whose origins are trusted.
  *
  * @returns {Function} - A function that receives a URL (string or parsed URL object) and returns
  *     whether it is of an allowed origin.
  */
-function urlIsAllowedOriginFactory(whitelistedOriginUrls) {
-  var parsedAllowedOriginUrls = [originUrl].concat(whitelistedOriginUrls.map(urlResolve));
+function urlIsAllowedOriginFactory(trustedOriginUrls) {
+  var parsedAllowedOriginUrls = [originUrl].concat(trustedOriginUrls.map(urlResolve));
 
   /**
    * Check whether the specified URL (string or parsed URL object) has an origin that is allowed
-   * based on a list of whitelisted-origin URLs. The current location's origin is implicitly
+   * based on a list of trusted-origin URLs. The current location's origin is implicitly
    * trusted.
    *
    * @param {string|Object} requestUrl - The URL to be checked (provided as a string that will be
@@ -33343,7 +33564,6 @@ var htmlAnchorDirective = valueFn({
       </file>
     </example>
  *
- * @element INPUT
  * @param {expression} ngDisabled If the {@link guide/expression expression} is truthy,
  *     then the `disabled` attribute will be set on the element
  */
@@ -33570,7 +33790,7 @@ forEach(ALIASED_ATTR, function(htmlAttr, ngAttr) {
 // ng-src, ng-srcset, ng-href are interpolated
 forEach(['src', 'srcset', 'href'], function(attrName) {
   var normalized = directiveNormalize('ng-' + attrName);
-  ngAttributeAliasDirectives[normalized] = function() {
+  ngAttributeAliasDirectives[normalized] = ['$sce', function($sce) {
     return {
       priority: 99, // it needs to run after the attributes are interpolated
       link: function(scope, element, attr) {
@@ -33583,6 +33803,10 @@ forEach(['src', 'srcset', 'href'], function(attrName) {
           attr.$attr[name] = 'xlink:href';
           propName = null;
         }
+
+        // We need to sanitize the url at least once, in case it is a constant
+        // non-interpolated attribute.
+        attr.$set(normalized, $sce.getTrustedMediaUrl(attr[normalized]));
 
         attr.$observe(normalized, function(value) {
           if (!value) {
@@ -33603,7 +33827,7 @@ forEach(['src', 'srcset', 'href'], function(attrName) {
         });
       }
     };
-  };
+  }];
 });
 
 /* global -nullFormCtrl, -PENDING_CLASS, -SUBMITTED_CLASS
@@ -35241,8 +35465,10 @@ var inputType = {
    *
    * <div class="alert alert-warning">
    * **Note:** `input[email]` uses a regex to validate email addresses that is derived from the regex
-   * used in Chromium. If you need stricter validation (e.g. requiring a top-level domain), you can
-   * use `ng-pattern` or modify the built-in validators (see the {@link guide/forms Forms guide})
+   * used in Chromium, which may not fulfill your app's requirements.
+   * If you need stricter (e.g. requiring a top-level domain), or more relaxed validation
+   * (e.g. allowing IPv6 address literals) you can use `ng-pattern` or
+   * modify the built-in validators (see the {@link guide/forms Forms guide}).
    * </div>
    *
    * @param {string} ngModel Assignable AngularJS expression to data-bind to.
@@ -35829,7 +36055,7 @@ function createDateParser(regexp, mapping) {
 }
 
 function createDateInputType(type, regexp, parseDate, format) {
-  return function dynamicDateInputType(scope, element, attr, ctrl, $sniffer, $browser, $filter) {
+  return function dynamicDateInputType(scope, element, attr, ctrl, $sniffer, $browser, $filter, $parse) {
     badInputChecker(scope, element, attr, ctrl, type);
     baseInputType(scope, element, attr, ctrl, $sniffer, $browser);
 
@@ -35872,24 +36098,34 @@ function createDateInputType(type, regexp, parseDate, format) {
     });
 
     if (isDefined(attr.min) || attr.ngMin) {
-      var minVal;
+      var minVal = attr.min || $parse(attr.ngMin)(scope);
+      var parsedMinVal = parseObservedDateValue(minVal);
+
       ctrl.$validators.min = function(value) {
-        return !isValidDate(value) || isUndefined(minVal) || parseDate(value) >= minVal;
+        return !isValidDate(value) || isUndefined(parsedMinVal) || parseDate(value) >= parsedMinVal;
       };
       attr.$observe('min', function(val) {
-        minVal = parseObservedDateValue(val);
-        ctrl.$validate();
+        if (val !== minVal) {
+          parsedMinVal = parseObservedDateValue(val);
+          minVal = val;
+          ctrl.$validate();
+        }
       });
     }
 
     if (isDefined(attr.max) || attr.ngMax) {
-      var maxVal;
+      var maxVal = attr.max || $parse(attr.ngMax)(scope);
+      var parsedMaxVal = parseObservedDateValue(maxVal);
+
       ctrl.$validators.max = function(value) {
-        return !isValidDate(value) || isUndefined(maxVal) || parseDate(value) <= maxVal;
+        return !isValidDate(value) || isUndefined(parsedMaxVal) || parseDate(value) <= parsedMaxVal;
       };
       attr.$observe('max', function(val) {
-        maxVal = parseObservedDateValue(val);
-        ctrl.$validate();
+        if (val !== maxVal) {
+          parsedMaxVal = parseObservedDateValue(val);
+          maxVal = val;
+          ctrl.$validate();
+        }
       });
     }
 
@@ -36041,50 +36277,68 @@ function isValidForStep(viewValue, stepBase, step) {
   return (value - stepBase) % step === 0;
 }
 
-function numberInputType(scope, element, attr, ctrl, $sniffer, $browser) {
+function numberInputType(scope, element, attr, ctrl, $sniffer, $browser, $filter, $parse) {
   badInputChecker(scope, element, attr, ctrl, 'number');
   numberFormatterParser(ctrl);
   baseInputType(scope, element, attr, ctrl, $sniffer, $browser);
 
-  var minVal;
-  var maxVal;
+  var parsedMinVal;
 
   if (isDefined(attr.min) || attr.ngMin) {
+    var minVal = attr.min || $parse(attr.ngMin)(scope);
+    parsedMinVal = parseNumberAttrVal(minVal);
+
     ctrl.$validators.min = function(modelValue, viewValue) {
-      return ctrl.$isEmpty(viewValue) || isUndefined(minVal) || viewValue >= minVal;
+      return ctrl.$isEmpty(viewValue) || isUndefined(parsedMinVal) || viewValue >= parsedMinVal;
     };
 
     attr.$observe('min', function(val) {
-      minVal = parseNumberAttrVal(val);
-      // TODO(matsko): implement validateLater to reduce number of validations
-      ctrl.$validate();
+      if (val !== minVal) {
+        parsedMinVal = parseNumberAttrVal(val);
+        minVal = val;
+        // TODO(matsko): implement validateLater to reduce number of validations
+        ctrl.$validate();
+      }
     });
   }
 
   if (isDefined(attr.max) || attr.ngMax) {
+    var maxVal = attr.max || $parse(attr.ngMax)(scope);
+    var parsedMaxVal = parseNumberAttrVal(maxVal);
+
     ctrl.$validators.max = function(modelValue, viewValue) {
-      return ctrl.$isEmpty(viewValue) || isUndefined(maxVal) || viewValue <= maxVal;
+      return ctrl.$isEmpty(viewValue) || isUndefined(parsedMaxVal) || viewValue <= parsedMaxVal;
     };
 
     attr.$observe('max', function(val) {
-      maxVal = parseNumberAttrVal(val);
-      // TODO(matsko): implement validateLater to reduce number of validations
-      ctrl.$validate();
+      if (val !== maxVal) {
+        parsedMaxVal = parseNumberAttrVal(val);
+        maxVal = val;
+        // TODO(matsko): implement validateLater to reduce number of validations
+        ctrl.$validate();
+      }
     });
   }
 
   if (isDefined(attr.step) || attr.ngStep) {
-    var stepVal;
+    var stepVal = attr.step || $parse(attr.ngStep)(scope);
+    var parsedStepVal = parseNumberAttrVal(stepVal);
+
     ctrl.$validators.step = function(modelValue, viewValue) {
-      return ctrl.$isEmpty(viewValue) || isUndefined(stepVal) ||
-             isValidForStep(viewValue, minVal || 0, stepVal);
+      return ctrl.$isEmpty(viewValue) || isUndefined(parsedStepVal) ||
+        isValidForStep(viewValue, parsedMinVal || 0, parsedStepVal);
     };
 
     attr.$observe('step', function(val) {
-      stepVal = parseNumberAttrVal(val);
       // TODO(matsko): implement validateLater to reduce number of validations
-      ctrl.$validate();
+      if (val !== stepVal) {
+        parsedStepVal = parseNumberAttrVal(val);
+        stepVal = val;
+        ctrl.$validate();
+      }
+
     });
+
   }
 }
 
@@ -36114,6 +36368,8 @@ function rangeInputType(scope, element, attr, ctrl, $sniffer, $browser) {
     originalRender;
 
   if (hasMinAttr) {
+    minVal = parseNumberAttrVal(attr.min);
+
     ctrl.$validators.min = supportsRange ?
       // Since all browsers set the input to a valid value, we don't need to check validity
       function noopMinValidator() { return true; } :
@@ -36126,6 +36382,8 @@ function rangeInputType(scope, element, attr, ctrl, $sniffer, $browser) {
   }
 
   if (hasMaxAttr) {
+    maxVal = parseNumberAttrVal(attr.max);
+
     ctrl.$validators.max = supportsRange ?
       // Since all browsers set the input to a valid value, we don't need to check validity
       function noopMaxValidator() { return true; } :
@@ -36138,6 +36396,8 @@ function rangeInputType(scope, element, attr, ctrl, $sniffer, $browser) {
   }
 
   if (hasStepAttr) {
+    stepVal = parseNumberAttrVal(attr.step);
+
     ctrl.$validators.step = supportsRange ?
       function nativeStepValidator() {
         // Currently, only FF implements the spec on step change correctly (i.e. adjusting the
@@ -36159,7 +36419,13 @@ function rangeInputType(scope, element, attr, ctrl, $sniffer, $browser) {
     // attribute value when the input is first rendered, so that the browser can adjust the
     // input value based on the min/max value
     element.attr(htmlAttrName, attr[htmlAttrName]);
-    attr.$observe(htmlAttrName, changeFn);
+    var oldVal = attr[htmlAttrName];
+    attr.$observe(htmlAttrName, function wrappedObserver(val) {
+      if (val !== oldVal) {
+        oldVal = val;
+        changeFn(val);
+      }
+    });
   }
 
   function minChange(val) {
@@ -36213,11 +36479,11 @@ function rangeInputType(scope, element, attr, ctrl, $sniffer, $browser) {
     }
 
     // Some browsers don't adjust the input value correctly, but set the stepMismatch error
-    if (supportsRange && ctrl.$viewValue !== element.val()) {
-      ctrl.$setViewValue(element.val());
-    } else {
+    if (!supportsRange) {
       // TODO(matsko): implement validateLater to reduce number of validations
       ctrl.$validate();
+    } else if (ctrl.$viewValue !== element.val()) {
+      ctrl.$setViewValue(element.val());
     }
   }
 }
@@ -36523,6 +36789,48 @@ var inputDirective = ['$browser', '$sniffer', '$filter', '$parse',
     }
   };
 }];
+
+
+var hiddenInputBrowserCacheDirective = function() {
+  var valueProperty = {
+    configurable: true,
+    enumerable: false,
+    get: function() {
+      return this.getAttribute('value') || '';
+    },
+    set: function(val) {
+      this.setAttribute('value', val);
+    }
+  };
+
+  return {
+    restrict: 'E',
+    priority: 200,
+    compile: function(_, attr) {
+      if (lowercase(attr.type) !== 'hidden') {
+        return;
+      }
+
+      return {
+        pre: function(scope, element, attr, ctrls) {
+          var node = element[0];
+
+          // Support: Edge
+          // Moving the DOM around prevents autofillling
+          if (node.parentNode) {
+            node.parentNode.insertBefore(node, node.nextSibling);
+          }
+
+          // Support: FF, IE
+          // Avoiding direct assignment to .value prevents autofillling
+          if (Object.defineProperty) {
+            Object.defineProperty(node, 'value', valueProperty);
+          }
+        }
+      };
+    }
+  };
+};
 
 
 
@@ -37029,6 +37337,8 @@ function classDirective(name, selector) {
   }
 
   function toClassString(classValue) {
+    if (!classValue) return classValue;
+
     var classString = classValue;
 
     if (isArray(classValue)) {
@@ -37037,6 +37347,8 @@ function classDirective(name, selector) {
       classString = Object.keys(classValue).
         filter(function(key) { return classValue[key]; }).
         join(' ');
+    } else if (!isString(classValue)) {
+      classString = classValue + '';
     }
 
     return classString;
@@ -38602,9 +38914,9 @@ var ngIfDirective = ['$animate', '$compile', function($animate, $compile) {
  * By default, the template URL is restricted to the same domain and protocol as the
  * application document. This is done by calling {@link $sce#getTrustedResourceUrl
  * $sce.getTrustedResourceUrl} on it. To load templates from other domains or protocols
- * you may either {@link ng.$sceDelegateProvider#resourceUrlWhitelist whitelist them} or
- * {@link $sce#trustAsResourceUrl wrap them} as trusted values. Refer to AngularJS's {@link
- * ng.$sce Strict Contextual Escaping}.
+ * you may either add them to your {@link ng.$sceDelegateProvider#trustedResourceUrlList trusted
+ * resource URL list} or {@link $sce#trustAsResourceUrl wrap them} as trusted values. Refer to
+ * AngularJS's {@link ng.$sce Strict Contextual Escaping}.
  *
  * In addition, the browser's
  * [Same Origin Policy](https://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy_for_XMLHttpRequest)
@@ -39661,6 +39973,7 @@ NgModelController.prototype = {
    * `$modelValue`, i.e. either the last parsed value or the last value set from the scope.
    */
   $validate: function() {
+
     // ignore $validate before model is initialized
     if (isNumberNaN(this.$modelValue)) {
       return;
@@ -42673,7 +42986,7 @@ var ngRefDirective = ['$parse', function($parse) {
  *     For example: `item in items | filter:x as results` will store the fragment of the repeated items as `results`, but only after
  *     the items have been processed through the filter.
  *
- *     Please note that `as [variable name] is not an operator but rather a part of ngRepeat
+ *     Please note that `as [variable name]` is not an operator but rather a part of ngRepeat
  *     micro-syntax so it can be used only after all filters (and not as operator, inside an expression).
  *
  *     For example: `item in items | filter : x | orderBy : order | limitTo : limit as results track by item.id` .
@@ -42795,6 +43108,13 @@ var ngRepeatDirective = ['$parse', '$animate', '$compile', function($parse, $ani
     return block.clone[block.clone.length - 1];
   };
 
+  var trackByIdArrayFn = function($scope, key, value) {
+    return hashKey(value);
+  };
+
+  var trackByIdObjFn = function($scope, key) {
+    return key;
+  };
 
   return {
     restrict: 'A',
@@ -42834,31 +43154,22 @@ var ngRepeatDirective = ['$parse', '$animate', '$compile', function($parse, $ani
           aliasAs);
       }
 
-      var trackByExpGetter, trackByIdExpFn, trackByIdArrayFn, trackByIdObjFn;
-      var hashFnLocals = {$id: hashKey};
+      var trackByIdExpFn;
 
       if (trackByExp) {
-        trackByExpGetter = $parse(trackByExp);
-      } else {
-        trackByIdArrayFn = function(key, value) {
-          return hashKey(value);
-        };
-        trackByIdObjFn = function(key) {
-          return key;
+        var hashFnLocals = {$id: hashKey};
+        var trackByExpGetter = $parse(trackByExp);
+
+        trackByIdExpFn = function($scope, key, value, index) {
+          // assign key, value, and $index to the locals so that they can be used in hash functions
+          if (keyIdentifier) hashFnLocals[keyIdentifier] = key;
+          hashFnLocals[valueIdentifier] = value;
+          hashFnLocals.$index = index;
+          return trackByExpGetter($scope, hashFnLocals);
         };
       }
 
       return function ngRepeatLink($scope, $element, $attr, ctrl, $transclude) {
-
-        if (trackByExpGetter) {
-          trackByIdExpFn = function(key, value, index) {
-            // assign key, value, and $index to the locals so that they can be used in hash functions
-            if (keyIdentifier) hashFnLocals[keyIdentifier] = key;
-            hashFnLocals[valueIdentifier] = value;
-            hashFnLocals.$index = index;
-            return trackByExpGetter($scope, hashFnLocals);
-          };
-        }
 
         // Store a list of elements from previous run. This is a hash where key is the item from the
         // iterator, and the value is objects with following properties.
@@ -42913,7 +43224,7 @@ var ngRepeatDirective = ['$parse', '$animate', '$compile', function($parse, $ani
           for (index = 0; index < collectionLength; index++) {
             key = (collection === collectionKeys) ? index : collectionKeys[index];
             value = collection[key];
-            trackById = trackByIdFn(key, value, index);
+            trackById = trackByIdFn($scope, key, value, index);
             if (lastBlockMap[trackById]) {
               // found previously seen block
               block = lastBlockMap[trackById];
@@ -42933,6 +43244,12 @@ var ngRepeatDirective = ['$parse', '$animate', '$compile', function($parse, $ani
               nextBlockOrder[index] = {id: trackById, scope: undefined, clone: undefined};
               nextBlockMap[trackById] = true;
             }
+          }
+
+          // Clear the value property from the hashFnLocals object to prevent a reference to the last value
+          // being leaked into the ngRepeatCompile function scope
+          if (hashFnLocals) {
+            hashFnLocals[valueIdentifier] = undefined;
           }
 
           // remove leftover items
@@ -43478,11 +43795,11 @@ var ngHideDirective = ['$animate', function($animate) {
        var colorSpan = element(by.css('span'));
 
        it('should check ng-style', function() {
-         expect(colorSpan.getCssValue('color')).toBe('rgba(0, 0, 0, 1)');
+         expect(colorSpan.getCssValue('color')).toMatch(/rgba\(0, 0, 0, 1\)|rgb\(0, 0, 0\)/);
          element(by.css('input[value=\'set color\']')).click();
-         expect(colorSpan.getCssValue('color')).toBe('rgba(255, 0, 0, 1)');
+         expect(colorSpan.getCssValue('color')).toMatch(/rgba\(255, 0, 0, 1\)|rgb\(255, 0, 0\)/);
          element(by.css('input[value=clear]')).click();
-         expect(colorSpan.getCssValue('color')).toBe('rgba(0, 0, 0, 1)');
+         expect(colorSpan.getCssValue('color')).toMatch(/rgba\(0, 0, 0, 1\)|rgb\(0, 0, 0\)/);
        });
      </file>
    </example>
@@ -43490,7 +43807,7 @@ var ngHideDirective = ['$animate', function($animate) {
 var ngStyleDirective = ngDirective(function(scope, element, attr) {
   scope.$watchCollection(attr.ngStyle, function ngStyleWatchAction(newStyles, oldStyles) {
     if (oldStyles && (newStyles !== oldStyles)) {
-      forEach(oldStyles, function(val, style) { element.css(style, '');});
+      forEach(oldStyles, function(val, style) { element.css(style, ''); });
     }
     if (newStyles) element.css(newStyles);
   });
@@ -44952,24 +45269,35 @@ var optionDirective = ['$interpolate', function($interpolate) {
  *   </file>
  * </example>
  */
-var requiredDirective = function() {
+var requiredDirective = ['$parse', function($parse) {
   return {
     restrict: 'A',
     require: '?ngModel',
     link: function(scope, elm, attr, ctrl) {
       if (!ctrl) return;
-      attr.required = true; // force truthy in case we are on non input element
+      // For boolean attributes like required, presence means true
+      var value = attr.hasOwnProperty('required') || $parse(attr.ngRequired)(scope);
+
+      if (!attr.ngRequired) {
+        // force truthy in case we are on non input element
+        // (input elements do this automatically for boolean attributes like required)
+        attr.required = true;
+      }
 
       ctrl.$validators.required = function(modelValue, viewValue) {
-        return !attr.required || !ctrl.$isEmpty(viewValue);
+        return !value || !ctrl.$isEmpty(viewValue);
       };
 
-      attr.$observe('required', function() {
-        ctrl.$validate();
+      attr.$observe('required', function(newVal) {
+
+        if (value !== newVal) {
+          value = newVal;
+          ctrl.$validate();
+        }
       });
     }
   };
-};
+}];
 
 /**
  * @ngdoc directive
@@ -45052,36 +45380,59 @@ var requiredDirective = function() {
  *   </file>
  * </example>
  */
-var patternDirective = function() {
+var patternDirective = ['$parse', function($parse) {
   return {
     restrict: 'A',
     require: '?ngModel',
-    link: function(scope, elm, attr, ctrl) {
-      if (!ctrl) return;
+    compile: function(tElm, tAttr) {
+      var patternExp;
+      var parseFn;
 
-      var regexp, patternExp = attr.ngPattern || attr.pattern;
-      attr.$observe('pattern', function(regex) {
-        if (isString(regex) && regex.length > 0) {
-          regex = new RegExp('^' + regex + '$');
+      if (tAttr.ngPattern) {
+        patternExp = tAttr.ngPattern;
+
+        // ngPattern might be a scope expression, or an inlined regex, which is not parsable.
+        // We get value of the attribute here, so we can compare the old and the new value
+        // in the observer to avoid unnecessary validations
+        if (tAttr.ngPattern.charAt(0) === '/' && REGEX_STRING_REGEXP.test(tAttr.ngPattern)) {
+          parseFn = function() { return tAttr.ngPattern; };
+        } else {
+          parseFn = $parse(tAttr.ngPattern);
+        }
+      }
+
+      return function(scope, elm, attr, ctrl) {
+        if (!ctrl) return;
+
+        var attrVal = attr.pattern;
+
+        if (attr.ngPattern) {
+          attrVal = parseFn(scope);
+        } else {
+          patternExp = attr.pattern;
         }
 
-        if (regex && !regex.test) {
-          throw minErr('ngPattern')('noregexp',
-            'Expected {0} to be a RegExp but was {1}. Element: {2}', patternExp,
-            regex, startingTag(elm));
-        }
+        var regexp = parsePatternAttr(attrVal, patternExp, elm);
 
-        regexp = regex || undefined;
-        ctrl.$validate();
-      });
+        attr.$observe('pattern', function(newVal) {
+          var oldRegexp = regexp;
 
-      ctrl.$validators.pattern = function(modelValue, viewValue) {
-        // HTML5 pattern constraint validates the input value, so we validate the viewValue
-        return ctrl.$isEmpty(viewValue) || isUndefined(regexp) || regexp.test(viewValue);
+          regexp = parsePatternAttr(newVal, patternExp, elm);
+
+          if ((oldRegexp && oldRegexp.toString()) !== (regexp && regexp.toString())) {
+            ctrl.$validate();
+          }
+        });
+
+        ctrl.$validators.pattern = function(modelValue, viewValue) {
+          // HTML5 pattern constraint validates the input value, so we validate the viewValue
+          return ctrl.$isEmpty(viewValue) || isUndefined(regexp) || regexp.test(viewValue);
+        };
       };
     }
+
   };
-};
+}];
 
 /**
  * @ngdoc directive
@@ -45154,25 +45505,29 @@ var patternDirective = function() {
  *   </file>
  * </example>
  */
-var maxlengthDirective = function() {
+var maxlengthDirective = ['$parse', function($parse) {
   return {
     restrict: 'A',
     require: '?ngModel',
     link: function(scope, elm, attr, ctrl) {
       if (!ctrl) return;
 
-      var maxlength = -1;
+      var maxlength = attr.maxlength || $parse(attr.ngMaxlength)(scope);
+      var maxlengthParsed = parseLength(maxlength);
+
       attr.$observe('maxlength', function(value) {
-        var intVal = toInt(value);
-        maxlength = isNumberNaN(intVal) ? -1 : intVal;
-        ctrl.$validate();
+        if (maxlength !== value) {
+          maxlengthParsed = parseLength(value);
+          maxlength = value;
+          ctrl.$validate();
+        }
       });
       ctrl.$validators.maxlength = function(modelValue, viewValue) {
-        return (maxlength < 0) || ctrl.$isEmpty(viewValue) || (viewValue.length <= maxlength);
+        return (maxlengthParsed < 0) || ctrl.$isEmpty(viewValue) || (viewValue.length <= maxlengthParsed);
       };
     }
   };
-};
+}];
 
 /**
  * @ngdoc directive
@@ -45243,24 +45598,52 @@ var maxlengthDirective = function() {
  *   </file>
  * </example>
  */
-var minlengthDirective = function() {
+var minlengthDirective = ['$parse', function($parse) {
   return {
     restrict: 'A',
     require: '?ngModel',
     link: function(scope, elm, attr, ctrl) {
       if (!ctrl) return;
 
-      var minlength = 0;
+      var minlength = attr.minlength || $parse(attr.ngMinlength)(scope);
+      var minlengthParsed = parseLength(minlength) || -1;
+
       attr.$observe('minlength', function(value) {
-        minlength = toInt(value) || 0;
-        ctrl.$validate();
+        if (minlength !== value) {
+          minlengthParsed = parseLength(value) || -1;
+          minlength = value;
+          ctrl.$validate();
+        }
+
       });
       ctrl.$validators.minlength = function(modelValue, viewValue) {
-        return ctrl.$isEmpty(viewValue) || viewValue.length >= minlength;
+        return ctrl.$isEmpty(viewValue) || viewValue.length >= minlengthParsed;
       };
     }
   };
-};
+}];
+
+
+function parsePatternAttr(regex, patternExp, elm) {
+  if (!regex) return undefined;
+
+  if (isString(regex)) {
+    regex = new RegExp('^' + regex + '$');
+  }
+
+  if (!regex.test) {
+    throw minErr('ngPattern')('noregexp',
+      'Expected {0} to be a RegExp but was {1}. Element: {2}', patternExp,
+      regex, startingTag(elm));
+  }
+
+  return regex;
+}
+
+function parseLength(val) {
+  var intVal = toInt(val);
+  return isNumberNaN(intVal) ? -1 : intVal;
+}
 
 if (window.angular.bootstrap) {
   // AngularJS is already loaded, so we can return here...
@@ -45425,10 +45808,10 @@ $provide.value("$locale", {
 
 })(window);
 
-!window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
+!window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend(window.angular.element('<style>').text('@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}'));
 /*!
- * Bootstrap v3.3.7 (http://getbootstrap.com)
- * Copyright 2011-2016 Twitter, Inc.
+ * Bootstrap v3.4.1 (https://getbootstrap.com/)
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under the MIT license
  */
 
@@ -45445,10 +45828,10 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: transition.js v3.3.7
- * http://getbootstrap.com/javascript/#transitions
+ * Bootstrap: transition.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#transitions
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -45456,7 +45839,7 @@ if (typeof jQuery === 'undefined') {
 +function ($) {
   'use strict';
 
-  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // CSS TRANSITION SUPPORT (Shoutout: https://modernizr.com/)
   // ============================================================
 
   function transitionEnd() {
@@ -45478,7 +45861,7 @@ if (typeof jQuery === 'undefined') {
     return false // explicit for ie8 (  ._.)
   }
 
-  // http://blog.alexmaccaw.com/css-transitions
+  // https://blog.alexmaccaw.com/css-transitions
   $.fn.emulateTransitionEnd = function (duration) {
     var called = false
     var $el = this
@@ -45505,10 +45888,10 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: alert.js v3.3.7
- * http://getbootstrap.com/javascript/#alerts
+ * Bootstrap: alert.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#alerts
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -45524,7 +45907,7 @@ if (typeof jQuery === 'undefined') {
     $(el).on('click', dismiss, this.close)
   }
 
-  Alert.VERSION = '3.3.7'
+  Alert.VERSION = '3.4.1'
 
   Alert.TRANSITION_DURATION = 150
 
@@ -45537,7 +45920,8 @@ if (typeof jQuery === 'undefined') {
       selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
     }
 
-    var $parent = $(selector === '#' ? [] : selector)
+    selector    = selector === '#' ? [] : selector
+    var $parent = $(document).find(selector)
 
     if (e) e.preventDefault()
 
@@ -45600,10 +45984,10 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: button.js v3.3.7
- * http://getbootstrap.com/javascript/#buttons
+ * Bootstrap: button.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#buttons
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -45620,7 +46004,7 @@ if (typeof jQuery === 'undefined') {
     this.isLoading = false
   }
 
-  Button.VERSION  = '3.3.7'
+  Button.VERSION  = '3.4.1'
 
   Button.DEFAULTS = {
     loadingText: 'loading...'
@@ -45726,10 +46110,10 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: carousel.js v3.3.7
- * http://getbootstrap.com/javascript/#carousel
+ * Bootstrap: carousel.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#carousel
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -45757,7 +46141,7 @@ if (typeof jQuery === 'undefined') {
       .on('mouseleave.bs.carousel', $.proxy(this.cycle, this))
   }
 
-  Carousel.VERSION  = '3.3.7'
+  Carousel.VERSION  = '3.4.1'
 
   Carousel.TRANSITION_DURATION = 600
 
@@ -45871,7 +46255,9 @@ if (typeof jQuery === 'undefined') {
     var slidEvent = $.Event('slid.bs.carousel', { relatedTarget: relatedTarget, direction: direction }) // yes, "slid"
     if ($.support.transition && this.$element.hasClass('slide')) {
       $next.addClass(type)
-      $next[0].offsetWidth // force reflow
+      if (typeof $next === 'object' && $next.length) {
+        $next[0].offsetWidth // force reflow
+      }
       $active.addClass(direction)
       $next.addClass(direction)
       $active
@@ -45933,10 +46319,17 @@ if (typeof jQuery === 'undefined') {
   // =================
 
   var clickHandler = function (e) {
-    var href
     var $this   = $(this)
-    var $target = $($this.attr('data-target') || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) // strip for ie7
+    var href    = $this.attr('href')
+    if (href) {
+      href = href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+    }
+
+    var target  = $this.attr('data-target') || href
+    var $target = $(document).find(target)
+
     if (!$target.hasClass('carousel')) return
+
     var options = $.extend({}, $target.data(), $this.data())
     var slideIndex = $this.attr('data-slide-to')
     if (slideIndex) options.interval = false
@@ -45964,10 +46357,10 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: collapse.js v3.3.7
- * http://getbootstrap.com/javascript/#collapse
+ * Bootstrap: collapse.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#collapse
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -45995,7 +46388,7 @@ if (typeof jQuery === 'undefined') {
     if (this.options.toggle) this.toggle()
   }
 
-  Collapse.VERSION  = '3.3.7'
+  Collapse.VERSION  = '3.4.1'
 
   Collapse.TRANSITION_DURATION = 350
 
@@ -46102,7 +46495,7 @@ if (typeof jQuery === 'undefined') {
   }
 
   Collapse.prototype.getParent = function () {
-    return $(this.options.parent)
+    return $(document).find(this.options.parent)
       .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
       .each($.proxy(function (i, element) {
         var $element = $(element)
@@ -46125,7 +46518,7 @@ if (typeof jQuery === 'undefined') {
     var target = $trigger.attr('data-target')
       || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
 
-    return $(target)
+    return $(document).find(target)
   }
 
 
@@ -46177,10 +46570,10 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: dropdown.js v3.3.7
- * http://getbootstrap.com/javascript/#dropdowns
+ * Bootstrap: dropdown.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#dropdowns
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -46197,7 +46590,7 @@ if (typeof jQuery === 'undefined') {
     $(element).on('click.bs.dropdown', this.toggle)
   }
 
-  Dropdown.VERSION = '3.3.7'
+  Dropdown.VERSION = '3.4.1'
 
   function getParent($this) {
     var selector = $this.attr('data-target')
@@ -46207,7 +46600,7 @@ if (typeof jQuery === 'undefined') {
       selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
     }
 
-    var $parent = selector && $(selector)
+    var $parent = selector !== '#' ? $(document).find(selector) : null
 
     return $parent && $parent.length ? $parent : $this.parent()
   }
@@ -46343,10 +46736,10 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: modal.js v3.3.7
- * http://getbootstrap.com/javascript/#modals
+ * Bootstrap: modal.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#modals
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -46358,15 +46751,16 @@ if (typeof jQuery === 'undefined') {
   // ======================
 
   var Modal = function (element, options) {
-    this.options             = options
-    this.$body               = $(document.body)
-    this.$element            = $(element)
-    this.$dialog             = this.$element.find('.modal-dialog')
-    this.$backdrop           = null
-    this.isShown             = null
-    this.originalBodyPad     = null
-    this.scrollbarWidth      = 0
+    this.options = options
+    this.$body = $(document.body)
+    this.$element = $(element)
+    this.$dialog = this.$element.find('.modal-dialog')
+    this.$backdrop = null
+    this.isShown = null
+    this.originalBodyPad = null
+    this.scrollbarWidth = 0
     this.ignoreBackdropClick = false
+    this.fixedContent = '.navbar-fixed-top, .navbar-fixed-bottom'
 
     if (this.options.remote) {
       this.$element
@@ -46377,7 +46771,7 @@ if (typeof jQuery === 'undefined') {
     }
   }
 
-  Modal.VERSION  = '3.3.7'
+  Modal.VERSION = '3.4.1'
 
   Modal.TRANSITION_DURATION = 300
   Modal.BACKDROP_TRANSITION_DURATION = 150
@@ -46394,7 +46788,7 @@ if (typeof jQuery === 'undefined') {
 
   Modal.prototype.show = function (_relatedTarget) {
     var that = this
-    var e    = $.Event('show.bs.modal', { relatedTarget: _relatedTarget })
+    var e = $.Event('show.bs.modal', { relatedTarget: _relatedTarget })
 
     this.$element.trigger(e)
 
@@ -46485,8 +46879,8 @@ if (typeof jQuery === 'undefined') {
       .off('focusin.bs.modal') // guard against infinite focus loop
       .on('focusin.bs.modal', $.proxy(function (e) {
         if (document !== e.target &&
-            this.$element[0] !== e.target &&
-            !this.$element.has(e.target).length) {
+          this.$element[0] !== e.target &&
+          !this.$element.has(e.target).length) {
           this.$element.trigger('focus')
         }
       }, this))
@@ -46588,7 +46982,7 @@ if (typeof jQuery === 'undefined') {
     var modalIsOverflowing = this.$element[0].scrollHeight > document.documentElement.clientHeight
 
     this.$element.css({
-      paddingLeft:  !this.bodyIsOverflowing && modalIsOverflowing ? this.scrollbarWidth : '',
+      paddingLeft: !this.bodyIsOverflowing && modalIsOverflowing ? this.scrollbarWidth : '',
       paddingRight: this.bodyIsOverflowing && !modalIsOverflowing ? this.scrollbarWidth : ''
     })
   }
@@ -46613,11 +47007,26 @@ if (typeof jQuery === 'undefined') {
   Modal.prototype.setScrollbar = function () {
     var bodyPad = parseInt((this.$body.css('padding-right') || 0), 10)
     this.originalBodyPad = document.body.style.paddingRight || ''
-    if (this.bodyIsOverflowing) this.$body.css('padding-right', bodyPad + this.scrollbarWidth)
+    var scrollbarWidth = this.scrollbarWidth
+    if (this.bodyIsOverflowing) {
+      this.$body.css('padding-right', bodyPad + scrollbarWidth)
+      $(this.fixedContent).each(function (index, element) {
+        var actualPadding = element.style.paddingRight
+        var calculatedPadding = $(element).css('padding-right')
+        $(element)
+          .data('padding-right', actualPadding)
+          .css('padding-right', parseFloat(calculatedPadding) + scrollbarWidth + 'px')
+      })
+    }
   }
 
   Modal.prototype.resetScrollbar = function () {
     this.$body.css('padding-right', this.originalBodyPad)
+    $(this.fixedContent).each(function (index, element) {
+      var padding = $(element).data('padding-right')
+      $(element).removeData('padding-right')
+      element.style.paddingRight = padding ? padding : ''
+    })
   }
 
   Modal.prototype.measureScrollbar = function () { // thx walsh
@@ -46635,8 +47044,8 @@ if (typeof jQuery === 'undefined') {
 
   function Plugin(option, _relatedTarget) {
     return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.modal')
+      var $this = $(this)
+      var data = $this.data('bs.modal')
       var options = $.extend({}, Modal.DEFAULTS, $this.data(), typeof option == 'object' && option)
 
       if (!data) $this.data('bs.modal', (data = new Modal(this, options)))
@@ -46647,7 +47056,7 @@ if (typeof jQuery === 'undefined') {
 
   var old = $.fn.modal
 
-  $.fn.modal             = Plugin
+  $.fn.modal = Plugin
   $.fn.modal.Constructor = Modal
 
 
@@ -46664,10 +47073,13 @@ if (typeof jQuery === 'undefined') {
   // ==============
 
   $(document).on('click.bs.modal.data-api', '[data-toggle="modal"]', function (e) {
-    var $this   = $(this)
-    var href    = $this.attr('href')
-    var $target = $($this.attr('data-target') || (href && href.replace(/.*(?=#[^\s]+$)/, ''))) // strip for ie7
-    var option  = $target.data('bs.modal') ? 'toggle' : $.extend({ remote: !/#/.test(href) && href }, $target.data(), $this.data())
+    var $this = $(this)
+    var href = $this.attr('href')
+    var target = $this.attr('data-target') ||
+      (href && href.replace(/.*(?=#[^\s]+$)/, '')) // strip for ie7
+
+    var $target = $(document).find(target)
+    var option = $target.data('bs.modal') ? 'toggle' : $.extend({ remote: !/#/.test(href) && href }, $target.data(), $this.data())
 
     if ($this.is('a')) e.preventDefault()
 
@@ -46683,17 +47095,147 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: tooltip.js v3.3.7
- * http://getbootstrap.com/javascript/#tooltip
+ * Bootstrap: tooltip.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#tooltip
  * Inspired by the original jQuery.tipsy by Jason Frame
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
-
 +function ($) {
   'use strict';
+
+  var DISALLOWED_ATTRIBUTES = ['sanitize', 'whiteList', 'sanitizeFn']
+
+  var uriAttrs = [
+    'background',
+    'cite',
+    'href',
+    'itemtype',
+    'longdesc',
+    'poster',
+    'src',
+    'xlink:href'
+  ]
+
+  var ARIA_ATTRIBUTE_PATTERN = /^aria-[\w-]*$/i
+
+  var DefaultWhitelist = {
+    // Global attributes allowed on any supplied element below.
+    '*': ['class', 'dir', 'id', 'lang', 'role', ARIA_ATTRIBUTE_PATTERN],
+    a: ['target', 'href', 'title', 'rel'],
+    area: [],
+    b: [],
+    br: [],
+    col: [],
+    code: [],
+    div: [],
+    em: [],
+    hr: [],
+    h1: [],
+    h2: [],
+    h3: [],
+    h4: [],
+    h5: [],
+    h6: [],
+    i: [],
+    img: ['src', 'alt', 'title', 'width', 'height'],
+    li: [],
+    ol: [],
+    p: [],
+    pre: [],
+    s: [],
+    small: [],
+    span: [],
+    sub: [],
+    sup: [],
+    strong: [],
+    u: [],
+    ul: []
+  }
+
+  /**
+   * A pattern that recognizes a commonly useful subset of URLs that are safe.
+   *
+   * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
+   */
+  var SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^&:/?#]*(?:[/?#]|$))/gi
+
+  /**
+   * A pattern that matches safe data URLs. Only matches image, video and audio types.
+   *
+   * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
+   */
+  var DATA_URL_PATTERN = /^data:(?:image\/(?:bmp|gif|jpeg|jpg|png|tiff|webp)|video\/(?:mpeg|mp4|ogg|webm)|audio\/(?:mp3|oga|ogg|opus));base64,[a-z0-9+/]+=*$/i
+
+  function allowedAttribute(attr, allowedAttributeList) {
+    var attrName = attr.nodeName.toLowerCase()
+
+    if ($.inArray(attrName, allowedAttributeList) !== -1) {
+      if ($.inArray(attrName, uriAttrs) !== -1) {
+        return Boolean(attr.nodeValue.match(SAFE_URL_PATTERN) || attr.nodeValue.match(DATA_URL_PATTERN))
+      }
+
+      return true
+    }
+
+    var regExp = $(allowedAttributeList).filter(function (index, value) {
+      return value instanceof RegExp
+    })
+
+    // Check if a regular expression validates the attribute.
+    for (var i = 0, l = regExp.length; i < l; i++) {
+      if (attrName.match(regExp[i])) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  function sanitizeHtml(unsafeHtml, whiteList, sanitizeFn) {
+    if (unsafeHtml.length === 0) {
+      return unsafeHtml
+    }
+
+    if (sanitizeFn && typeof sanitizeFn === 'function') {
+      return sanitizeFn(unsafeHtml)
+    }
+
+    // IE 8 and below don't support createHTMLDocument
+    if (!document.implementation || !document.implementation.createHTMLDocument) {
+      return unsafeHtml
+    }
+
+    var createdDocument = document.implementation.createHTMLDocument('sanitization')
+    createdDocument.body.innerHTML = unsafeHtml
+
+    var whitelistKeys = $.map(whiteList, function (el, i) { return i })
+    var elements = $(createdDocument.body).find('*')
+
+    for (var i = 0, len = elements.length; i < len; i++) {
+      var el = elements[i]
+      var elName = el.nodeName.toLowerCase()
+
+      if ($.inArray(elName, whitelistKeys) === -1) {
+        el.parentNode.removeChild(el)
+
+        continue
+      }
+
+      var attributeList = $.map(el.attributes, function (el) { return el })
+      var whitelistedAttributes = [].concat(whiteList['*'] || [], whiteList[elName] || [])
+
+      for (var j = 0, len2 = attributeList.length; j < len2; j++) {
+        if (!allowedAttribute(attributeList[j], whitelistedAttributes)) {
+          el.removeAttribute(attributeList[j].nodeName)
+        }
+      }
+    }
+
+    return createdDocument.body.innerHTML
+  }
 
   // TOOLTIP PUBLIC CLASS DEFINITION
   // ===============================
@@ -46710,7 +47252,7 @@ if (typeof jQuery === 'undefined') {
     this.init('tooltip', element, options)
   }
 
-  Tooltip.VERSION  = '3.3.7'
+  Tooltip.VERSION  = '3.4.1'
 
   Tooltip.TRANSITION_DURATION = 150
 
@@ -46727,7 +47269,10 @@ if (typeof jQuery === 'undefined') {
     viewport: {
       selector: 'body',
       padding: 0
-    }
+    },
+    sanitize : true,
+    sanitizeFn : null,
+    whiteList : DefaultWhitelist
   }
 
   Tooltip.prototype.init = function (type, element, options) {
@@ -46735,7 +47280,7 @@ if (typeof jQuery === 'undefined') {
     this.type      = type
     this.$element  = $(element)
     this.options   = this.getOptions(options)
-    this.$viewport = this.options.viewport && $($.isFunction(this.options.viewport) ? this.options.viewport.call(this, this.$element) : (this.options.viewport.selector || this.options.viewport))
+    this.$viewport = this.options.viewport && $(document).find($.isFunction(this.options.viewport) ? this.options.viewport.call(this, this.$element) : (this.options.viewport.selector || this.options.viewport))
     this.inState   = { click: false, hover: false, focus: false }
 
     if (this.$element[0] instanceof document.constructor && !this.options.selector) {
@@ -46768,13 +47313,25 @@ if (typeof jQuery === 'undefined') {
   }
 
   Tooltip.prototype.getOptions = function (options) {
-    options = $.extend({}, this.getDefaults(), this.$element.data(), options)
+    var dataAttributes = this.$element.data()
+
+    for (var dataAttr in dataAttributes) {
+      if (dataAttributes.hasOwnProperty(dataAttr) && $.inArray(dataAttr, DISALLOWED_ATTRIBUTES) !== -1) {
+        delete dataAttributes[dataAttr]
+      }
+    }
+
+    options = $.extend({}, this.getDefaults(), dataAttributes, options)
 
     if (options.delay && typeof options.delay == 'number') {
       options.delay = {
         show: options.delay,
         hide: options.delay
       }
+    }
+
+    if (options.sanitize) {
+      options.template = sanitizeHtml(options.template, options.whiteList, options.sanitizeFn)
     }
 
     return options
@@ -46888,7 +47445,7 @@ if (typeof jQuery === 'undefined') {
         .addClass(placement)
         .data('bs.' + this.type, this)
 
-      this.options.container ? $tip.appendTo(this.options.container) : $tip.insertAfter(this.$element)
+      this.options.container ? $tip.appendTo($(document).find(this.options.container)) : $tip.insertAfter(this.$element)
       this.$element.trigger('inserted.bs.' + this.type)
 
       var pos          = this.getPosition()
@@ -46990,7 +47547,16 @@ if (typeof jQuery === 'undefined') {
     var $tip  = this.tip()
     var title = this.getTitle()
 
-    $tip.find('.tooltip-inner')[this.options.html ? 'html' : 'text'](title)
+    if (this.options.html) {
+      if (this.options.sanitize) {
+        title = sanitizeHtml(title, this.options.whiteList, this.options.sanitizeFn)
+      }
+
+      $tip.find('.tooltip-inner').html(title)
+    } else {
+      $tip.find('.tooltip-inner').text(title)
+    }
+
     $tip.removeClass('fade in top bottom left right')
   }
 
@@ -47171,6 +47737,9 @@ if (typeof jQuery === 'undefined') {
     })
   }
 
+  Tooltip.prototype.sanitizeHtml = function (unsafeHtml) {
+    return sanitizeHtml(unsafeHtml, this.options.whiteList, this.options.sanitizeFn)
+  }
 
   // TOOLTIP PLUGIN DEFINITION
   // =========================
@@ -47204,10 +47773,10 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: popover.js v3.3.7
- * http://getbootstrap.com/javascript/#popovers
+ * Bootstrap: popover.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#popovers
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -47224,7 +47793,7 @@ if (typeof jQuery === 'undefined') {
 
   if (!$.fn.tooltip) throw new Error('Popover requires tooltip.js')
 
-  Popover.VERSION  = '3.3.7'
+  Popover.VERSION  = '3.4.1'
 
   Popover.DEFAULTS = $.extend({}, $.fn.tooltip.Constructor.DEFAULTS, {
     placement: 'right',
@@ -47250,10 +47819,25 @@ if (typeof jQuery === 'undefined') {
     var title   = this.getTitle()
     var content = this.getContent()
 
-    $tip.find('.popover-title')[this.options.html ? 'html' : 'text'](title)
-    $tip.find('.popover-content').children().detach().end()[ // we use append for html objects to maintain js events
-      this.options.html ? (typeof content == 'string' ? 'html' : 'append') : 'text'
-    ](content)
+    if (this.options.html) {
+      var typeContent = typeof content
+
+      if (this.options.sanitize) {
+        title = this.sanitizeHtml(title)
+
+        if (typeContent === 'string') {
+          content = this.sanitizeHtml(content)
+        }
+      }
+
+      $tip.find('.popover-title').html(title)
+      $tip.find('.popover-content').children().detach().end()[
+        typeContent === 'string' ? 'html' : 'append'
+      ](content)
+    } else {
+      $tip.find('.popover-title').text(title)
+      $tip.find('.popover-content').children().detach().end().text(content)
+    }
 
     $tip.removeClass('fade top bottom left right in')
 
@@ -47272,8 +47856,8 @@ if (typeof jQuery === 'undefined') {
 
     return $e.attr('data-content')
       || (typeof o.content == 'function' ?
-            o.content.call($e[0]) :
-            o.content)
+        o.content.call($e[0]) :
+        o.content)
   }
 
   Popover.prototype.arrow = function () {
@@ -47313,10 +47897,10 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: scrollspy.js v3.3.7
- * http://getbootstrap.com/javascript/#scrollspy
+ * Bootstrap: scrollspy.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#scrollspy
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -47342,7 +47926,7 @@ if (typeof jQuery === 'undefined') {
     this.process()
   }
 
-  ScrollSpy.VERSION  = '3.3.7'
+  ScrollSpy.VERSION  = '3.4.1'
 
   ScrollSpy.DEFAULTS = {
     offset: 10
@@ -47486,10 +48070,10 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: tab.js v3.3.7
- * http://getbootstrap.com/javascript/#tabs
+ * Bootstrap: tab.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#tabs
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -47506,7 +48090,7 @@ if (typeof jQuery === 'undefined') {
     // jscs:enable requireDollarBeforejQueryAssignment
   }
 
-  Tab.VERSION = '3.3.7'
+  Tab.VERSION = '3.4.1'
 
   Tab.TRANSITION_DURATION = 150
 
@@ -47535,7 +48119,7 @@ if (typeof jQuery === 'undefined') {
 
     if (showEvent.isDefaultPrevented() || hideEvent.isDefaultPrevented()) return
 
-    var $target = $(selector)
+    var $target = $(document).find(selector)
 
     this.activate($this.closest('li'), $ul)
     this.activate($target, $target.parent(), function () {
@@ -47560,15 +48144,15 @@ if (typeof jQuery === 'undefined') {
       $active
         .removeClass('active')
         .find('> .dropdown-menu > .active')
-          .removeClass('active')
+        .removeClass('active')
         .end()
         .find('[data-toggle="tab"]')
-          .attr('aria-expanded', false)
+        .attr('aria-expanded', false)
 
       element
         .addClass('active')
         .find('[data-toggle="tab"]')
-          .attr('aria-expanded', true)
+        .attr('aria-expanded', true)
 
       if (transition) {
         element[0].offsetWidth // reflow for transition
@@ -47580,10 +48164,10 @@ if (typeof jQuery === 'undefined') {
       if (element.parent('.dropdown-menu').length) {
         element
           .closest('li.dropdown')
-            .addClass('active')
+          .addClass('active')
           .end()
           .find('[data-toggle="tab"]')
-            .attr('aria-expanded', true)
+          .attr('aria-expanded', true)
       }
 
       callback && callback()
@@ -47642,10 +48226,10 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: affix.js v3.3.7
- * http://getbootstrap.com/javascript/#affix
+ * Bootstrap: affix.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#affix
  * ========================================================================
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -47659,7 +48243,9 @@ if (typeof jQuery === 'undefined') {
   var Affix = function (element, options) {
     this.options = $.extend({}, Affix.DEFAULTS, options)
 
-    this.$target = $(this.options.target)
+    var target = this.options.target === Affix.DEFAULTS.target ? $(this.options.target) : $(document).find(this.options.target)
+
+    this.$target = target
       .on('scroll.bs.affix.data-api', $.proxy(this.checkPosition, this))
       .on('click.bs.affix.data-api',  $.proxy(this.checkPositionWithEventLoop, this))
 
@@ -47671,7 +48257,7 @@ if (typeof jQuery === 'undefined') {
     this.checkPosition()
   }
 
-  Affix.VERSION  = '3.3.7'
+  Affix.VERSION  = '3.4.1'
 
   Affix.RESET    = 'affix affix-top affix-bottom'
 
@@ -47810,15 +48396,15 @@ if (typeof jQuery === 'undefined') {
  *         This causes it to be incompatible with plugins that depend on @uirouter/core.
  *         We recommend switching to the ui-router-core.js and ui-router-angularjs.js bundles instead.
  *         For more information, see https://ui-router.github.io/blog/uirouter-for-angularjs-umd-bundles
- * @version v1.0.20
+ * @version v1.0.29
  * @link https://ui-router.github.io
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('angular')) :
     typeof define === 'function' && define.amd ? define(['exports', 'angular'], factory) :
-    (factory((global['@uirouter/angularjs'] = {}),global.angular));
-}(this, (function (exports,ng_from_import) { 'use strict';
+    (global = global || self, factory(global['@uirouter/angularjs'] = {}, global.angular));
+}(this, (function (exports, ng_from_import) { 'use strict';
 
     /** @publicapi @module ng1 */ /** */
     /** @hidden */ var ng_from_global = angular;
@@ -47829,8 +48415,15 @@ if (typeof jQuery === 'undefined') {
      *
      * These utility functions are exported, but are subject to change without notice.
      *
-     * @module common_hof
-     */ /** */
+     * @packageDocumentation
+     */
+    var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
+        for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+        for (var r = Array(s), k = 0, i = 0; i < il; i++)
+            for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+                r[k] = a[j];
+        return r;
+    };
     /**
      * Returns a new function for [Partial Application](https://en.wikipedia.org/wiki/Partial_application) of the original function.
      *
@@ -47869,22 +48462,17 @@ if (typeof jQuery === 'undefined') {
      *
      * ```
      *
-     * Stolen from: http://stackoverflow.com/questions/4394747/javascript-curry-function
-     *
      * @param fn
      * @returns {*|function(): (*|any)}
      */
     function curry(fn) {
-        var initial_args = [].slice.apply(arguments, [1]);
-        var func_args_length = fn.length;
-        function curried(args) {
-            if (args.length >= func_args_length)
-                return fn.apply(null, args);
-            return function () {
-                return curried(args.concat([].slice.apply(arguments)));
-            };
-        }
-        return curried(initial_args);
+        return function curried() {
+            if (arguments.length >= fn.length) {
+                return fn.apply(this, arguments);
+            }
+            var args = Array.prototype.slice.call(arguments);
+            return curried.bind.apply(curried, __spreadArrays([this], args));
+        };
     }
     /**
      * Given a varargs list of functions, returns a function that composes the argument functions, right-to-left
@@ -48045,13 +48633,14 @@ if (typeof jQuery === 'undefined') {
         };
     }
 
-    /** Predicates
+    /**
+     * Predicates
      *
      * These predicates return true/false based on the input.
      * Although these functions are exported, they are subject to change without notice.
      *
-     * @module common_predicates
-     */ /** */
+     * @packageDocumentation
+     */
     var toStr = Object.prototype.toString;
     var tis = function (t) { return function (x) { return typeof x === t; }; };
     var isUndefined = tis('undefined');
@@ -48071,12 +48660,12 @@ if (typeof jQuery === 'undefined') {
      * A value is "injectable" if it is a function, or if it is an ng1 array-notation-style array
      * where all the elements in the array are Strings, except the last one, which is a Function
      */
-    function isInjectable(val$$1) {
-        if (isArray(val$$1) && val$$1.length) {
-            var head = val$$1.slice(0, -1), tail = val$$1.slice(-1);
+    function isInjectable(val) {
+        if (isArray(val) && val.length) {
+            var head = val.slice(0, -1), tail = val.slice(-1);
             return !(head.filter(not(isString)).length || tail.filter(not(isFunction)).length);
         }
-        return isFunction(val$$1);
+        return isFunction(val);
     }
     /**
      * Predicate which checks if a value looks like a Promise
@@ -48096,13 +48685,13 @@ if (typeof jQuery === 'undefined') {
         $injector: undefined,
     };
 
-    /**
-     * Random utility functions used in the UI-Router code
-     *
-     * These functions are exported, but are subject to change without notice.
-     *
-     * @preferred @publicapi @module common
-     */ /** */
+    var __spreadArrays$1 = (undefined && undefined.__spreadArrays) || function () {
+        for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+        for (var r = Array(s), k = 0, i = 0; i < il; i++)
+            for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+                r[k] = a[j];
+        return r;
+    };
     var root = (typeof self === 'object' && self.self === self && self) ||
         (typeof global === 'object' && global.global === global && global) ||
         undefined;
@@ -48210,8 +48799,8 @@ if (typeof jQuery === 'undefined') {
     }
     /** pushes a values to an array and returns the value */
     var pushTo = curry(_pushTo);
-    function _pushTo(arr, val$$1) {
-        return arr.push(val$$1), val$$1;
+    function _pushTo(arr, val) {
+        return arr.push(val), val;
     }
     /** Given an array of (deregistration) functions, calls all functions and removes each one from the source array */
     var deregAll = function (functions) {
@@ -48230,7 +48819,7 @@ if (typeof jQuery === 'undefined') {
         for (var _i = 1; _i < arguments.length; _i++) {
             defaultsList[_i - 1] = arguments[_i];
         }
-        var defaultVals = extend.apply(void 0, [{}].concat(defaultsList.reverse()));
+        var defaultVals = extend.apply(void 0, __spreadArrays$1([{}], defaultsList.reverse()));
         return extend(defaultVals, pick(opts || {}, Object.keys(defaultVals)));
     }
     /** Reduce function that merges each element of the list into a single object, using extend */
@@ -48623,7 +49212,6 @@ if (typeof jQuery === 'undefined') {
     var silenceUncaughtInPromise = function (promise) { return promise.catch(function (e) { return 0; }) && promise; };
     var silentRejection = function (error) { return silenceUncaughtInPromise(services.$q.reject(error)); };
 
-    /** @publicapi @module core */
     /**
      * Matches state names using glob-like pattern strings.
      *
@@ -48671,6 +49259,7 @@ if (typeof jQuery === 'undefined') {
      * | `'**.X'`    | `'X'` , `'A.X'` , `'Z.Y.X'`                   | `'A'` , `'A.login.Z'`             |
      * | `'A.**.X'`  | `'A.X'` , `'A.B.X'` , `'A.B.C.X'`             | `'A'` , `'A.B.C'`                 |
      *
+     * @packageDocumentation
      */
     var Glob = /** @class */ (function () {
         function Glob(text) {
@@ -48702,7 +49291,6 @@ if (typeof jQuery === 'undefined') {
         return Glob;
     }());
 
-    /** @publicapi @module common */ /** */
     var Queue = /** @class */ (function () {
         function Queue(_items, _limit) {
             if (_items === void 0) { _items = []; }
@@ -48750,7 +49338,7 @@ if (typeof jQuery === 'undefined') {
         return Queue;
     }());
 
-    /** @publicapi @module transition */ /** */
+    /** An enum for Transition Rejection reasons */
 
     (function (RejectType) {
         /**
@@ -48790,11 +49378,11 @@ if (typeof jQuery === 'undefined') {
          */
         RejectType[RejectType["ERROR"] = 6] = "ERROR";
     })(exports.RejectType || (exports.RejectType = {}));
-    /** @hidden */
+    /** @internal */
     var id = 0;
     var Rejection = /** @class */ (function () {
         function Rejection(type, message, detail) {
-            /** @hidden */
+            /** @internal */
             this.$id = id++;
             this.type = type;
             this.message = message;
@@ -48866,8 +49454,8 @@ if (typeof jQuery === 'undefined') {
      *
      * Although these functions are exported, they are subject to change without notice.
      *
-     * @module common_strings
-     */ /** */
+     * @packageDocumentation
+     */
     /**
      * Returns a string shortened to a maximum length
      *
@@ -48994,6 +49582,40 @@ if (typeof jQuery === 'undefined') {
     }
 
     /**
+     * workaround for missing console object in IE9 when dev tools haven't been opened o_O
+     * @packageDocumentation
+     */
+    var noopConsoleStub = { log: noop, error: noop, table: noop };
+    function ie9Console(console) {
+        var bound = function (fn) { return Function.prototype.bind.call(fn, console); };
+        return {
+            log: bound(console.log),
+            error: bound(console.log),
+            table: bound(console.log),
+        };
+    }
+    function fallbackConsole(console) {
+        var log = console.log.bind(console);
+        var error = console.error ? console.error.bind(console) : log;
+        var table = console.table ? console.table.bind(console) : log;
+        return { log: log, error: error, table: table };
+    }
+    function getSafeConsole() {
+        // @ts-ignore
+        var isIE9 = typeof document !== 'undefined' && document.documentMode && document.documentMode === 9;
+        if (isIE9) {
+            return window && window.console ? ie9Console(window.console) : noopConsoleStub;
+        }
+        else if (!console.table || !console.error) {
+            return fallbackConsole(console);
+        }
+        else {
+            return console;
+        }
+    }
+    var safeConsole = getSafeConsole();
+
+    /**
      * # Transition tracing (debug)
      *
      * Enable transition tracing to print transition information to the console,
@@ -49025,29 +49647,22 @@ if (typeof jQuery === 'undefined') {
      * app.run($trace => $trace.enable());
      * ```
      *
-     * @publicapi @module trace
+     * @packageDocumentation
      */
-    /** @hidden */
     function uiViewString(uiview) {
         if (!uiview)
             return 'ui-view (defunct)';
         var state = uiview.creationContext ? uiview.creationContext.name || '(root)' : '(none)';
         return "[ui-view#" + uiview.id + " " + uiview.$type + ":" + uiview.fqn + " (" + uiview.name + "@" + state + ")]";
     }
-    /** @hidden */
     var viewConfigString = function (viewConfig) {
         var view = viewConfig.viewDecl;
         var state = view.$context.name || '(root)';
         return "[View#" + viewConfig.$id + " from '" + state + "' state]: target ui-view: '" + view.$uiViewName + "@" + view.$uiViewContextAnchor + "'";
     };
-    /** @hidden */
     function normalizedCat(input) {
         return isNumber(input) ? exports.Category[input] : exports.Category[exports.Category[input]];
     }
-    /** @hidden */
-    var consoleLog = Function.prototype.bind.call(console.log, console);
-    /** @hidden */
-    var consoletable = isFunction(console.table) ? console.table.bind(console) : consoleLog.bind(console);
     /**
      * Trace categories Enum
      *
@@ -49069,23 +49684,20 @@ if (typeof jQuery === 'undefined') {
         Category[Category["UIVIEW"] = 3] = "UIVIEW";
         Category[Category["VIEWCONFIG"] = 4] = "VIEWCONFIG";
     })(exports.Category || (exports.Category = {}));
-    /** @hidden */
     var _tid = parse('$id');
-    /** @hidden */
     var _rid = parse('router.$id');
-    /** @hidden */
     var transLbl = function (trans) { return "Transition #" + _tid(trans) + "-" + _rid(trans); };
     /**
      * Prints UI-Router Transition trace information to the console.
      */
     var Trace = /** @class */ (function () {
-        /** @hidden */
+        /** @internal */
         function Trace() {
-            /** @hidden */
+            /** @internal */
             this._enabled = {};
             this.approximateDigests = 0;
         }
-        /** @hidden */
+        /** @internal */
         Trace.prototype._set = function (enabled, categories) {
             var _this = this;
             if (!categories.length) {
@@ -49122,75 +49734,75 @@ if (typeof jQuery === 'undefined') {
         Trace.prototype.enabled = function (category) {
             return !!this._enabled[normalizedCat(category)];
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceTransitionStart = function (trans) {
             if (!this.enabled(exports.Category.TRANSITION))
                 return;
-            console.log(transLbl(trans) + ": Started  -> " + stringify(trans));
+            safeConsole.log(transLbl(trans) + ": Started  -> " + stringify(trans));
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceTransitionIgnored = function (trans) {
             if (!this.enabled(exports.Category.TRANSITION))
                 return;
-            console.log(transLbl(trans) + ": Ignored  <> " + stringify(trans));
+            safeConsole.log(transLbl(trans) + ": Ignored  <> " + stringify(trans));
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceHookInvocation = function (step, trans, options) {
             if (!this.enabled(exports.Category.HOOK))
                 return;
             var event = parse('traceData.hookType')(options) || 'internal', context = parse('traceData.context.state.name')(options) || parse('traceData.context')(options) || 'unknown', name = functionToString(step.registeredHook.callback);
-            console.log(transLbl(trans) + ":   Hook -> " + event + " context: " + context + ", " + maxLength(200, name));
+            safeConsole.log(transLbl(trans) + ":   Hook -> " + event + " context: " + context + ", " + maxLength(200, name));
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceHookResult = function (hookResult, trans, transitionOptions) {
             if (!this.enabled(exports.Category.HOOK))
                 return;
-            console.log(transLbl(trans) + ":   <- Hook returned: " + maxLength(200, stringify(hookResult)));
+            safeConsole.log(transLbl(trans) + ":   <- Hook returned: " + maxLength(200, stringify(hookResult)));
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceResolvePath = function (path, when, trans) {
             if (!this.enabled(exports.Category.RESOLVE))
                 return;
-            console.log(transLbl(trans) + ":         Resolving " + path + " (" + when + ")");
+            safeConsole.log(transLbl(trans) + ":         Resolving " + path + " (" + when + ")");
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceResolvableResolved = function (resolvable, trans) {
             if (!this.enabled(exports.Category.RESOLVE))
                 return;
-            console.log(transLbl(trans) + ":               <- Resolved  " + resolvable + " to: " + maxLength(200, stringify(resolvable.data)));
+            safeConsole.log(transLbl(trans) + ":               <- Resolved  " + resolvable + " to: " + maxLength(200, stringify(resolvable.data)));
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceError = function (reason, trans) {
             if (!this.enabled(exports.Category.TRANSITION))
                 return;
-            console.log(transLbl(trans) + ": <- Rejected " + stringify(trans) + ", reason: " + reason);
+            safeConsole.log(transLbl(trans) + ": <- Rejected " + stringify(trans) + ", reason: " + reason);
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceSuccess = function (finalState, trans) {
             if (!this.enabled(exports.Category.TRANSITION))
                 return;
-            console.log(transLbl(trans) + ": <- Success  " + stringify(trans) + ", final state: " + finalState.name);
+            safeConsole.log(transLbl(trans) + ": <- Success  " + stringify(trans) + ", final state: " + finalState.name);
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceUIViewEvent = function (event, viewData, extra) {
             if (extra === void 0) { extra = ''; }
             if (!this.enabled(exports.Category.UIVIEW))
                 return;
-            console.log("ui-view: " + padString(30, event) + " " + uiViewString(viewData) + extra);
+            safeConsole.log("ui-view: " + padString(30, event) + " " + uiViewString(viewData) + extra);
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceUIViewConfigUpdated = function (viewData, context) {
             if (!this.enabled(exports.Category.UIVIEW))
                 return;
             this.traceUIViewEvent('Updating', viewData, " with ViewConfig from context='" + context + "'");
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceUIViewFill = function (viewData, html) {
             if (!this.enabled(exports.Category.UIVIEW))
                 return;
             this.traceUIViewEvent('Fill', viewData, " with: " + maxLength(200, html));
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceViewSync = function (pairs) {
             if (!this.enabled(exports.Category.VIEWCONFIG))
                 return;
@@ -49198,26 +49810,26 @@ if (typeof jQuery === 'undefined') {
             var cfgheader = 'view config state (view name)';
             var mapping = pairs
                 .map(function (_a) {
-                var uiView = _a.uiView, viewConfig = _a.viewConfig;
                 var _b;
+                var uiView = _a.uiView, viewConfig = _a.viewConfig;
                 var uiv = uiView && uiView.fqn;
                 var cfg = viewConfig && viewConfig.viewDecl.$context.name + ": (" + viewConfig.viewDecl.$name + ")";
                 return _b = {}, _b[uivheader] = uiv, _b[cfgheader] = cfg, _b;
             })
                 .sort(function (a, b) { return (a[uivheader] || '').localeCompare(b[uivheader] || ''); });
-            consoletable(mapping);
+            safeConsole.table(mapping);
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceViewServiceEvent = function (event, viewConfig) {
             if (!this.enabled(exports.Category.VIEWCONFIG))
                 return;
-            console.log("VIEWCONFIG: " + event + " " + viewConfigString(viewConfig));
+            safeConsole.log("VIEWCONFIG: " + event + " " + viewConfigString(viewConfig));
         };
-        /** @internalapi called by ui-router code */
+        /** @internal called by ui-router code */
         Trace.prototype.traceViewServiceUIViewEvent = function (event, viewData) {
             if (!this.enabled(exports.Category.VIEWCONFIG))
                 return;
-            console.log("VIEWCONFIG: " + event + " " + uiViewString(viewData));
+            safeConsole.log("VIEWCONFIG: " + event + " " + uiViewString(viewData));
         };
         return Trace;
     }());
@@ -49232,9 +49844,6 @@ if (typeof jQuery === 'undefined') {
      */
     var trace = new Trace();
 
-    /** @publicapi @module common */ /** */
-
-    /** @publicapi @module params */ /** */
     /**
      * An internal class which implements [[ParamTypeDefinition]].
      *
@@ -49257,7 +49866,6 @@ if (typeof jQuery === 'undefined') {
      *
      * var paramType = new ParamType(paramTypeDef);
      * ```
-     * @internalapi
      */
     var ParamType = /** @class */ (function () {
         /**
@@ -49320,10 +49928,7 @@ if (typeof jQuery === 'undefined') {
         };
         return ParamType;
     }());
-    /**
-     * Wraps up a `ParamType` object to handle array values.
-     * @internalapi
-     */
+    /** Wraps up a `ParamType` object to handle array values. */
     function ArrayType(type, mode) {
         var _this = this;
         // Wrap non-array value as array
@@ -49380,21 +49985,16 @@ if (typeof jQuery === 'undefined') {
         });
     }
 
-    /** @publicapi @module params */ /** */
-    /** @hidden */
     var hasOwn = Object.prototype.hasOwnProperty;
-    /** @hidden */
     var isShorthand = function (cfg) {
         return ['value', 'type', 'squash', 'array', 'dynamic'].filter(hasOwn.bind(cfg || {})).length === 0;
     };
-    /** @internalapi */
 
     (function (DefType) {
         DefType[DefType["PATH"] = 0] = "PATH";
         DefType[DefType["SEARCH"] = 1] = "SEARCH";
         DefType[DefType["CONFIG"] = 2] = "CONFIG";
     })(exports.DefType || (exports.DefType = {}));
-    /** @internalapi */
     function getParamDeclaration(paramName, location, state) {
         var noReloadOnSearch = (state.reloadOnSearch === false && location === exports.DefType.SEARCH) || undefined;
         var dynamic = find([state.dynamic, noReloadOnSearch], isDefined);
@@ -49402,7 +50002,6 @@ if (typeof jQuery === 'undefined') {
         var paramConfig = unwrapShorthand(state && state.params && state.params[paramName]);
         return extend(defaultConfig, paramConfig);
     }
-    /** @hidden */
     function unwrapShorthand(cfg) {
         cfg = isShorthand(cfg) ? { value: cfg } : cfg;
         getStaticDefaultValue['__cacheable'] = true;
@@ -49412,7 +50011,6 @@ if (typeof jQuery === 'undefined') {
         var $$fn = isInjectable(cfg.value) ? cfg.value : getStaticDefaultValue;
         return extend(cfg, { $$fn: $$fn });
     }
-    /** @hidden */
     function getType(cfg, urlType, location, id, paramTypes) {
         if (cfg.type && urlType && urlType.name !== 'string')
             throw new Error("Param '" + id + "' has two type configurations.");
@@ -49432,10 +50030,7 @@ if (typeof jQuery === 'undefined') {
         }
         return cfg.type instanceof ParamType ? cfg.type : paramTypes.type(cfg.type);
     }
-    /**
-     * @internalapi
-     * returns false, true, or the squash value to indicate the "default parameter url squash policy".
-     */
+    /** returns false, true, or the squash value to indicate the "default parameter url squash policy". */
     function getSquashPolicy(config, isOptional, defaultPolicy) {
         var squash = config.squash;
         if (!isOptional || squash === false)
@@ -49446,7 +50041,6 @@ if (typeof jQuery === 'undefined') {
             return squash;
         throw new Error("Invalid squash policy: '" + squash + "'. Valid policies: false, true, or arbitrary string");
     }
-    /** @internalapi */
     function getReplace(config, arrayMode, isOptional, squash) {
         var defaultPolicy = [
             { from: '', to: isOptional || arrayMode ? undefined : '' },
@@ -49458,7 +50052,6 @@ if (typeof jQuery === 'undefined') {
         var configuredKeys = map(replace, prop('from'));
         return filter(defaultPolicy, function (item) { return configuredKeys.indexOf(item.from) === -1; }).concat(replace);
     }
-    /** @internalapi */
     var Param = /** @class */ (function () {
         function Param(id, type, location, urlConfig, state) {
             var config = getParamDeclaration(id, location, state);
@@ -49470,21 +50063,21 @@ if (typeof jQuery === 'undefined') {
             var raw = isDefined(config.raw) ? !!config.raw : !!type.raw;
             var squash = getSquashPolicy(config, isOptional, urlConfig.defaultSquashPolicy());
             var replace = getReplace(config, arrayMode, isOptional, squash);
-            var inherit$$1 = isDefined(config.inherit) ? !!config.inherit : !!type.inherit;
+            var inherit = isDefined(config.inherit) ? !!config.inherit : !!type.inherit;
             // array config: param name (param[]) overrides default settings.  explicit config overrides param name.
             function getArrayMode() {
                 var arrayDefaults = { array: location === exports.DefType.SEARCH ? 'auto' : false };
                 var arrayParamNomenclature = id.match(/\[\]$/) ? { array: true } : {};
                 return extend(arrayDefaults, arrayParamNomenclature, config).array;
             }
-            extend(this, { id: id, type: type, location: location, isOptional: isOptional, dynamic: dynamic, raw: raw, squash: squash, replace: replace, inherit: inherit$$1, array: arrayMode, config: config });
+            extend(this, { id: id, type: type, location: location, isOptional: isOptional, dynamic: dynamic, raw: raw, squash: squash, replace: replace, inherit: inherit, array: arrayMode, config: config });
         }
-        Param.values = function (params, values$$1) {
-            if (values$$1 === void 0) { values$$1 = {}; }
+        Param.values = function (params, values) {
+            if (values === void 0) { values = {}; }
             var paramValues = {};
             for (var _i = 0, params_1 = params; _i < params_1.length; _i++) {
                 var param = params_1[_i];
-                paramValues[param.id] = param.value(values$$1[param.id]);
+                paramValues[param.id] = param.value(values[param.id]);
             }
             return paramValues;
         };
@@ -49519,9 +50112,9 @@ if (typeof jQuery === 'undefined') {
             return Param.changed(params, values1, values2).length === 0;
         };
         /** Returns true if a the parameter values are valid, according to the Param definitions */
-        Param.validates = function (params, values$$1) {
-            if (values$$1 === void 0) { values$$1 = {}; }
-            return params.map(function (param) { return param.validates(values$$1[param.id]); }).reduce(allTrueR, true);
+        Param.validates = function (params, values) {
+            if (values === void 0) { values = {}; }
+            return params.map(function (param) { return param.validates(values[param.id]); }).reduce(allTrueR, true);
         };
         Param.prototype.isDefaultValue = function (value) {
             return this.isOptional && this.type.equals(this.value(), value);
@@ -49548,13 +50141,13 @@ if (typeof jQuery === 'undefined') {
                 }
                 return defaultValue;
             };
-            var replaceSpecialValues = function (val$$1) {
+            var replaceSpecialValues = function (val) {
                 for (var _i = 0, _a = _this.replace; _i < _a.length; _i++) {
                     var tuple = _a[_i];
-                    if (tuple.from === val$$1)
+                    if (tuple.from === val)
                         return tuple.to;
                 }
-                return val$$1;
+                return val;
             };
             value = replaceSpecialValues(value);
             return isUndefined(value) ? getDefaultValue() : this.type.$normalize(value);
@@ -49580,7 +50173,6 @@ if (typeof jQuery === 'undefined') {
         return Param;
     }());
 
-    /** @publicapi @module params */ /** */
     /**
      * A registry for parameter types.
      *
@@ -49605,13 +50197,9 @@ if (typeof jQuery === 'undefined') {
      * ```
      */
     var ParamTypes = /** @class */ (function () {
-        /** @internalapi */
         function ParamTypes() {
-            /** @hidden */
             this.enqueue = true;
-            /** @hidden */
             this.typeQueue = [];
-            /** @internalapi */
             this.defaultTypes = pick(ParamTypes.prototype, [
                 'hash',
                 'string',
@@ -49627,7 +50215,6 @@ if (typeof jQuery === 'undefined') {
             var makeType = function (definition, name) { return new ParamType(extend({ name: name }, definition)); };
             this.types = inherit(map(this.defaultTypes, makeType), {});
         }
-        /** @internalapi */
         ParamTypes.prototype.dispose = function () {
             this.types = {};
         };
@@ -49649,7 +50236,6 @@ if (typeof jQuery === 'undefined') {
             }
             return this;
         };
-        /** @internalapi */
         ParamTypes.prototype._flushTypeQueue = function () {
             while (this.typeQueue.length) {
                 var type = this.typeQueue.shift();
@@ -49660,10 +50246,9 @@ if (typeof jQuery === 'undefined') {
         };
         return ParamTypes;
     }());
-    /** @hidden */
     function initDefaultTypes() {
         var makeDefaultType = function (def) {
-            var valToString = function (val$$1) { return (val$$1 != null ? val$$1.toString() : val$$1); };
+            var valToString = function (val) { return (val != null ? val.toString() : val); };
             var defaultTypeBase = {
                 encode: valToString,
                 decode: valToString,
@@ -49685,31 +50270,31 @@ if (typeof jQuery === 'undefined') {
                 inherit: false,
             }),
             int: makeDefaultType({
-                decode: function (val$$1) { return parseInt(val$$1, 10); },
-                is: function (val$$1) {
-                    return !isNullOrUndefined(val$$1) && this.decode(val$$1.toString()) === val$$1;
+                decode: function (val) { return parseInt(val, 10); },
+                is: function (val) {
+                    return !isNullOrUndefined(val) && this.decode(val.toString()) === val;
                 },
                 pattern: /-?\d+/,
             }),
             bool: makeDefaultType({
-                encode: function (val$$1) { return (val$$1 && 1) || 0; },
-                decode: function (val$$1) { return parseInt(val$$1, 10) !== 0; },
+                encode: function (val) { return (val && 1) || 0; },
+                decode: function (val) { return parseInt(val, 10) !== 0; },
                 is: is(Boolean),
                 pattern: /0|1/,
             }),
             date: makeDefaultType({
-                encode: function (val$$1) {
-                    return !this.is(val$$1)
+                encode: function (val) {
+                    return !this.is(val)
                         ? undefined
-                        : [val$$1.getFullYear(), ('0' + (val$$1.getMonth() + 1)).slice(-2), ('0' + val$$1.getDate()).slice(-2)].join('-');
+                        : [val.getFullYear(), ('0' + (val.getMonth() + 1)).slice(-2), ('0' + val.getDate()).slice(-2)].join('-');
                 },
-                decode: function (val$$1) {
-                    if (this.is(val$$1))
-                        return val$$1;
-                    var match = this.capture.exec(val$$1);
+                decode: function (val) {
+                    if (this.is(val))
+                        return val;
+                    var match = this.capture.exec(val);
                     return match ? new Date(match[1], match[2] - 1, match[3]) : undefined;
                 },
-                is: function (val$$1) { return val$$1 instanceof Date && !isNaN(val$$1.valueOf()); },
+                is: function (val) { return val instanceof Date && !isNaN(val.valueOf()); },
                 equals: function (l, r) {
                     return ['getFullYear', 'getMonth', 'getDate'].reduce(function (acc, fn) { return acc && l[fn]() === r[fn](); }, true);
                 },
@@ -49734,8 +50319,6 @@ if (typeof jQuery === 'undefined') {
     }
     initDefaultTypes();
 
-    /** @publicapi @module params */ /** */
-    /** @internalapi */
     var StateParams = /** @class */ (function () {
         function StateParams(params) {
             if (params === void 0) { params = {}; }
@@ -49770,7 +50353,6 @@ if (typeof jQuery === 'undefined') {
         return StateParams;
     }());
 
-    /** @internalapi @module path */ /** */
     /**
      * A node in a [[TreeChanges]] path
      *
@@ -49843,7 +50425,6 @@ if (typeof jQuery === 'undefined') {
         return PathNode;
     }());
 
-    /** @publicapi @module state */ /** */
     /**
      * Encapsulate the target (destination) state/params/options of a [[Transition]].
      *
@@ -49886,7 +50467,7 @@ if (typeof jQuery === 'undefined') {
          * @param _params Parameters for the target state
          * @param _options Transition options.
          *
-         * @internalapi
+         * @internal
          */
         function TargetState(_stateRegistry, _identifier, _params, _options) {
             this._stateRegistry = _stateRegistry;
@@ -49977,11 +50558,12 @@ if (typeof jQuery === 'undefined') {
             return new TargetState(this._stateRegistry, this._identifier, this._params, newOpts);
         };
         /** Returns true if the object has a state property that might be a state or state name */
-        TargetState.isDef = function (obj) { return obj && obj.state && (isString(obj.state) || isString(obj.state.name)); };
+        TargetState.isDef = function (obj) {
+            return obj && obj.state && (isString(obj.state) || (isObject(obj.state) && isString(obj.state.name)));
+        };
         return TargetState;
     }());
 
-    /** @internalapi @module path */ /** */
     /**
      * This class contains functions which convert TargetStates, Nodes and paths from one type to another.
      */
@@ -50012,7 +50594,9 @@ if (typeof jQuery === 'undefined') {
          */
         PathUtils.applyViewConfigs = function ($view, path, states) {
             // Only apply the viewConfigs to the nodes for the given states
-            path.filter(function (node) { return inArray(states, node.state); }).forEach(function (node) {
+            path
+                .filter(function (node) { return inArray(states, node.state); })
+                .forEach(function (node) {
                 var viewDecls = values(node.state.views || {});
                 var subPath = PathUtils.subPath(path, function (n) { return n === node; });
                 var viewConfigs = viewDecls.map(function (view) { return $view.createViewConfig(subPath, view); });
@@ -50143,9 +50727,6 @@ if (typeof jQuery === 'undefined') {
         return PathUtils;
     }());
 
-    /** @internalapi @module path */ /** */
-
-    /** @internalapi */
     var resolvePolicies = {
         when: {
             LAZY: 'LAZY',
@@ -50154,11 +50735,9 @@ if (typeof jQuery === 'undefined') {
         async: {
             WAIT: 'WAIT',
             NOWAIT: 'NOWAIT',
-            RXWAIT: 'RXWAIT',
         },
     };
 
-    /** @publicapi @module resolve */ /** */
     // TODO: explicitly make this user configurable
     var defaultResolvePolicy = {
         when: 'LAZY',
@@ -50225,25 +50804,10 @@ if (typeof jQuery === 'undefined') {
             };
             // Invokes the resolve function passing the resolved dependencies as arguments
             var invokeResolveFn = function (resolvedDeps) { return _this.resolveFn.apply(null, resolvedDeps); };
-            /**
-             * For RXWAIT policy:
-             *
-             * Given an observable returned from a resolve function:
-             * - enables .cache() mode (this allows multicast subscribers)
-             * - then calls toPromise() (this triggers subscribe() and thus fetches)
-             * - Waits for the promise, then return the cached observable (not the first emitted value).
-             */
-            var waitForRx = function (observable$) {
-                var cached = observable$.cache(1);
-                return cached
-                    .take(1)
-                    .toPromise()
-                    .then(function () { return cached; });
-            };
-            // If the resolve policy is RXWAIT, wait for the observable to emit something. otherwise pass through.
             var node = resolveContext.findNode(this);
             var state = node && node.state;
-            var maybeWaitForRx = this.getPolicy(state).async === 'RXWAIT' ? waitForRx : identity;
+            var asyncPolicy = this.getPolicy(state).async;
+            var customAsyncPolicy = isFunction(asyncPolicy) ? asyncPolicy : identity;
             // After the final value has been resolved, update the state of the Resolvable
             var applyResolvedValue = function (resolvedValue) {
                 _this.data = resolvedValue;
@@ -50257,7 +50821,7 @@ if (typeof jQuery === 'undefined') {
                 .when()
                 .then(getResolvableDependencies)
                 .then(invokeResolveFn)
-                .then(maybeWaitForRx)
+                .then(customAsyncPolicy)
                 .then(applyResolvedValue));
         };
         /**
@@ -50279,7 +50843,6 @@ if (typeof jQuery === 'undefined') {
         return Resolvable;
     }());
 
-    /** @publicapi @module resolve */ /** */
     var whens = resolvePolicies.when;
     var ALL_WHENS = [whens.EAGER, whens.LAZY];
     var EAGER_WHENS = [whens.EAGER];
@@ -50441,7 +51004,7 @@ if (typeof jQuery === 'undefined') {
         };
         return ResolveContext;
     }());
-    /** @internalapi */
+    /** @internal */
     var UIInjectorImpl = /** @class */ (function () {
         function UIInjectorImpl(context) {
             this.context = context;
@@ -50472,14 +51035,11 @@ if (typeof jQuery === 'undefined') {
         return UIInjectorImpl;
     }());
 
-    /** @publicapi @module resolve */ /** */
-
-    /** @publicapi @module state */ /** */
     var parseUrl = function (url) {
         if (!isString(url))
             return false;
-        var root$$1 = url.charAt(0) === '^';
-        return { val: root$$1 ? url.substring(1) : url, root: root$$1 };
+        var root = url.charAt(0) === '^';
+        return { val: root ? url.substring(1) : url, root: root };
     };
     function nameBuilder(state) {
         return state.name;
@@ -50494,22 +51054,25 @@ if (typeof jQuery === 'undefined') {
         }
         return state.data;
     }
-    var getUrlBuilder = function ($urlMatcherFactoryProvider, root$$1) {
+    var getUrlBuilder = function ($urlMatcherFactoryProvider, root) {
         return function urlBuilder(stateObject) {
-            var state = stateObject.self;
+            var stateDec = stateObject.self;
             // For future states, i.e., states whose name ends with `.**`,
             // match anything that starts with the url prefix
-            if (state && state.url && state.name && state.name.match(/\.\*\*$/)) {
-                state.url += '{remainder:any}'; // match any path (.*)
+            if (stateDec && stateDec.url && stateDec.name && stateDec.name.match(/\.\*\*$/)) {
+                var newStateDec = {};
+                copy(stateDec, newStateDec);
+                newStateDec.url += '{remainder:any}'; // match any path (.*)
+                stateDec = newStateDec;
             }
             var parent = stateObject.parent;
-            var parsed = parseUrl(state.url);
-            var url = !parsed ? state.url : $urlMatcherFactoryProvider.compile(parsed.val, { state: state });
+            var parsed = parseUrl(stateDec.url);
+            var url = !parsed ? stateDec.url : $urlMatcherFactoryProvider.compile(parsed.val, { state: stateDec });
             if (!url)
                 return null;
             if (!$urlMatcherFactoryProvider.isMatcher(url))
                 throw new Error("Invalid url '" + url + "' in state '" + stateObject + "'");
-            return parsed && parsed.root ? url : ((parent && parent.navigable) || root$$1()).url.append(url);
+            return parsed && parsed.root ? url : ((parent && parent.navigable) || root()).url.append(url);
         };
     };
     var getNavigableBuilder = function (isRoot) {
@@ -50636,7 +51199,7 @@ if (typeof jQuery === 'undefined') {
         return items.map(item2Resolvable);
     }
     /**
-     * @internalapi A internal global service
+     * A internal global service
      *
      * StateBuilder is a factory for the internal [[StateObject]] objects.
      *
@@ -50651,12 +51214,12 @@ if (typeof jQuery === 'undefined') {
         function StateBuilder(matcher, urlMatcherFactory) {
             this.matcher = matcher;
             var self = this;
-            var root$$1 = function () { return matcher.find(''); };
+            var root = function () { return matcher.find(''); };
             var isRoot = function (state) { return state.name === ''; };
             function parentBuilder(state) {
                 if (isRoot(state))
                     return null;
-                return matcher.find(self.parentName(state)) || root$$1();
+                return matcher.find(self.parentName(state)) || root();
             }
             this.builders = {
                 name: [nameBuilder],
@@ -50664,7 +51227,7 @@ if (typeof jQuery === 'undefined') {
                 parent: [parentBuilder],
                 data: [dataBuilder],
                 // Build a URLMatcher if necessary, either via a relative or absolute URL
-                url: [getUrlBuilder(urlMatcherFactory, root$$1)],
+                url: [getUrlBuilder(urlMatcherFactory, root)],
                 // Keep track of the closest ancestor state that has a URL (i.e. is navigable)
                 navigable: [getNavigableBuilder(isRoot)],
                 params: [getParamsBuilder(urlMatcherFactory.paramFactory)],
@@ -50678,16 +51241,6 @@ if (typeof jQuery === 'undefined') {
                 resolvables: [resolvablesBuilder],
             };
         }
-        /**
-         * Registers a [[BuilderFunction]] for a specific [[StateObject]] property (e.g., `parent`, `url`, or `path`).
-         * More than one BuilderFunction can be registered for a given property.
-         *
-         * The BuilderFunction(s) will be used to define the property on any subsequently built [[StateObject]] objects.
-         *
-         * @param name The name of the State property being registered for.
-         * @param fn The BuilderFunction which will be used to build the State property
-         * @returns a function which deregisters the BuilderFunction
-         */
         StateBuilder.prototype.builder = function (name, fn) {
             var builders = this.builders;
             var array = builders[name] || [];
@@ -50853,12 +51406,13 @@ if (typeof jQuery === 'undefined') {
         StateObject.isStateClass = function (stateDecl) {
             return isFunction(stateDecl) && stateDecl['__uiRouterState'] === true;
         };
+        /** Predicate which returns true if the object is a [[StateDeclaration]] object */
+        StateObject.isStateDeclaration = function (obj) { return isFunction(obj['$$state']); };
         /** Predicate which returns true if the object is an internal [[StateObject]] object */
         StateObject.isState = function (obj) { return isObject(obj['__stateObjectCache']); };
         return StateObject;
     }());
 
-    /** @publicapi @module state */ /** */
     var StateMatcher = /** @class */ (function () {
         function StateMatcher(_states) {
             this._states = _states;
@@ -50883,8 +51437,7 @@ if (typeof jQuery === 'undefined') {
                 var _states = values(this._states);
                 var matches = _states.filter(function (_state) { return _state.__stateObjectCache.nameGlob && _state.__stateObjectCache.nameGlob.matches(name); });
                 if (matches.length > 1) {
-                    // tslint:disable-next-line:no-console
-                    console.log("stateMatcher.find: Found multiple matches for " + name + " using glob: ", matches.map(function (match) { return match.name; }));
+                    safeConsole.error("stateMatcher.find: Found multiple matches for " + name + " using glob: ", matches.map(function (match) { return match.name; }));
                 }
                 return matches[0];
             }
@@ -50916,8 +51469,6 @@ if (typeof jQuery === 'undefined') {
         return StateMatcher;
     }());
 
-    /** @publicapi @module state */ /** */
-    /** @internalapi */
     var StateQueueManager = /** @class */ (function () {
         function StateQueueManager(router, states, builder, listeners) {
             this.router = router;
@@ -50926,7 +51477,6 @@ if (typeof jQuery === 'undefined') {
             this.listeners = listeners;
             this.queue = [];
         }
-        /** @internalapi */
         StateQueueManager.prototype.dispose = function () {
             this.queue = [];
         };
@@ -50951,7 +51501,9 @@ if (typeof jQuery === 'undefined') {
             var getState = function (name) { return _this.states.hasOwnProperty(name) && _this.states[name]; };
             var notifyListeners = function () {
                 if (registered.length) {
-                    _this.listeners.forEach(function (listener) { return listener('registered', registered.map(function (s) { return s.self; })); });
+                    _this.listeners.forEach(function (listener) {
+                        return listener('registered', registered.map(function (s) { return s.self; }));
+                    });
                 }
             };
             while (queue.length > 0) {
@@ -51002,19 +51554,24 @@ if (typeof jQuery === 'undefined') {
         return StateQueueManager;
     }());
 
-    /** @publicapi @module state */ /** */
+    /**
+     * A registry for all of the application's [[StateDeclaration]]s
+     *
+     * This API is found at `router.stateRegistry` ([[UIRouter.stateRegistry]])
+     */
     var StateRegistry = /** @class */ (function () {
-        /** @internalapi */
+        /** @internal */
         function StateRegistry(router) {
             this.router = router;
             this.states = {};
+            /** @internal */
             this.listeners = [];
             this.matcher = new StateMatcher(this.states);
             this.builder = new StateBuilder(this.matcher, router.urlMatcherFactory);
             this.stateQueue = new StateQueueManager(router, this.states, this.builder, this.listeners);
             this._registerRoot();
         }
-        /** @internalapi */
+        /** @internal */
         StateRegistry.prototype._registerRoot = function () {
             var rootStateDef = {
                 name: '',
@@ -51028,7 +51585,7 @@ if (typeof jQuery === 'undefined') {
             var _root = (this._root = this.stateQueue.register(rootStateDef));
             _root.navigable = null;
         };
-        /** @internalapi */
+        /** @internal */
         StateRegistry.prototype.dispose = function () {
             var _this = this;
             this.stateQueue.dispose();
@@ -51098,12 +51655,12 @@ if (typeof jQuery === 'undefined') {
         StateRegistry.prototype.register = function (stateDefinition) {
             return this.stateQueue.register(stateDefinition);
         };
-        /** @hidden */
+        /** @internal */
         StateRegistry.prototype._deregisterTree = function (state) {
             var _this = this;
-            var all$$1 = this.get().map(function (s) { return s.$$state(); });
+            var all = this.get().map(function (s) { return s.$$state(); });
             var getChildren = function (states) {
-                var _children = all$$1.filter(function (s) { return states.indexOf(s.parent) !== -1; });
+                var _children = all.filter(function (s) { return states.indexOf(s.parent) !== -1; });
                 return _children.length === 0 ? _children : _children.concat(getChildren(_children));
             };
             var children = getChildren([state]);
@@ -51134,7 +51691,9 @@ if (typeof jQuery === 'undefined') {
             if (!_state)
                 throw new Error("Can't deregister state; not found: " + stateOrName);
             var deregisteredStates = this._deregisterTree(_state.$$state());
-            this.listeners.forEach(function (listener) { return listener('deregistered', deregisteredStates.map(function (s) { return s.self; })); });
+            this.listeners.forEach(function (listener) {
+                return listener('deregistered', deregisteredStates.map(function (s) { return s.self; }));
+            });
             return deregisteredStates;
         };
         StateRegistry.prototype.get = function (stateOrName, base) {
@@ -51144,8 +51703,18 @@ if (typeof jQuery === 'undefined') {
             var found = this.matcher.find(stateOrName, base);
             return (found && found.self) || null;
         };
-        StateRegistry.prototype.decorator = function (name, func) {
-            return this.builder.builder(name, func);
+        /**
+         * Registers a [[BuilderFunction]] for a specific [[StateObject]] property (e.g., `parent`, `url`, or `path`).
+         * More than one BuilderFunction can be registered for a given property.
+         *
+         * The BuilderFunction(s) will be used to define the property on any subsequently built [[StateObject]] objects.
+         *
+         * @param property The name of the State property being registered for.
+         * @param builderFunction The BuilderFunction which will be used to build the State property
+         * @returns a function which deregisters the BuilderFunction
+         */
+        StateRegistry.prototype.decorator = function (property, builderFunction) {
+            return this.builder.builder(property, builderFunction);
         };
         return StateRegistry;
     }());
@@ -51163,14 +51732,12 @@ if (typeof jQuery === 'undefined') {
         TransitionHookScope[TransitionHookScope["STATE"] = 1] = "STATE";
     })(exports.TransitionHookScope || (exports.TransitionHookScope = {}));
 
-    /** @publicapi @module transition */ /** */
     var defaultOptions = {
         current: noop,
         transition: null,
         traceData: {},
         bind: null,
     };
-    /** @hidden */
     var TransitionHook = /** @class */ (function () {
         function TransitionHook(transition, stateContext, registeredHook, options) {
             var _this = this;
@@ -51285,7 +51852,7 @@ if (typeof jQuery === 'undefined') {
             // Hook returned a promise
             if (isPromise(result)) {
                 // Wait for the promise, then reprocess with the resulting value
-                return result.then(function (val$$1) { return _this.handleHookResult(val$$1); });
+                return result.then(function (val) { return _this.handleHookResult(val); });
             }
             trace.traceHookResult(result, this.transition, this.options);
             // Hook returned false
@@ -51352,11 +51919,10 @@ if (typeof jQuery === 'undefined') {
         return TransitionHook;
     }());
 
-    /** @publicapi @module transition */ /** */
     /**
      * Determines if the given state matches the matchCriteria
      *
-     * @hidden
+     * @internal
      *
      * @param state a State Object to test against
      * @param criterion
@@ -51366,7 +51932,7 @@ if (typeof jQuery === 'undefined') {
      * - If a function, matchState calls the function with the state and returns true if the function's result is truthy.
      * @returns {boolean}
      */
-    function matchState(state, criterion) {
+    function matchState(state, criterion, transition) {
         var toMatch = isString(criterion) ? [criterion] : criterion;
         function matchGlobs(_state) {
             var globStrings = toMatch;
@@ -51379,10 +51945,9 @@ if (typeof jQuery === 'undefined') {
             return false;
         }
         var matchFn = (isFunction(toMatch) ? toMatch : matchGlobs);
-        return !!matchFn(state);
+        return !!matchFn(state, transition);
     }
     /**
-     * @internalapi
      * The registration data for a registered transition hook
      */
     var RegisteredHook = /** @class */ (function () {
@@ -51414,10 +51979,10 @@ if (typeof jQuery === 'undefined') {
          * with `entering: (state) => true` which only matches when a state is actually
          * being entered.
          */
-        RegisteredHook.prototype._matchingNodes = function (nodes, criterion) {
+        RegisteredHook.prototype._matchingNodes = function (nodes, criterion, transition) {
             if (criterion === true)
                 return nodes;
-            var matching = nodes.filter(function (node) { return matchState(node.state, criterion); });
+            var matching = nodes.filter(function (node) { return matchState(node.state, criterion, transition); });
             return matching.length ? matching : null;
         };
         /**
@@ -51452,7 +52017,7 @@ if (typeof jQuery === 'undefined') {
          * };
          * ```
          */
-        RegisteredHook.prototype._getMatchingNodes = function (treeChanges) {
+        RegisteredHook.prototype._getMatchingNodes = function (treeChanges, transition) {
             var _this = this;
             var criteria = extend(this._getDefaultMatchCriteria(), this.matchCriteria);
             var paths = values(this.tranSvc._pluginapi._getPathTypes());
@@ -51462,7 +52027,7 @@ if (typeof jQuery === 'undefined') {
                 var isStateHook = pathtype.scope === exports.TransitionHookScope.STATE;
                 var path = treeChanges[pathtype.name] || [];
                 var nodes = isStateHook ? path : [tail(path)];
-                mn[pathtype.name] = _this._matchingNodes(nodes, criteria[pathtype.name]);
+                mn[pathtype.name] = _this._matchingNodes(nodes, criteria[pathtype.name], transition);
                 return mn;
             }, {});
         };
@@ -51472,8 +52037,8 @@ if (typeof jQuery === 'undefined') {
          * @returns an IMatchingNodes object, or null. If an IMatchingNodes object is returned, its values
          * are the matching [[PathNode]]s for each [[HookMatchCriterion]] (to, from, exiting, retained, entering)
          */
-        RegisteredHook.prototype.matches = function (treeChanges) {
-            var matches = this._getMatchingNodes(treeChanges);
+        RegisteredHook.prototype.matches = function (treeChanges, transition) {
+            var matches = this._getMatchingNodes(treeChanges, transition);
             // Check if all the criteria matched the TreeChanges object
             var allMatched = values(matches).every(identity);
             return allMatched ? matches : null;
@@ -51484,7 +52049,7 @@ if (typeof jQuery === 'undefined') {
         };
         return RegisteredHook;
     }());
-    /** @hidden Return a registration function of the requested type. */
+    /** Return a registration function of the requested type. */
     function makeEvent(registry, transitionService, eventType) {
         // Create the object which holds the registered transition hooks.
         var _registeredHooks = (registry._registeredHooks = registry._registeredHooks || {});
@@ -51501,7 +52066,6 @@ if (typeof jQuery === 'undefined') {
         return hookRegistrationFn;
     }
 
-    /** @publicapi @module transition */ /** */
     /**
      * This class returns applicable TransitionHooks for a specific Transition instance.
      *
@@ -51514,7 +52078,6 @@ if (typeof jQuery === 'undefined') {
      * The HookBuilder constructor is given the $transitions service and a Transition instance.  Thus, a HookBuilder
      * instance may only be used for one specific Transition object. (side note: the _treeChanges accessor is private
      * in the Transition class, so we must also provide the Transition's _treeChanges)
-     *
      */
     var HookBuilder = /** @class */ (function () {
         function HookBuilder(transition) {
@@ -51542,7 +52105,7 @@ if (typeof jQuery === 'undefined') {
             var transition = this.transition;
             var treeChanges = transition.treeChanges();
             // Find all the matching registered hooks for a given hook type
-            var matchingHooks = this.getMatchingHooks(hookType, treeChanges);
+            var matchingHooks = this.getMatchingHooks(hookType, treeChanges, transition);
             if (!matchingHooks)
                 return [];
             var baseHookOptions = {
@@ -51551,7 +52114,7 @@ if (typeof jQuery === 'undefined') {
             };
             var makeTransitionHooks = function (hook) {
                 // Fetch the Nodes that caused this hook to match.
-                var matches = hook.matches(treeChanges);
+                var matches = hook.matches(treeChanges, transition);
                 // Select the PathNode[] that will be used as TransitionHook context objects
                 var matchingNodes = matches[hookType.criteriaMatchPath.name];
                 // Return an array of HookTuples
@@ -51582,7 +52145,7 @@ if (typeof jQuery === 'undefined') {
          *
          * @returns an array of matched [[RegisteredHook]]s
          */
-        HookBuilder.prototype.getMatchingHooks = function (hookType, treeChanges) {
+        HookBuilder.prototype.getMatchingHooks = function (hookType, treeChanges, transition) {
             var isCreate = hookType.hookPhase === exports.TransitionHookPhase.CREATE;
             // Instance and Global hook registries
             var $transitions = this.transition.router.transitionService;
@@ -51591,7 +52154,7 @@ if (typeof jQuery === 'undefined') {
                 .map(function (reg) { return reg.getHooks(hookType.name); }) // Get named hooks from registries
                 .filter(assertPredicate(isArray, "broken event named: " + hookType.name)) // Sanity check
                 .reduce(unnestR, []) // Un-nest RegisteredHook[][] to RegisteredHook[] array
-                .filter(function (hook) { return hook.matches(treeChanges); }); // Only those satisfying matchCriteria
+                .filter(function (hook) { return hook.matches(treeChanges, transition); }); // Only those satisfying matchCriteria
         };
         return HookBuilder;
     }());
@@ -51613,8 +52176,7 @@ if (typeof jQuery === 'undefined') {
         };
     }
 
-    /** @publicapi @module transition */ /** */
-    /** @hidden */
+    /** @internal */
     var stateSelf = prop('self');
     /**
      * Represents a transition between two states.
@@ -51630,16 +52192,17 @@ if (typeof jQuery === 'undefined') {
          *
          * If the target state is not valid, an error is thrown.
          *
-         * @internalapi
+         * @internal
          *
          * @param fromPath The path of [[PathNode]]s from which the transition is leaving.  The last node in the `fromPath`
          *        encapsulates the "from state".
          * @param targetState The target state and parameters being transitioned to (also, the transition options)
          * @param router The [[UIRouter]] instance
+         * @internal
          */
         function Transition(fromPath, targetState, router) {
             var _this = this;
-            /** @hidden */
+            /** @internal */
             this._deferred = services.$q.defer();
             /**
              * This promise is resolved or rejected based on the outcome of the Transition.
@@ -51648,9 +52211,9 @@ if (typeof jQuery === 'undefined') {
              * When the transition is unsuccessful, the promise is rejected with the [[Rejection]] or javascript error
              */
             this.promise = this._deferred.promise;
-            /** @hidden Holds the hook registration functions such as those passed to Transition.onStart() */
+            /** @internal Holds the hook registration functions such as those passed to Transition.onStart() */
             this._registeredHooks = {};
-            /** @hidden */
+            /** @internal */
             this._hookBuilder = new HookBuilder(this);
             /** Checks if this transition is currently active/running. */
             this.isActive = function () { return _this.router.globals.transition === _this; };
@@ -51669,7 +52232,7 @@ if (typeof jQuery === 'undefined') {
             TransitionHook.invokeHooks(onCreateHooks, function () { return null; });
             this.applyViewConfigs(router);
         }
-        /** @hidden */
+        /** @internal */
         Transition.prototype.onBefore = function (criteria, callback, options) {
             return;
         };
@@ -51701,7 +52264,7 @@ if (typeof jQuery === 'undefined') {
         Transition.prototype.onError = function (criteria, callback, options) {
             return;
         };
-        /** @hidden
+        /** @internal
          * Creates the transition-level hook registration functions
          * (which can then be used to register hooks)
          */
@@ -51712,7 +52275,7 @@ if (typeof jQuery === 'undefined') {
                 .filter(function (type) { return type.hookPhase !== exports.TransitionHookPhase.CREATE; })
                 .forEach(function (type) { return makeEvent(_this, _this.router.transitionService, type); });
         };
-        /** @internalapi */
+        /** @internal */
         Transition.prototype.getHooks = function (hookName) {
             return this._registeredHooks[hookName];
         };
@@ -51721,16 +52284,14 @@ if (typeof jQuery === 'undefined') {
             PathUtils.applyViewConfigs(router.transitionService.$view, this._treeChanges.to, enteringStates);
         };
         /**
-         * @internalapi
-         *
+         * @internal
          * @returns the internal from [State] object
          */
         Transition.prototype.$from = function () {
             return tail(this._treeChanges.from).state;
         };
         /**
-         * @internalapi
-         *
+         * @internal
          * @returns the internal to [State] object
          */
         Transition.prototype.$to = function () {
@@ -51775,8 +52336,8 @@ if (typeof jQuery === 'undefined') {
                 // TODO: Also compare parameters
                 return this.is({ to: compare.$to().name, from: compare.$from().name });
             }
-            return !((compare.to && !matchState(this.$to(), compare.to)) ||
-                (compare.from && !matchState(this.$from(), compare.from)));
+            return !((compare.to && !matchState(this.$to(), compare.to, this)) ||
+                (compare.from && !matchState(this.$from(), compare.from, this)));
         };
         Transition.prototype.params = function (pathname) {
             if (pathname === void 0) { pathname = 'to'; }
@@ -52006,9 +52567,7 @@ if (typeof jQuery === 'undefined') {
          * @returns an array of states that will be exited during this transition.
          */
         Transition.prototype.exiting = function () {
-            return map(this._treeChanges.exiting, prop('state'))
-                .map(stateSelf)
-                .reverse();
+            return map(this._treeChanges.exiting, prop('state')).map(stateSelf).reverse();
         };
         /**
          * Gets the states being retained.
@@ -52035,10 +52594,7 @@ if (typeof jQuery === 'undefined') {
             if (pathname === void 0) { pathname = 'entering'; }
             var path = this._treeChanges[pathname];
             path = !state ? path : path.filter(propEq('state', state));
-            return path
-                .map(prop('views'))
-                .filter(identity)
-                .reduce(unnestR, []);
+            return path.map(prop('views')).filter(identity).reduce(unnestR, []);
         };
         Transition.prototype.treeChanges = function (pathname) {
             return pathname ? this._treeChanges[pathname] : this._treeChanges;
@@ -52049,7 +52605,7 @@ if (typeof jQuery === 'undefined') {
          * This transition can be returned from a [[TransitionService]] hook to
          * redirect a transition to a new state and/or set of parameters.
          *
-         * @internalapi
+         * @internal
          *
          * @returns Returns a new [[Transition]] instance.
          */
@@ -52093,7 +52649,7 @@ if (typeof jQuery === 'undefined') {
             });
             return newTransition;
         };
-        /** @hidden If a transition doesn't exit/enter any states, returns any [[Param]] whose value changed */
+        /** @internal If a transition doesn't exit/enter any states, returns any [[Param]] whose value changed */
         Transition.prototype._changedParams = function () {
             var tc = this._treeChanges;
             /** Return undefined if it's not a "dynamic" transition, for the following reasons */
@@ -52142,7 +52698,7 @@ if (typeof jQuery === 'undefined') {
         Transition.prototype.ignored = function () {
             return !!this._ignoredReason();
         };
-        /** @hidden */
+        /** @internal */
         Transition.prototype._ignoredReason = function () {
             var pending = this.router.globals.transition;
             var reloadState = this._options.reloadState;
@@ -52164,7 +52720,7 @@ if (typeof jQuery === 'undefined') {
          *
          * This method is generally called from the [[StateService.transitionTo]]
          *
-         * @internalapi
+         * @internal
          *
          * @returns a promise for a successful transition.
          */
@@ -52242,10 +52798,10 @@ if (typeof jQuery === 'undefined') {
                 return Rejection.invalid("Cannot transition to abstract state '" + state.name + "'");
             }
             var paramDefs = state.parameters();
-            var values$$1 = this.params();
-            var invalidParams = paramDefs.filter(function (param) { return !param.validates(values$$1[param.id]); });
+            var values = this.params();
+            var invalidParams = paramDefs.filter(function (param) { return !param.validates(values[param.id]); });
             if (invalidParams.length) {
-                var invalidValues = invalidParams.map(function (param) { return "[" + param.id + ":" + stringify(values$$1[param.id]) + "]"; }).join(', ');
+                var invalidValues = invalidParams.map(function (param) { return "[" + param.id + ":" + stringify(values[param.id]) + "]"; }).join(', ');
                 var detail = "The following parameter values are not valid for state '" + state.name + "': " + invalidValues;
                 return Rejection.invalid(detail);
             }
@@ -52267,13 +52823,11 @@ if (typeof jQuery === 'undefined') {
             var id = this.$id, from = isObject(fromStateOrName) ? fromStateOrName.name : fromStateOrName, fromParams = stringify(avoidEmptyHash(this._treeChanges.from.map(prop('paramValues')).reduce(mergeR, {}))), toValid = this.valid() ? '' : '(X) ', to = isObject(toStateOrName) ? toStateOrName.name : toStateOrName, toParams = stringify(avoidEmptyHash(this.params()));
             return "Transition#" + id + "( '" + from + "'" + fromParams + " -> " + toValid + "'" + to + "'" + toParams + " )";
         };
-        /** @hidden */
+        /** @internal */
         Transition.diToken = Transition;
         return Transition;
     }());
 
-    /** @publicapi @module url */ /** */
-    /** @hidden */
     function quoteRegExp(str, param) {
         var surroundPattern = ['', ''], result = str.replace(/[\\\[\]\^$*+?.()|{}]/g, '\\$&');
         if (!param)
@@ -52292,15 +52846,13 @@ if (typeof jQuery === 'undefined') {
         }
         return result + surroundPattern[0] + param.type.pattern.source + surroundPattern[1];
     }
-    /** @hidden */
     var memoizeTo = function (obj, _prop, fn) { return (obj[_prop] = obj[_prop] || fn()); };
-    /** @hidden */
     var splitOnSlash = splitOnDelim('/');
-    /** @hidden */
     var defaultConfig = {
         state: { params: {} },
         strict: true,
         caseInsensitive: true,
+        decodeParams: true,
     };
     /**
      * Matches URLs against patterns.
@@ -52360,20 +52912,20 @@ if (typeof jQuery === 'undefined') {
          * @param paramFactory A [[ParamFactory]] object
          * @param config  A [[UrlMatcherCompileConfig]] configuration object
          */
-        function UrlMatcher(pattern$$1, paramTypes, paramFactory, config) {
+        function UrlMatcher(pattern, paramTypes, paramFactory, config) {
             var _this = this;
-            /** @hidden */
+            /** @internal */
             this._cache = { path: [this] };
-            /** @hidden */
+            /** @internal */
             this._children = [];
-            /** @hidden */
+            /** @internal */
             this._params = [];
-            /** @hidden */
+            /** @internal */
             this._segments = [];
-            /** @hidden */
+            /** @internal */
             this._compiled = [];
             this.config = config = defaults(config, defaultConfig);
-            this.pattern = pattern$$1;
+            this.pattern = pattern;
             // Find all placeholders and create a compiled pattern, using either classic or curly syntax:
             //   '*' name
             //   ':' name
@@ -52394,9 +52946,9 @@ if (typeof jQuery === 'undefined') {
             var matchArray;
             var checkParamErrors = function (id) {
                 if (!UrlMatcher.nameValidator.test(id))
-                    throw new Error("Invalid parameter name '" + id + "' in pattern '" + pattern$$1 + "'");
+                    throw new Error("Invalid parameter name '" + id + "' in pattern '" + pattern + "'");
                 if (find(_this._params, propEq('id', id)))
-                    throw new Error("Duplicate parameter name '" + id + "' in pattern '" + pattern$$1 + "'");
+                    throw new Error("Duplicate parameter name '" + id + "' in pattern '" + pattern + "'");
             };
             // Split into static segments separated by path parameter placeholders.
             // The number of segments is always 1 more than the number of parameters.
@@ -52412,14 +52964,14 @@ if (typeof jQuery === 'undefined') {
                 return {
                     id: id,
                     regexp: regexp,
-                    segment: pattern$$1.substring(last, m.index),
+                    segment: pattern.substring(last, m.index),
                     type: !regexp ? null : paramTypes.type(regexp) || makeRegexpType(regexp),
                 };
             };
             var details;
             var segment;
             // tslint:disable-next-line:no-conditional-assignment
-            while ((matchArray = placeholder.exec(pattern$$1))) {
+            while ((matchArray = placeholder.exec(pattern))) {
                 details = matchDetails(matchArray, false);
                 if (details.segment.indexOf('?') >= 0)
                     break; // we're into the search part
@@ -52429,7 +52981,7 @@ if (typeof jQuery === 'undefined') {
                 patterns.push([details.segment, tail(this._params)]);
                 last = placeholder.lastIndex;
             }
-            segment = pattern$$1.substring(last);
+            segment = pattern.substring(last);
             // Find any search parameter names and remove them from the last segment
             var i = segment.indexOf('?');
             if (i >= 0) {
@@ -52450,17 +53002,12 @@ if (typeof jQuery === 'undefined') {
             this._segments.push(segment);
             this._compiled = patterns.map(function (_pattern) { return quoteRegExp.apply(null, _pattern); }).concat(quoteRegExp(segment));
         }
-        /** @hidden */
+        /** @internal */
         UrlMatcher.encodeDashes = function (str) {
             // Replace dashes with encoded "\-"
-            return encodeURIComponent(str).replace(/-/g, function (c) {
-                return "%5C%" + c
-                    .charCodeAt(0)
-                    .toString(16)
-                    .toUpperCase();
-            });
+            return encodeURIComponent(str).replace(/-/g, function (c) { return "%5C%" + c.charCodeAt(0).toString(16).toUpperCase(); });
         };
-        /** @hidden Given a matcher, return an array with the matcher's path segments and path params, in order */
+        /** @internal Given a matcher, return an array with the matcher's path segments and path params, in order */
         UrlMatcher.pathSegmentsAndParams = function (matcher) {
             var staticSegments = matcher._segments;
             var pathParams = matcher._params.filter(function (p) { return p.location === exports.DefType.PATH; });
@@ -52468,7 +53015,7 @@ if (typeof jQuery === 'undefined') {
                 .reduce(unnestR, [])
                 .filter(function (x) { return x !== '' && isDefined(x); });
         };
-        /** @hidden Given a matcher, return an array with the matcher's query params */
+        /** @internal Given a matcher, return an array with the matcher's query params */
         UrlMatcher.queryParams = function (matcher) {
             return matcher._params.filter(function (p) { return p.location === exports.DefType.SEARCH; });
         };
@@ -52557,13 +53104,27 @@ if (typeof jQuery === 'undefined') {
             };
             return url;
         };
-        /** @hidden */
+        /** @internal */
         UrlMatcher.prototype.isRoot = function () {
             return this._cache.path[0] === this;
         };
         /** Returns the input pattern string */
         UrlMatcher.prototype.toString = function () {
             return this.pattern;
+        };
+        UrlMatcher.prototype._getDecodedParamValue = function (value, param) {
+            if (isDefined(value)) {
+                if (this.config.decodeParams && !param.type.raw) {
+                    if (isArray(value)) {
+                        value = value.map(function (paramValue) { return decodeURIComponent(paramValue); });
+                    }
+                    else {
+                        value = decodeURIComponent(value);
+                    }
+                }
+                value = param.type.decode(value);
+            }
+            return param.value(value);
         };
         /**
          * Tests the specified url/path against this matcher.
@@ -52594,7 +53155,6 @@ if (typeof jQuery === 'undefined') {
         UrlMatcher.prototype.exec = function (path, search, hash, options) {
             var _this = this;
             if (search === void 0) { search = {}; }
-            if (options === void 0) { options = {}; }
             var match = memoizeTo(this._cache, 'pattern', function () {
                 return new RegExp([
                     '^',
@@ -52606,16 +53166,11 @@ if (typeof jQuery === 'undefined') {
             if (!match)
                 return null;
             // options = defaults(options, { isolate: false });
-            var allParams = this.parameters(), pathParams = allParams.filter(function (param) { return !param.isSearch(); }), searchParams = allParams.filter(function (param) { return param.isSearch(); }), nPathSegments = this._cache.path.map(function (urlm) { return urlm._segments.length - 1; }).reduce(function (a, x) { return a + x; }), values$$1 = {};
+            var allParams = this.parameters(), pathParams = allParams.filter(function (param) { return !param.isSearch(); }), searchParams = allParams.filter(function (param) { return param.isSearch(); }), nPathSegments = this._cache.path.map(function (urlm) { return urlm._segments.length - 1; }).reduce(function (a, x) { return a + x; }), values = {};
             if (nPathSegments !== match.length - 1)
                 throw new Error("Unbalanced capture group in route '" + this.pattern + "'");
             function decodePathArray(paramVal) {
-                var reverseString = function (str) {
-                    return str
-                        .split('')
-                        .reverse()
-                        .join('');
-                };
+                var reverseString = function (str) { return str.split('').reverse().join(''); };
                 var unquoteDashes = function (str) { return str.replace(/\\-/g, '-'); };
                 var split = reverseString(paramVal).split(/-(?!\\)/);
                 var allReversed = map(split, reverseString);
@@ -52631,9 +53186,7 @@ if (typeof jQuery === 'undefined') {
                 }
                 if (value && param.array === true)
                     value = decodePathArray(value);
-                if (isDefined(value))
-                    value = param.type.decode(value);
-                values$$1[param.id] = param.value(value);
+                values[param.id] = this._getDecodedParamValue(value, param);
             }
             searchParams.forEach(function (param) {
                 var value = search[param.id];
@@ -52641,16 +53194,14 @@ if (typeof jQuery === 'undefined') {
                     if (param.replace[j].from === value)
                         value = param.replace[j].to;
                 }
-                if (isDefined(value))
-                    value = param.type.decode(value);
-                values$$1[param.id] = param.value(value);
+                values[param.id] = _this._getDecodedParamValue(value, param);
             });
             if (hash)
-                values$$1['#'] = hash;
-            return values$$1;
+                values['#'] = hash;
+            return values;
         };
         /**
-         * @hidden
+         * @internal
          * Returns all the [[Param]] objects of all path and search parameters of this pattern in order of appearance.
          *
          * @returns {Array.<Param>}  An array of [[Param]] objects. Must be treated as read-only. If the
@@ -52663,7 +53214,7 @@ if (typeof jQuery === 'undefined') {
             return unnest(this._cache.path.map(function (matcher) { return matcher._params; }));
         };
         /**
-         * @hidden
+         * @internal
          * Returns a single parameter from this UrlMatcher by id
          *
          * @param id
@@ -52693,7 +53244,7 @@ if (typeof jQuery === 'undefined') {
          * @returns Returns `true` if `params` validates, otherwise `false`.
          */
         UrlMatcher.prototype.validates = function (params) {
-            var validParamVal = function (param, val$$1) { return !param || param.validates(val$$1); };
+            var validParamVal = function (param, val) { return !param || param.validates(val); };
             params = params || {};
             // I'm not sure why this checks only the param keys passed in, and not all the params known to the matcher
             var paramSchema = this.parameters().filter(function (paramDef) { return params.hasOwnProperty(paramDef.id); });
@@ -52714,8 +53265,8 @@ if (typeof jQuery === 'undefined') {
          * @param values  the values to substitute for the parameters in this pattern.
          * @returns the formatted URL (path and optionally search part).
          */
-        UrlMatcher.prototype.format = function (values$$1) {
-            if (values$$1 === void 0) { values$$1 = {}; }
+        UrlMatcher.prototype.format = function (values) {
+            if (values === void 0) { values = {}; }
             // Build the full path of UrlMatchers (including all parent UrlMatchers)
             var urlMatchers = this._cache.path;
             // Extract all the static segments and Params (processed as ParamDetails)
@@ -52738,7 +53289,7 @@ if (typeof jQuery === 'undefined') {
              */
             function getDetails(param) {
                 // Normalize to typed value
-                var value = param.value(values$$1[param.id]);
+                var value = param.value(values[param.id]);
                 var isValid = param.validates(value);
                 var isDefaultValue = param.isDefaultValue(value);
                 // Check if we're in squash mode for the parameter
@@ -52786,28 +53337,30 @@ if (typeof jQuery === 'undefined') {
                     return;
                 if (!param.raw)
                     encoded = map(encoded, encodeURIComponent);
-                return encoded.map(function (val$$1) { return param.id + "=" + val$$1; });
+                return encoded.map(function (val) { return param.id + "=" + val; });
             })
                 .filter(identity)
                 .reduce(unnestR, [])
                 .join('&');
             // Concat the pathstring with the queryString (if exists) and the hashString (if exists)
-            return pathString + (queryString ? "?" + queryString : '') + (values$$1['#'] ? '#' + values$$1['#'] : '');
+            return pathString + (queryString ? "?" + queryString : '') + (values['#'] ? '#' + values['#'] : '');
         };
-        /** @hidden */
+        /** @internal */
         UrlMatcher.nameValidator = /^\w+([-.]+\w+)*(?:\[\])?$/;
         return UrlMatcher;
     }());
 
-    var __assign = (undefined && undefined.__assign) || Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
+    var __assign = (undefined && undefined.__assign) || function () {
+        __assign = Object.assign || function(t) {
+            for (var s, i = 1, n = arguments.length; i < n; i++) {
+                s = arguments[i];
+                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                    t[p] = s[p];
+            }
+            return t;
+        };
+        return __assign.apply(this, arguments);
     };
-    /** @internalapi */
     var ParamFactory = /** @class */ (function () {
         function ParamFactory(router) {
             this.router = router;
@@ -52828,16 +53381,17 @@ if (typeof jQuery === 'undefined') {
      *
      * The factory is available to ng1 services as
      * `$urlMatcherFactory` or ng1 providers as `$urlMatcherFactoryProvider`.
-     *
-     * @internalapi
      */
     var UrlMatcherFactory = /** @class */ (function () {
         // TODO: move implementations to UrlConfig (urlService.config)
-        function UrlMatcherFactory(/** @hidden */ router) {
+        function UrlMatcherFactory(/** @internal */ router) {
             var _this = this;
             this.router = router;
-            /** @internalapi Creates a new [[Param]] for a given location (DefType) */
+            /** Creates a new [[Param]] for a given location (DefType) */
             this.paramFactory = new ParamFactory(this.router);
+            // TODO: Check if removal of this will break anything, then remove these
+            this.UrlMatcher = UrlMatcher;
+            this.Param = Param;
             /** @deprecated use [[UrlConfig.caseInsensitive]] */
             this.caseInsensitive = function (value) { return _this.router.urlService.config.caseInsensitive(value); };
             /** @deprecated use [[UrlConfig.defaultSquashPolicy]] */
@@ -52848,7 +53402,6 @@ if (typeof jQuery === 'undefined') {
             this.type = function (name, definition, definitionFn) {
                 return _this.router.urlService.config.type(name, definition, definitionFn) || _this;
             };
-            extend(this, { UrlMatcher: UrlMatcher, Param: Param });
         }
         /**
          * Creates a [[UrlMatcher]] for the specified pattern.
@@ -52857,13 +53410,17 @@ if (typeof jQuery === 'undefined') {
          * @param config  The config object hash.
          * @returns The UrlMatcher.
          */
-        UrlMatcherFactory.prototype.compile = function (pattern$$1, config) {
+        UrlMatcherFactory.prototype.compile = function (pattern, config) {
             var urlConfig = this.router.urlService.config;
             // backward-compatible support for config.params -> config.state.params
             var params = config && !config.state && config.params;
             config = params ? __assign({ state: { params: params } }, config) : config;
-            var globalConfig = { strict: urlConfig._isStrictMode, caseInsensitive: urlConfig._isCaseInsensitive };
-            return new UrlMatcher(pattern$$1, urlConfig.paramTypes, this.paramFactory, extend(globalConfig, config));
+            var globalConfig = {
+                strict: urlConfig._isStrictMode,
+                caseInsensitive: urlConfig._isCaseInsensitive,
+                decodeParams: urlConfig._decodeParams,
+            };
+            return new UrlMatcher(pattern, urlConfig.paramTypes, this.paramFactory, extend(globalConfig, config));
         };
         /**
          * Returns true if the specified object is a [[UrlMatcher]], or false otherwise.
@@ -52877,13 +53434,13 @@ if (typeof jQuery === 'undefined') {
             if (!isObject(object))
                 return false;
             var result = true;
-            forEach(UrlMatcher.prototype, function (val$$1, name) {
-                if (isFunction(val$$1))
-                    result = result && (isDefined(object[name]) && isFunction(object[name]));
+            forEach(UrlMatcher.prototype, function (val, name) {
+                if (isFunction(val))
+                    result = result && isDefined(object[name]) && isFunction(object[name]);
             });
             return result;
         };
-        /** @hidden */
+        /** @internal */
         UrlMatcherFactory.prototype.$get = function () {
             var urlConfig = this.router.urlService.config;
             urlConfig.paramTypes.enqueue = false;
@@ -52893,7 +53450,6 @@ if (typeof jQuery === 'undefined') {
         return UrlMatcherFactory;
     }());
 
-    /** @publicapi @module url */ /** */
     /**
      * Creates a [[UrlRule]]
      *
@@ -52903,7 +53459,6 @@ if (typeof jQuery === 'undefined') {
      * - [[UrlMatcher]]
      * - `RegExp`
      * - [[StateObject]]
-     * @internalapi
      */
     var UrlRuleFactory = /** @class */ (function () {
         function UrlRuleFactory(router) {
@@ -52914,11 +53469,11 @@ if (typeof jQuery === 'undefined') {
         };
         UrlRuleFactory.prototype.create = function (what, handler) {
             var _this = this;
-            var isState = StateObject.isState;
+            var isState = StateObject.isState, isStateDeclaration = StateObject.isStateDeclaration;
             var makeRule = pattern([
                 [isString, function (_what) { return makeRule(_this.compile(_what)); }],
                 [is(UrlMatcher), function (_what) { return _this.fromUrlMatcher(_what, handler); }],
-                [isState, function (_what) { return _this.fromState(_what, _this.router); }],
+                [or(isState, isStateDeclaration), function (_what) { return _this.fromState(_what, _this.router); }],
                 [is(RegExp), function (_what) { return _this.fromRegExp(_what, handler); }],
                 [isFunction, function (_what) { return new BaseUrlRule(_what, handler); }],
             ]);
@@ -52999,7 +53554,8 @@ if (typeof jQuery === 'undefined') {
          * // Starts a transition to 'foo' with params: { fooId: '123', barId: '456' }
          * ```
          */
-        UrlRuleFactory.prototype.fromState = function (state, router) {
+        UrlRuleFactory.prototype.fromState = function (stateOrDecl, router) {
+            var state = StateObject.isStateDeclaration(stateOrDecl) ? stateOrDecl.$$state() : stateOrDecl;
             /**
              * Handles match by transitioning to matched state
              *
@@ -53073,7 +53629,7 @@ if (typeof jQuery === 'undefined') {
      * A base rule which calls `match`
      *
      * The value from the `match` function is passed through to the `handler`.
-     * @internalapi
+     * @internal
      */
     var BaseUrlRule = /** @class */ (function () {
         function BaseUrlRule(match, handler) {
@@ -53086,8 +53642,6 @@ if (typeof jQuery === 'undefined') {
         return BaseUrlRule;
     }());
 
-    /** @publicapi @module url */ /** */
-    /** @hidden */
     function appendBasePath(url, isHtml5, absolute, baseHref) {
         if (baseHref === '/')
             return url;
@@ -53104,12 +53658,10 @@ if (typeof jQuery === 'undefined') {
      * This class is now considered to be an internal API
      * Use the [[UrlService]] instead.
      * For configuring URL rules, use the [[UrlRules]] which can be found as [[UrlService.rules]].
-     *
-     * @internalapi
      */
     var UrlRouter = /** @class */ (function () {
-        /** @hidden */
-        function UrlRouter(/** @hidden */ router) {
+        /** @internal */
+        function UrlRouter(/** @internal */ router) {
             var _this = this;
             this.router = router;
             // Delegate these calls to [[UrlService]]
@@ -53142,10 +53694,7 @@ if (typeof jQuery === 'undefined') {
             this.when = function (matcher, handler, options) { return _this.router.urlService.rules.when(matcher, handler, options); };
             this.urlRuleFactory = new UrlRuleFactory(router);
         }
-        /**
-         * Internal API.
-         * @internalapi
-         */
+        /** Internal API. */
         UrlRouter.prototype.update = function (read) {
             var $url = this.router.locationService;
             if (read) {
@@ -53161,7 +53710,7 @@ if (typeof jQuery === 'undefined') {
          *
          * Pushes a new location to the browser history.
          *
-         * @internalapi
+         * @internal
          * @param urlMatcher
          * @param params
          * @param options
@@ -53213,13 +53762,12 @@ if (typeof jQuery === 'undefined') {
             get: function () {
                 return this.router.urlService.interceptDeferred;
             },
-            enumerable: true,
+            enumerable: false,
             configurable: true
         });
         return UrlRouter;
     }());
 
-    /** @publicapi @module view */ /** */
     /**
      * The View service
      *
@@ -53237,15 +53785,15 @@ if (typeof jQuery === 'undefined') {
      *
      */
     var ViewService = /** @class */ (function () {
-        /** @hidden */
-        function ViewService(/** @hidden */ router) {
+        /** @internal */
+        function ViewService(/** @internal */ router) {
             var _this = this;
             this.router = router;
-            /** @hidden */ this._uiViews = [];
-            /** @hidden */ this._viewConfigs = [];
-            /** @hidden */ this._viewConfigFactories = {};
-            /** @hidden */ this._listeners = [];
-            /** @internalapi */
+            /** @internal */ this._uiViews = [];
+            /** @internal */ this._viewConfigs = [];
+            /** @internal */ this._viewConfigFactories = {};
+            /** @internal */ this._listeners = [];
+            /** @internal */
             this._pluginapi = {
                 _rootViewContext: this._rootViewContext.bind(this),
                 _viewConfigFactory: this._viewConfigFactory.bind(this),
@@ -53300,11 +53848,11 @@ if (typeof jQuery === 'undefined') {
             }
             return { uiViewName: uiViewName, uiViewContextAnchor: uiViewContextAnchor };
         };
-        /** @hidden */
+        /** @internal */
         ViewService.prototype._rootViewContext = function (context) {
             return (this._rootContext = context || this._rootContext);
         };
-        /** @hidden */
+        /** @internal */
         ViewService.prototype._viewConfigFactory = function (viewType, factory) {
             this._viewConfigFactories[viewType] = factory;
         };
@@ -53481,7 +54029,7 @@ if (typeof jQuery === 'undefined') {
          * - And the remaining segments [ "$default", "bar" ].join("."_ of the ViewConfig's target name match
          *   the tail of the ui-view's fqn "default.bar"
          *
-         * @internalapi
+         * @internal
          */
         ViewService.matches = function (uiViewsByFqn, uiView) { return function (viewConfig) {
             // Don't supply an ng1 ui-view with an ng2 ViewConfig, etc
@@ -53505,7 +54053,6 @@ if (typeof jQuery === 'undefined') {
         return ViewService;
     }());
 
-    /** @publicapi @module core */ /** */
     /**
      * Global router state
      *
@@ -53520,11 +54067,11 @@ if (typeof jQuery === 'undefined') {
              * The parameter values from the latest successful transition
              */
             this.params = new StateParams();
-            /** @internalapi */
+            /** @internal */
             this.lastStartedTransitionId = -1;
-            /** @internalapi */
+            /** @internal */
             this.transitionHistory = new Queue([], 1);
-            /** @internalapi */
+            /** @internal */
             this.successfulTransitions = new Queue([], 1);
         }
         UIRouterGlobals.prototype.dispose = function () {
@@ -53535,18 +54082,14 @@ if (typeof jQuery === 'undefined') {
         return UIRouterGlobals;
     }());
 
-    /** @hidden */
     var prioritySort = function (a, b) { return (b.priority || 0) - (a.priority || 0); };
-    /** @hidden */
     var typeSort = function (a, b) {
         var weights = { STATE: 4, URLMATCHER: 4, REGEXP: 3, RAW: 2, OTHER: 1 };
         return (weights[a.type] || 0) - (weights[b.type] || 0);
     };
-    /** @hidden */
     var urlMatcherSort = function (a, b) {
         return !a.urlMatcher || !b.urlMatcher ? 0 : UrlMatcher.compare(a.urlMatcher, b.urlMatcher);
     };
-    /** @hidden */
     var idSort = function (a, b) {
         // Identically sorted STATE and URLMATCHER best rule will be chosen by `matchPriority` after each rule matches the URL
         var useMatchPriority = { STATE: true, URLMATCHER: true };
@@ -53564,8 +54107,6 @@ if (typeof jQuery === 'undefined') {
      * - Rule registration order (for rule types other than STATE and URLMATCHER)
      *   - Equally sorted State and UrlMatcher rules will each match the URL.
      *     Then, the *best* match is chosen based on how many parameter values were matched.
-     *
-     * @publicapi
      */
     var defaultRuleSortFn;
     defaultRuleSortFn = function (a, b) {
@@ -53580,7 +54121,6 @@ if (typeof jQuery === 'undefined') {
             return cmp;
         return idSort(a, b);
     };
-    /** @hidden */
     function getHandlerFn(handler) {
         if (!isFunction(handler) && !isString(handler) && !is(TargetState)(handler) && !TargetState.isDef(handler)) {
             throw new Error("'handler' must be a string, function, TargetState, or have a state: 'newtarget' property");
@@ -53595,20 +54135,18 @@ if (typeof jQuery === 'undefined') {
      *
      * The most commonly used methods are [[otherwise]] and [[when]].
      *
-     * This API is a property of [[UrlService]] as [[UrlService.rules]]
-     *
-     * @publicapi
+     * This API is found at `router.urlService.rules` (see: [[UIRouter.urlService]], [[URLService.rules]])
      */
     var UrlRules = /** @class */ (function () {
-        /** @hidden */
-        function UrlRules(/** @hidden */ router) {
+        /** @internal */
+        function UrlRules(/** @internal */ router) {
             this.router = router;
-            /** @hidden */ this._sortFn = defaultRuleSortFn;
-            /** @hidden */ this._rules = [];
-            /** @hidden */ this._id = 0;
+            /** @internal */ this._sortFn = defaultRuleSortFn;
+            /** @internal */ this._rules = [];
+            /** @internal */ this._id = 0;
             this.urlRuleFactory = new UrlRuleFactory(router);
         }
-        /** @hidden */
+        /** @internal */
         UrlRules.prototype.dispose = function (router) {
             this._rules = [];
             delete this._otherwiseFn;
@@ -53797,11 +54335,11 @@ if (typeof jQuery === 'undefined') {
             this._rules = sorted;
             this._sorted = true;
         };
-        /** @hidden */
+        /** @internal */
         UrlRules.prototype.ensureSorted = function () {
             this._sorted || this.sort();
         };
-        /** @hidden */
+        /** @internal */
         UrlRules.prototype.stableSort = function (arr, compareFn) {
             var arrOfWrapper = arr.map(function (elem, idx) { return ({ elem: elem, idx: idx }); });
             arrOfWrapper.sort(function (wrapperA, wrapperB) {
@@ -53890,17 +54428,18 @@ if (typeof jQuery === 'undefined') {
      * This information can be used to build absolute URLs, such as
      * `https://example.com:443/basepath/state/substate?param1=a#hashvalue`;
      *
-     * This API is a property of [[UrlService]] as [[UrlService.config]].
+     * This API is found at `router.urlService.config` (see: [[UIRouter.urlService]], [[URLService.config]])
      */
     var UrlConfig = /** @class */ (function () {
-        /** @hidden */ function UrlConfig(/** @hidden */ router) {
+        /** @internal */ function UrlConfig(/** @internal */ router) {
             var _this = this;
             this.router = router;
-            /** @hidden */ this.paramTypes = new ParamTypes();
-            /** @hidden */ this._isCaseInsensitive = false;
-            /** @hidden */ this._isStrictMode = true;
-            /** @hidden */ this._defaultSquashPolicy = false;
-            /** @internalapi */ this.dispose = function () { return _this.paramTypes.dispose(); };
+            /** @internal */ this.paramTypes = new ParamTypes();
+            /** @internal */ this._decodeParams = true;
+            /** @internal */ this._isCaseInsensitive = false;
+            /** @internal */ this._isStrictMode = true;
+            /** @internal */ this._defaultSquashPolicy = false;
+            /** @internal */ this.dispose = function () { return _this.paramTypes.dispose(); };
             // Delegate these calls to the current LocationConfig implementation
             /**
              * Gets the base Href, e.g., `http://localhost/approot/`
@@ -54032,13 +54571,15 @@ if (typeof jQuery === 'undefined') {
         return UrlConfig;
     }());
 
-    /** API for URL management */
+    /**
+     * API for URL management
+     */
     var UrlService = /** @class */ (function () {
-        /** @hidden */
-        function UrlService(/** @hidden */ router) {
+        /** @internal */
+        function UrlService(/** @internal */ router) {
             var _this = this;
             this.router = router;
-            /** @hidden */ this.interceptDeferred = false;
+            /** @internal */ this.interceptDeferred = false;
             /**
              * The nested [[UrlRules]] API for managing URL rules and rewrites
              *
@@ -54132,7 +54673,7 @@ if (typeof jQuery === 'undefined') {
              */
             this.hash = function () { return _this.router.locationService.hash(); };
             /**
-             * @internalapi
+             * @internal
              *
              * Registers a low level url change handler
              *
@@ -54148,7 +54689,7 @@ if (typeof jQuery === 'undefined') {
              */
             this.onChange = function (callback) { return _this.router.locationService.onChange(callback); };
         }
-        /** @hidden */
+        /** @internal */
         UrlService.prototype.dispose = function () {
             this.listen(false);
             this.rules.dispose();
@@ -54223,7 +54764,8 @@ if (typeof jQuery === 'undefined') {
                 delete this._stopListeningFn;
             }
             else {
-                return (this._stopListeningFn = this._stopListeningFn || this.router.urlService.onChange(function (evt) { return _this.sync(evt); }));
+                return (this._stopListeningFn =
+                    this._stopListeningFn || this.router.urlService.onChange(function (evt) { return _this.sync(evt); }));
             }
         };
         /**
@@ -54288,31 +54830,20 @@ if (typeof jQuery === 'undefined') {
         return UrlService;
     }());
 
-    /** @publicapi @module core */ /** */
-    /** @hidden */
+    /** @internal */
     var _routerInstance = 0;
-    /** @hidden */
+    /** @internal */
     var locSvcFns = ['url', 'path', 'search', 'hash', 'onChange'];
-    /** @hidden */
+    /** @internal */
     var locCfgFns = ['port', 'protocol', 'host', 'baseHref', 'html5Mode', 'hashPrefix'];
-    /** @hidden */
+    /** @internal */
     var locationServiceStub = makeStub('LocationServices', locSvcFns);
-    /** @hidden */
+    /** @internal */
     var locationConfigStub = makeStub('LocationConfig', locCfgFns);
     /**
-     * The master class used to instantiate an instance of UI-Router.
+     * An instance of UI-Router.
      *
-     * UI-Router (for each specific framework) will create an instance of this class during bootstrap.
-     * This class instantiates and wires the UI-Router services together.
-     *
-     * After a new instance of the UIRouter class is created, it should be configured for your app.
-     * For instance, app states should be registered with the [[UIRouter.stateRegistry]].
-     *
-     * ---
-     *
-     * Normally the framework code will bootstrap UI-Router.
-     * If you are bootstrapping UIRouter manually, tell it to monitor the URL by calling
-     * [[UrlService.listen]] then [[UrlService.sync]].
+     * This object contains references to service APIs which define your application's routing behavior.
      */
     var UIRouter = /** @class */ (function () {
         /**
@@ -54320,23 +54851,23 @@ if (typeof jQuery === 'undefined') {
          *
          * @param locationService a [[LocationServices]] implementation
          * @param locationConfig a [[LocationConfig]] implementation
-         * @internalapi
+         * @internal
          */
         function UIRouter(locationService, locationConfig) {
             if (locationService === void 0) { locationService = locationServiceStub; }
             if (locationConfig === void 0) { locationConfig = locationConfigStub; }
             this.locationService = locationService;
             this.locationConfig = locationConfig;
-            /** @hidden */ this.$id = _routerInstance++;
-            /** @hidden */ this._disposed = false;
-            /** @hidden */ this._disposables = [];
-            /** Provides trace information to the console */
+            /** @internal */ this.$id = _routerInstance++;
+            /** @internal */ this._disposed = false;
+            /** @internal */ this._disposables = [];
+            /** Enable/disable tracing to the javascript console */
             this.trace = trace;
             /** Provides services related to ui-view synchronization */
             this.viewService = new ViewService(this);
-            /** Global router state */
+            /** An object that contains global router state, such as the current state and params */
             this.globals = new UIRouterGlobals();
-            /** Provides services related to Transitions */
+            /** A service that exposes global Transition Hooks */
             this.transitionService = new TransitionService(this);
             /**
              * Deprecated for public use. Use [[urlService]] instead.
@@ -54354,7 +54885,7 @@ if (typeof jQuery === 'undefined') {
             this.stateRegistry = new StateRegistry(this);
             /** Provides services related to states */
             this.stateService = new StateService(this);
-            /** @hidden plugin instances are registered here */
+            /** @internal plugin instances are registered here */
             this._plugins = {};
             this.viewService._pluginapi._rootViewContext(this.stateRegistry.root());
             this.globals.$current = this.stateRegistry.root();
@@ -54379,6 +54910,7 @@ if (typeof jQuery === 'undefined') {
          *
          * Or, if a `disposable` object is provided, calls `dispose(this)` on that object only.
          *
+         * @internal
          * @param disposable (optional) the disposable to dispose
          */
         UIRouter.prototype.dispose = function (disposable) {
@@ -54463,7 +54995,6 @@ if (typeof jQuery === 'undefined') {
         return UIRouter;
     }());
 
-    /** @internalapi @module hooks */ /** */
     function addCoreResolvables(trans) {
         trans.addResolvable(Resolvable.fromData(UIRouter, trans.router), '');
         trans.addResolvable(Resolvable.fromData(Transition, trans), '');
@@ -54483,9 +55014,7 @@ if (typeof jQuery === 'undefined') {
     // This function removes resolves for '$transition$' and `Transition` from the treeChanges.
     // Do not use this on current transitions, only on old ones.
     var treeChangesCleanup = function (trans) {
-        var nodes = values(trans.treeChanges())
-            .reduce(unnestR, [])
-            .reduce(uniqR, []);
+        var nodes = values(trans.treeChanges()).reduce(unnestR, []).reduce(uniqR, []);
         // If the resolvable is a Transition, return a new resolvable with null data
         var replaceTransitionWithNull = function (r) {
             return isTransition(r.token) ? Resolvable.fromData(r.token, null) : r;
@@ -54495,7 +55024,6 @@ if (typeof jQuery === 'undefined') {
         });
     };
 
-    /** @internalapi @module hooks */ /** */
     /**
      * A [[TransitionHookFn]] that redirects to a different state or params
      *
@@ -54532,8 +55060,6 @@ if (typeof jQuery === 'undefined') {
      *
      * The returned function invokes the (for instance) state.onEnter hook when the
      * state is being entered.
-     *
-     * @hidden
      */
     function makeEnterExitRetainHook(hookName) {
         return function (transition, state) {
@@ -54582,7 +55108,6 @@ if (typeof jQuery === 'undefined') {
         return transitionService.onEnter({ entering: function (state) { return !!state.onEnter; } }, onEnterHook);
     };
 
-    /** @internalapi @module hooks */ /** */
     var RESOLVE_HOOK_PRIORITY = 1000;
     /**
      * A [[TransitionHookFn]] which resolves all EAGER Resolvables in the To Path
@@ -54609,10 +55134,7 @@ if (typeof jQuery === 'undefined') {
      * See [[StateDeclaration.resolve]]
      */
     var lazyResolveState = function (trans, state) {
-        return new ResolveContext(trans.treeChanges().to)
-            .subContext(state.$$state())
-            .resolvePath('LAZY', trans)
-            .then(noop);
+        return new ResolveContext(trans.treeChanges().to).subContext(state.$$state()).resolvePath('LAZY', trans).then(noop);
     };
     var registerLazyResolveState = function (transitionService) {
         return transitionService.onEnter({ entering: val(true) }, lazyResolveState, { priority: RESOLVE_HOOK_PRIORITY });
@@ -54634,7 +55156,6 @@ if (typeof jQuery === 'undefined') {
         return transitionService.onFinish({}, resolveRemaining, { priority: RESOLVE_HOOK_PRIORITY });
     };
 
-    /** @internalapi @module hooks */ /** */
     /**
      * A [[TransitionHookFn]] which waits for the views to load
      *
@@ -54750,7 +55271,7 @@ if (typeof jQuery === 'undefined') {
      * ```
      * .state('abc', {
      *   component: 'fooComponent',
-     *   lazyLoad: () => System.import('./fooComponent')
+     *   lazyLoad: () => import('./fooComponent')
      *   });
      * ```
      *
@@ -54829,8 +55350,6 @@ if (typeof jQuery === 'undefined') {
     /**
      * This class defines a type of hook, such as `onBefore` or `onEnter`.
      * Plugins can define custom hook types, such as sticky states does for `onInactive`.
-     *
-     * @interalapi
      */
     var TransitionEventType = /** @class */ (function () {
         /* tslint:disable:no-inferrable-types */
@@ -54851,7 +55370,6 @@ if (typeof jQuery === 'undefined') {
         return TransitionEventType;
     }());
 
-    /** @internalapi @module hooks */ /** */
     /**
      * A [[TransitionHookFn]] that skips a transition if it should be ignored
      *
@@ -54878,7 +55396,6 @@ if (typeof jQuery === 'undefined') {
         return transitionService.onBefore({}, ignoredHook, { priority: -9999 });
     };
 
-    /** @internalapi @module hooks */ /** */
     /**
      * A [[TransitionHookFn]] that rejects the Transition if it is invalid
      *
@@ -54895,7 +55412,6 @@ if (typeof jQuery === 'undefined') {
         return transitionService.onBefore({}, invalidTransitionHook, { priority: -10000 });
     };
 
-    /** @publicapi @module transition */ /** */
     /**
      * The default [[Transition]] options.
      *
@@ -54909,6 +55425,7 @@ if (typeof jQuery === 'undefined') {
         inherit: false,
         notify: true,
         reload: false,
+        supercede: true,
         custom: {},
         current: function () { return null; },
         source: 'unknown',
@@ -54921,17 +55438,19 @@ if (typeof jQuery === 'undefined') {
      * - It also has a factory function for creating new [[Transition]] objects, (used internally by the [[StateService]]).
      *
      * At bootstrap, [[UIRouter]] creates a single instance (singleton) of this class.
+     *
+     * This API is located at `router.transitionService` ([[UIRouter.transitionService]])
      */
     var TransitionService = /** @class */ (function () {
-        /** @hidden */
+        /** @internal */
         function TransitionService(_router) {
-            /** @hidden */
+            /** @internal */
             this._transitionCount = 0;
-            /** @hidden The transition hook types, such as `onEnter`, `onStart`, etc */
+            /** The transition hook types, such as `onEnter`, `onStart`, etc */
             this._eventTypes = [];
-            /** @hidden The registered transition hooks */
+            /** @internal The registered transition hooks */
             this._registeredHooks = {};
-            /** @hidden The  paths on a criteria object */
+            /** The  paths on a criteria object */
             this._criteriaPaths = {};
             this._router = _router;
             this.$view = _router.viewService;
@@ -54965,7 +55484,7 @@ if (typeof jQuery === 'undefined') {
          *
          * The hook's return value is ignored
          *
-         * @internalapi
+         * @internal
          * @param criteria defines which Transitions the Hook should be invoked for.
          * @param callback the hook function which will be invoked.
          * @param options the registration options
@@ -55008,7 +55527,7 @@ if (typeof jQuery === 'undefined') {
         };
         /**
          * dispose
-         * @internalapi
+         * @internal
          */
         TransitionService.prototype.dispose = function (router) {
             values(this._registeredHooks).forEach(function (hooksArray) {
@@ -55024,6 +55543,7 @@ if (typeof jQuery === 'undefined') {
          * This is a factory function for creating new Transition objects.
          * It is used internally by the [[StateService]] and should generally not be called by application code.
          *
+         * @internal
          * @param fromPath the path to the current state (the from state)
          * @param targetState the target state (destination)
          * @returns a Transition
@@ -55031,7 +55551,7 @@ if (typeof jQuery === 'undefined') {
         TransitionService.prototype.create = function (fromPath, targetState) {
             return new Transition(fromPath, targetState, this._router);
         };
-        /** @hidden */
+        /** @internal */
         TransitionService.prototype._defineCoreEvents = function () {
             var Phase = exports.TransitionHookPhase;
             var TH = TransitionHook;
@@ -55048,7 +55568,7 @@ if (typeof jQuery === 'undefined') {
             this._defineEvent('onSuccess', Phase.SUCCESS, 0, paths.to, NORMAL_SORT, TH.LOG_REJECTED_RESULT, TH.LOG_ERROR, SYNCHRONOUS);
             this._defineEvent('onError', Phase.ERROR, 0, paths.to, NORMAL_SORT, TH.LOG_REJECTED_RESULT, TH.LOG_ERROR, SYNCHRONOUS);
         };
-        /** @hidden */
+        /** @internal */
         TransitionService.prototype._defineCorePaths = function () {
             var STATE = exports.TransitionHookScope.STATE, TRANSITION = exports.TransitionHookScope.TRANSITION;
             this._definePathType('to', TRANSITION);
@@ -55057,7 +55577,7 @@ if (typeof jQuery === 'undefined') {
             this._definePathType('retained', STATE);
             this._definePathType('entering', STATE);
         };
-        /** @hidden */
+        /** @internal */
         TransitionService.prototype._defineEvent = function (name, hookPhase, hookOrder, criteriaMatchPath, reverseSort, getResultHandler, getErrorHandler, synchronous) {
             if (reverseSort === void 0) { reverseSort = false; }
             if (getResultHandler === void 0) { getResultHandler = TransitionHook.HANDLE_RESULT; }
@@ -55067,8 +55587,7 @@ if (typeof jQuery === 'undefined') {
             this._eventTypes.push(eventType);
             makeEvent(this, this, eventType);
         };
-        /** @hidden */
-        // tslint:disable-next-line
+        /** @internal */
         TransitionService.prototype._getEvents = function (phase) {
             var transitionHookTypes = isDefined(phase)
                 ? this._eventTypes.filter(function (type) { return type.hookPhase === phase; })
@@ -55089,21 +55608,21 @@ if (typeof jQuery === 'undefined') {
          * It was defined by calling `defineTreeChangesCriterion('to', TransitionHookScope.TRANSITION)`
          * Only the tail of the `to` path is checked against the criteria and returned as part of the match.
          *
-         * @hidden
+         * @internal
          */
         TransitionService.prototype._definePathType = function (name, hookScope) {
             this._criteriaPaths[name] = { name: name, scope: hookScope };
         };
-        /** * @hidden */
+        /** @internal */
         // tslint:disable-next-line
         TransitionService.prototype._getPathTypes = function () {
             return this._criteriaPaths;
         };
-        /** @hidden */
+        /** @internal */
         TransitionService.prototype.getHooks = function (hookName) {
             return this._registeredHooks[hookName];
         };
-        /** @hidden */
+        /** @internal */
         TransitionService.prototype._registerCoreTransitionHooks = function () {
             var fns = this._deregisterHookFns;
             fns.addCoreResolves = registerAddCoreResolvables(this);
@@ -55132,20 +55651,18 @@ if (typeof jQuery === 'undefined') {
         return TransitionService;
     }());
 
-    /** @publicapi @module state */ /** */
     /**
-     * Provides state related service functions
+     * Provides services related to ui-router states.
      *
-     * This class provides services related to ui-router states.
-     * An instance of this class is located on the global [[UIRouter]] object.
+     * This API is located at `router.stateService` ([[UIRouter.stateService]])
      */
     var StateService = /** @class */ (function () {
-        /** @internalapi */
-        function StateService(/** @hidden */ router) {
+        /** @internal */
+        function StateService(/** @internal */ router) {
             this.router = router;
-            /** @internalapi */
+            /** @internal */
             this.invalidCallbacks = [];
-            /** @hidden */
+            /** @internal */
             this._defaultErrorHandler = function $defaultErrorHandler($error$) {
                 if ($error$ instanceof Error && $error$.stack) {
                     console.error($error$);
@@ -55168,51 +55685,51 @@ if (typeof jQuery === 'undefined') {
             /**
              * The [[Transition]] currently in progress (or null)
              *
-             * This is a passthrough through to [[UIRouterGlobals.transition]]
+             * @deprecated This is a passthrough through to [[UIRouterGlobals.transition]]
              */
             get: function () {
                 return this.router.globals.transition;
             },
-            enumerable: true,
+            enumerable: false,
             configurable: true
         });
         Object.defineProperty(StateService.prototype, "params", {
             /**
              * The latest successful state parameters
              *
-             * This is a passthrough through to [[UIRouterGlobals.params]]
+             * @deprecated This is a passthrough through to [[UIRouterGlobals.params]]
              */
             get: function () {
                 return this.router.globals.params;
             },
-            enumerable: true,
+            enumerable: false,
             configurable: true
         });
         Object.defineProperty(StateService.prototype, "current", {
             /**
              * The current [[StateDeclaration]]
              *
-             * This is a passthrough through to [[UIRouterGlobals.current]]
+             * @deprecated This is a passthrough through to [[UIRouterGlobals.current]]
              */
             get: function () {
                 return this.router.globals.current;
             },
-            enumerable: true,
+            enumerable: false,
             configurable: true
         });
         Object.defineProperty(StateService.prototype, "$current", {
             /**
-             * The current [[StateObject]]
+             * The current [[StateObject]] (an internal API)
              *
-             * This is a passthrough through to [[UIRouterGlobals.$current]]
+             * @deprecated This is a passthrough through to [[UIRouterGlobals.$current]]
              */
             get: function () {
                 return this.router.globals.$current;
             },
-            enumerable: true,
+            enumerable: false,
             configurable: true
         });
-        /** @internalapi */
+        /** @internal */
         StateService.prototype.dispose = function () {
             this.defaultErrorHandler(noop);
             this.invalidCallbacks = [];
@@ -55226,7 +55743,7 @@ if (typeof jQuery === 'undefined') {
          *
          * If a callback returns an TargetState, then it is used as arguments to $state.transitionTo() and the result returned.
          *
-         * @internalapi
+         * @internal
          */
         StateService.prototype._handleInvalidTargetState = function (fromPath, toState) {
             var _this = this;
@@ -55405,6 +55922,7 @@ if (typeof jQuery === 'undefined') {
                 throw new Error("No such reload state '" + (isString(options.reload) ? options.reload : options.reload.name) + "'");
             return new TargetState(this.router.stateRegistry, identifier, params, options);
         };
+        /** @internal */
         StateService.prototype.getCurrentPath = function () {
             var _this = this;
             var globals = this.router.globals;
@@ -55450,6 +55968,9 @@ if (typeof jQuery === 'undefined') {
                 return this._handleInvalidTargetState(currentPath, ref);
             if (!ref.valid())
                 return silentRejection(ref.error());
+            if (options.supercede === false && getCurrent()) {
+                return (Rejection.ignored('Another transition is in progress and supercede has been set to false in TransitionOptions for the transition. So the transition was ignored in favour of the existing one in progress.').toPromise());
+            }
             /**
              * Special handling for Ignored, Aborted, and Redirected transitions
              *
@@ -55461,7 +55982,7 @@ if (typeof jQuery === 'undefined') {
              */
             var rejectedTransitionHandler = function (trans) { return function (error) {
                 if (error instanceof Rejection) {
-                    var isLatest = router.globals.lastStartedTransitionId === trans.$id;
+                    var isLatest = router.globals.lastStartedTransitionId <= trans.$id;
                     if (error.type === exports.RejectType.IGNORED) {
                         isLatest && router.urlRouter.update();
                         // Consider ignored `Transition.run()` as a successful `transitionTo`
@@ -55682,20 +56203,6 @@ if (typeof jQuery === 'undefined') {
     }());
 
     /**
-     * # Transition subsystem
-     *
-     * This module contains APIs related to a Transition.
-     *
-     * See:
-     * - [[TransitionService]]
-     * - [[Transition]]
-     * - [[HookFn]], [[TransitionHookFn]], [[TransitionStateHookFn]], [[HookMatchCriteria]], [[HookResult]]
-     *
-     * @preferred @publicapi @module transition
-     */ /** */
-
-    /** @internalapi @module vanilla */ /** */
-    /**
      * An angular1-like promise api
      *
      * This object implements four methods similar to the
@@ -55712,11 +56219,11 @@ if (typeof jQuery === 'undefined') {
      */
     var $q = {
         /** Normalizes a value as a promise */
-        when: function (val$$1) { return new Promise(function (resolve, reject) { return resolve(val$$1); }); },
+        when: function (val) { return new Promise(function (resolve, reject) { return resolve(val); }); },
         /** Normalizes a value as a promise rejection */
-        reject: function (val$$1) {
+        reject: function (val) {
             return new Promise(function (resolve, reject) {
-                reject(val$$1);
+                reject(val);
             });
         },
         /** @returns a deferred object, which has `resolve` and `reject` functions */
@@ -55736,10 +56243,10 @@ if (typeof jQuery === 'undefined') {
             if (isObject(promises)) {
                 // Convert promises map to promises array.
                 // When each promise resolves, map it to a tuple { key: key, val: val }
-                var chain = Object.keys(promises).map(function (key) { return promises[key].then(function (val$$1) { return ({ key: key, val: val$$1 }); }); });
+                var chain = Object.keys(promises).map(function (key) { return promises[key].then(function (val) { return ({ key: key, val: val }); }); });
                 // Then wait for all promises to resolve, and convert them back to an object
-                return $q.all(chain).then(function (values$$1) {
-                    return values$$1.reduce(function (acc, tuple) {
+                return $q.all(chain).then(function (values) {
+                    return values.reduce(function (acc, tuple) {
                         acc[tuple.key] = tuple.val;
                         return acc;
                     }, {});
@@ -55748,7 +56255,6 @@ if (typeof jQuery === 'undefined') {
         },
     };
 
-    /** @internalapi @module vanilla */ /** */
     // globally available injectables
     var globals = {};
     var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
@@ -55813,10 +56319,10 @@ if (typeof jQuery === 'undefined') {
          * @param locals An object with additional DI tokens and values, such as `{ someToken: { foo: 1 } }`
          */
         invoke: function (fn, context, locals) {
-            var all$$1 = extend({}, globals, locals || {});
+            var all = extend({}, globals, locals || {});
             var params = $injector.annotate(fn);
-            var ensureExist = assertPredicate(function (key) { return all$$1.hasOwnProperty(key); }, function (key) { return "DI can't find injectable: '" + key + "'"; });
-            var args = params.filter(ensureExist).map(function (x) { return all$$1[x]; });
+            var ensureExist = assertPredicate(function (key) { return all.hasOwnProperty(key); }, function (key) { return "DI can't find injectable: '" + key + "'"; });
+            var args = params.filter(ensureExist).map(function (x) { return all[x]; });
             if (isFunction(fn))
                 return fn.apply(context, args);
             else
@@ -55841,26 +56347,21 @@ if (typeof jQuery === 'undefined') {
         },
     };
 
-    /** @internalapi @module vanilla */ /** */
     var keyValsToObjectR = function (accum, _a) {
-        var key = _a[0], val$$1 = _a[1];
+        var key = _a[0], val = _a[1];
         if (!accum.hasOwnProperty(key)) {
-            accum[key] = val$$1;
+            accum[key] = val;
         }
         else if (isArray(accum[key])) {
-            accum[key].push(val$$1);
+            accum[key].push(val);
         }
         else {
-            accum[key] = [accum[key], val$$1];
+            accum[key] = [accum[key], val];
         }
         return accum;
     };
     var getParams = function (queryString) {
-        return queryString
-            .split('&')
-            .filter(identity)
-            .map(splitEqual)
-            .reduce(keyValsToObjectR, {});
+        return queryString.split('&').filter(identity).map(splitEqual).reduce(keyValsToObjectR, {});
     };
     function parseUrl$1(url) {
         var orEmptyString = function (x) { return x || ''; };
@@ -55876,7 +56377,7 @@ if (typeof jQuery === 'undefined') {
             .map(function (key) {
             var param = searchObject[key];
             var vals = isArray(param) ? param : [param];
-            return vals.map(function (val$$1) { return key + '=' + val$$1; });
+            return vals.map(function (val) { return key + '=' + val; });
         })
             .reduce(unnestR, [])
             .join('&');
@@ -55894,7 +56395,6 @@ if (typeof jQuery === 'undefined') {
         };
     }
 
-    /** @internalapi @module vanilla */ /** */
     /** A base `LocationServices` */
     var BaseLocationServices = /** @class */ (function () {
         function BaseLocationServices(router, fireAfterUpdate) {
@@ -55930,9 +56430,12 @@ if (typeof jQuery === 'undefined') {
     }());
 
     var __extends = (undefined && undefined.__extends) || (function () {
-        var extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf ||
+                ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+                function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            return extendStatics(d, b);
+        };
         return function (d, b) {
             extendStatics(d, b);
             function __() { this.constructor = d; }
@@ -55961,9 +56464,12 @@ if (typeof jQuery === 'undefined') {
     }(BaseLocationServices));
 
     var __extends$1 = (undefined && undefined.__extends) || (function () {
-        var extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf ||
+                ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+                function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            return extendStatics(d, b);
+        };
         return function (d, b) {
             extendStatics(d, b);
             function __() { this.constructor = d; }
@@ -55986,9 +56492,12 @@ if (typeof jQuery === 'undefined') {
     }(BaseLocationServices));
 
     var __extends$2 = (undefined && undefined.__extends) || (function () {
-        var extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf ||
+                ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+                function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            return extendStatics(d, b);
+        };
         return function (d, b) {
             extendStatics(d, b);
             function __() { this.constructor = d; }
@@ -56075,7 +56584,6 @@ if (typeof jQuery === 'undefined') {
         return MemoryLocationConfig;
     }());
 
-    /** @internalapi @module vanilla */
     /** A `LocationConfig` that delegates to the browser's `location` object */
     var BrowserLocationConfig = /** @class */ (function () {
         function BrowserLocationConfig(router, _isHtml5) {
@@ -56112,7 +56620,7 @@ if (typeof jQuery === 'undefined') {
         BrowserLocationConfig.prototype.getBaseHref = function () {
             var baseTag = document.getElementsByTagName('base')[0];
             if (baseTag && baseTag.href) {
-                return baseTag.href.replace(/^(https?:)?\/\/[^/]*/, '');
+                return baseTag.href.replace(/^([^/:]*:)?\/\/[^/]*/, '');
             }
             return this._isHtml5 ? '/' : location.pathname || '/';
         };
@@ -56120,7 +56628,6 @@ if (typeof jQuery === 'undefined') {
         return BrowserLocationConfig;
     }());
 
-    /** @internalapi @module vanilla */ /** */
     function servicesPlugin(router) {
         services.$injector = $injector;
         services.$q = $q;
@@ -56133,17 +56640,6 @@ if (typeof jQuery === 'undefined') {
     /** A `UIRouterPlugin` that gets/sets the current location from an in-memory object */
     var memoryLocationPlugin = locationPluginFactory('vanilla.memoryLocation', false, MemoryLocationService, MemoryLocationConfig);
 
-    /** @internalapi @module vanilla */ /** */
-
-    /**
-     * # Core classes and interfaces
-     *
-     * The classes and interfaces that are core to ui-router and do not belong
-     * to a more specific subsystem (such as resolve).
-     *
-     * @preferred @publicapi @module core
-     */ /** */
-    /** @internalapi */
     var UIRouterPluginBase = /** @class */ (function () {
         function UIRouterPluginBase() {
         }
@@ -56151,9 +56647,8 @@ if (typeof jQuery === 'undefined') {
         return UIRouterPluginBase;
     }());
 
-    /** @publicapi @module common */ /** */
-
     var index = /*#__PURE__*/Object.freeze({
+        __proto__: null,
         root: root,
         fromJson: fromJson,
         toJson: toJson,
@@ -56317,6 +56812,7 @@ if (typeof jQuery === 'undefined') {
         UIRouterPluginBase: UIRouterPluginBase
     });
 
+    /** @publicapi @module ng1 */ /** */
     /** @internalapi */
     function getNg1ViewConfigFactory() {
         var templateFactory = null;
@@ -56395,14 +56891,14 @@ if (typeof jQuery === 'undefined') {
         }
         Ng1ViewConfig.prototype.load = function () {
             var _this = this;
-            var $q$$1 = services.$q;
+            var $q = services.$q;
             var context = new ResolveContext(this.path);
             var params = this.path.reduce(function (acc, node) { return extend(acc, node.paramValues); }, {});
             var promises = {
-                template: $q$$1.when(this.factory.fromConfig(this.viewDecl, params, context)),
-                controller: $q$$1.when(this.getController(context)),
+                template: $q.when(this.factory.fromConfig(this.viewDecl, params, context)),
+                controller: $q.when(this.getController(context)),
             };
-            return $q$$1.all(promises).then(function (results) {
+            return $q.all(promises).then(function (results) {
                 trace.traceViewServiceEvent('Loaded', _this);
                 _this.controller = results.controller;
                 extend(_this, results.template); // Either { template: "tpl" } or { component: "cmpName" }
@@ -56438,8 +56934,8 @@ if (typeof jQuery === 'undefined') {
                 '$http',
                 '$templateCache',
                 '$injector',
-                function ($http, $templateCache, $injector$$1) {
-                    _this.$templateRequest = $injector$$1.has && $injector$$1.has('$templateRequest') && $injector$$1.get('$templateRequest');
+                function ($http, $templateCache, $injector) {
+                    _this.$templateRequest = $injector.has && $injector.has('$templateRequest') && $injector.get('$templateRequest');
                     _this.$http = $http;
                     _this.$templateCache = $templateCache;
                     return _this;
@@ -56591,9 +57087,7 @@ if (typeof jQuery === 'undefined') {
                 // some-attr="::$resolve.someResolveName"
                 return attrName + "='" + prefix + "$resolve." + resolveName + "'";
             };
-            var attrs = getComponentBindings(component)
-                .map(attributeTpl)
-                .join(' ');
+            var attrs = getComponentBindings(component).map(attributeTpl).join(' ');
             var kebobName = kebob(component);
             return "<" + kebobName + " " + attrs + "></" + kebobName + ">";
         };
@@ -56772,7 +57266,7 @@ if (typeof jQuery === 'undefined') {
      * @internalapi
      */
     var getStateHookBuilder = function (hookName) {
-        return function stateHookBuilder(stateObject, parentFn) {
+        return function stateHookBuilder(stateObject) {
             var hook = stateObject[hookName];
             var pathname = hookName === 'onExit' ? 'from' : 'to';
             function decoratedNg1Hook(trans, state) {
@@ -56819,6 +57313,7 @@ if (typeof jQuery === 'undefined') {
                 return x != null ? x.toString().replace(/(~~|~2F)/g, function (m) { return ({ '~~': '~', '~2F': '/' }[m]); }) : x;
             };
         };
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         Ng1LocationServices.prototype.dispose = function () { };
         Ng1LocationServices.prototype.onChange = function (callback) {
             var _this = this;
@@ -57053,23 +57548,14 @@ if (typeof jQuery === 'undefined') {
         return UrlRouterProvider;
     }());
 
-    /**
-     * # Angular 1 types
-     *
-     * UI-Router core provides various Typescript types which you can use for code completion and validating parameter values, etc.
-     * The customizations to the core types for Angular UI-Router are documented here.
-     *
-     * The optional [[$resolve]] service is also documented here.
-     *
-     * @preferred @publicapi @module ng1
-     */ /** */
+    /* eslint-disable @typescript-eslint/no-empty-function */
     ng.module('ui.router.angular1', []);
     var mod_init = ng.module('ui.router.init', ['ng']);
     var mod_util = ng.module('ui.router.util', ['ui.router.init']);
     var mod_rtr = ng.module('ui.router.router', ['ui.router.util']);
     var mod_state = ng.module('ui.router.state', ['ui.router.router', 'ui.router.util', 'ui.router.angular1']);
     var mod_main = ng.module('ui.router', ['ui.router.init', 'ui.router.state', 'ui.router.angular1']);
-    var mod_cmpt = ng.module('ui.router.compat', ['ui.router']); // tslint:disable-line
+    var mod_cmpt = ng.module('ui.router.compat', ['ui.router']);
     var router = null;
     $uiRouterProvider.$inject = ['$locationProvider'];
     /** This angular 1 provider instantiates a Router and exposes its services via the angular injector */
@@ -57083,6 +57569,8 @@ if (typeof jQuery === 'undefined') {
         router.stateRegistry.decorator('onRetain', getStateHookBuilder('onRetain'));
         router.stateRegistry.decorator('onEnter', getStateHookBuilder('onEnter'));
         router.viewService._pluginapi._viewConfigFactory('ng1', getNg1ViewConfigFactory());
+        // Disable decoding of params by UrlMatcherFactory because $location already handles this
+        router.urlService.config._decodeParams = false;
         var ng1LocationService = (router.locationService = router.locationConfig = new Ng1LocationServices($locationProvider));
         Ng1LocationServices.monkeyPatchPathParameterType(router);
         // backwards compat: also expose router instance as $uiRouterProvider.router
@@ -57107,16 +57595,16 @@ if (typeof jQuery === 'undefined') {
     ]; };
     // This effectively calls $get() on `$uiRouterProvider` to trigger init (when ng enters runtime)
     runBlock.$inject = ['$injector', '$q', '$uiRouter'];
-    function runBlock($injector$$1, $q$$1, $uiRouter) {
-        services.$injector = $injector$$1;
-        services.$q = $q$$1;
+    function runBlock($injector, $q, $uiRouter) {
+        services.$injector = $injector;
+        services.$q = $q;
         // https://github.com/angular-ui/ui-router/issues/3678
-        if (!$injector$$1.hasOwnProperty('strictDi')) {
+        if (!Object.prototype.hasOwnProperty.call($injector, 'strictDi')) {
             try {
-                $injector$$1.invoke(function (checkStrictDi) { });
+                $injector.invoke(function (checkStrictDi) { });
             }
             catch (error) {
-                $injector$$1.strictDi = !!/strict mode/.exec(error && error.toString());
+                $injector.strictDi = !!/strict mode/.exec(error && error.toString());
             }
         }
         // The $injector is now available.
@@ -57126,7 +57614,7 @@ if (typeof jQuery === 'undefined') {
             .map(function (x) { return x.$$state().resolvables; })
             .reduce(unnestR, [])
             .filter(function (x) { return x.deps === 'deferred'; })
-            .forEach(function (resolvable) { return (resolvable.deps = $injector$$1.annotate(resolvable.resolveFn, $injector$$1.strictDi)); });
+            .forEach(function (resolvable) { return (resolvable.deps = $injector.annotate(resolvable.resolveFn, $injector.strictDi)); });
     }
     // $urlRouter service and $urlRouterProvider
     var getUrlRouterProvider = function (uiRouter) { return (uiRouter.urlRouterProvider = new UrlRouterProvider(uiRouter)); };
@@ -57167,83 +57655,13 @@ if (typeof jQuery === 'undefined') {
         return tuples.reduce(applyPairs, {});
     };
 
-    /**
-     * The current (or pending) State Parameters
-     *
-     * An injectable global **Service Object** which holds the state parameters for the latest **SUCCESSFUL** transition.
-     *
-     * The values are not updated until *after* a `Transition` successfully completes.
-     *
-     * **Also:** an injectable **Per-Transition Object** object which holds the pending state parameters for the pending `Transition` currently running.
-     *
-     * ### Deprecation warning:
-     *
-     * The value injected for `$stateParams` is different depending on where it is injected.
-     *
-     * - When injected into an angular service, the object injected is the global **Service Object** with the parameter values for the latest successful `Transition`.
-     * - When injected into transition hooks, resolves, or view controllers, the object is the **Per-Transition Object** with the parameter values for the running `Transition`.
-     *
-     * Because of these confusing details, this service is deprecated.
-     *
-     * ### Instead of using the global `$stateParams` service object,
-     * inject [[$uiRouterGlobals]] and use [[UIRouterGlobals.params]]
-     *
-     * ```js
-     * MyService.$inject = ['$uiRouterGlobals'];
-     * function MyService($uiRouterGlobals) {
-     *   return {
-     *     paramValues: function () {
-     *       return $uiRouterGlobals.params;
-     *     }
-     *   }
-     * }
-     * ```
-     *
-     * ### Instead of using the per-transition `$stateParams` object,
-     * inject the current `Transition` (as [[$transition$]]) and use [[Transition.params]]
-     *
-     * ```js
-     * MyController.$inject = ['$transition$'];
-     * function MyController($transition$) {
-     *   var username = $transition$.params().username;
-     *   // .. do something with username
-     * }
-     * ```
-     *
-     * ---
-     *
-     * This object can be injected into other services.
-     *
-     * #### Deprecated Example:
-     * ```js
-     * SomeService.$inject = ['$http', '$stateParams'];
-     * function SomeService($http, $stateParams) {
-     *   return {
-     *     getUser: function() {
-     *       return $http.get('/api/users/' + $stateParams.username);
-     *     }
-     *   }
-     * };
-     * angular.service('SomeService', SomeService);
-     * ```
-     * @deprecated
-     */
-
-    /**
-     * # Angular 1 Directives
-     *
-     * These are the directives included in UI-Router for Angular 1.
-     * These directives are used in templates to create viewports and link/navigate to states.
-     *
-     * @preferred @publicapi @module directives
-     */ /** */
+    /* eslint-disable @typescript-eslint/no-empty-interface */
     /** @hidden */
     function parseStateRef(ref) {
-        var parsed;
         var paramsOnly = ref.match(/^\s*({[^}]*})\s*$/);
         if (paramsOnly)
             ref = '(' + paramsOnly[1] + ')';
-        parsed = ref.replace(/\n/g, ' ').match(/^\s*([^(]*?)\s*(\((.*)\))?\s*$/);
+        var parsed = ref.replace(/\n/g, ' ').match(/^\s*([^(]*?)\s*(\((.*)\))?\s*$/);
         if (!parsed || parsed.length !== 4)
             throw new Error("Invalid state ref '" + ref + "'");
         return { state: parsed[1] || null, paramExpr: parsed[3] || null };
@@ -57276,7 +57694,7 @@ if (typeof jQuery === 'undefined') {
     function clickHook(el, $state, $timeout, type, getDef) {
         return function (e) {
             var button = e.which || e.button, target = getDef();
-            if (!(button > 1 || e.ctrlKey || e.metaKey || e.shiftKey || el.attr('target'))) {
+            if (!(button > 1 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || el.attr('target'))) {
                 // HACK: This is to allow ng-clicks to be processed before the transition is initiated:
                 var transition_1 = $timeout(function () {
                     if (!el.attr('disabled')) {
@@ -57469,7 +57887,6 @@ if (typeof jQuery === 'undefined') {
                     var type = getTypeInfo(element);
                     var active = uiSrefActive[1] || uiSrefActive[0];
                     var unlinkInfoFn = null;
-                    var hookFn;
                     var rawDef = {};
                     var getDef = function () { return processedDef($state, element, rawDef); };
                     var ref = parseStateRef(attrs.uiSref);
@@ -57485,8 +57902,8 @@ if (typeof jQuery === 'undefined') {
                             attrs.$set(type.attr, def.href);
                     }
                     if (ref.paramExpr) {
-                        scope.$watch(ref.paramExpr, function (val$$1) {
-                            rawDef.uiStateParams = extend({}, val$$1);
+                        scope.$watch(ref.paramExpr, function (val) {
+                            rawDef.uiStateParams = extend({}, val);
                             update();
                         }, true);
                         rawDef.uiStateParams = extend({}, scope.$eval(ref.paramExpr));
@@ -57496,7 +57913,7 @@ if (typeof jQuery === 'undefined') {
                     scope.$on('$destroy', $uiRouter.transitionService.onSuccess({}, update));
                     if (!type.clickable)
                         return;
-                    hookFn = clickHook(element, $state, $timeout, type, getDef);
+                    var hookFn = clickHook(element, $state, $timeout, type, getDef);
                     bindEvents(element, scope, hookFn, rawDef.uiStateOpts);
                 },
             };
@@ -57830,9 +58247,7 @@ if (typeof jQuery === 'undefined') {
                                     .map(splitClasses)
                                     .reduce(unnestR, []);
                             };
-                            var allClasses = getClasses(states)
-                                .concat(splitClasses(activeEqClass))
-                                .reduce(uniqR, []);
+                            var allClasses = getClasses(states).concat(splitClasses(activeEqClass)).reduce(uniqR, []);
                             var fuzzyClasses = getClasses(states.filter(function (x) { return $state.includes(x.state.name, x.params); }));
                             var exactlyMatchesAny = !!states.filter(function (x) { return $state.is(x.state.name, x.params); }).length;
                             var exactClasses = exactlyMatchesAny ? splitClasses(activeEqClass) : [];
@@ -57893,10 +58308,7 @@ if (typeof jQuery === 'undefined') {
         includesFilter.$stateful = true;
         return includesFilter;
     }
-    ng
-        .module('ui.router.state')
-        .filter('isState', $IsStateFilter)
-        .filter('includedByState', $IncludedByStateFilter);
+    ng.module('ui.router.state').filter('isState', $IsStateFilter).filter('includedByState', $IncludedByStateFilter);
 
     /** @publicapi @module directives */ /** */
     /**
@@ -58025,14 +58437,15 @@ if (typeof jQuery === 'undefined') {
      * ```
      */
     var uiView;
+    // eslint-disable-next-line prefer-const
     uiView = [
         '$view',
         '$animate',
         '$uiViewScroll',
         '$interpolate',
         '$q',
-        function $ViewDirective($view, $animate, $uiViewScroll, $interpolate, $q$$1) {
-            function getRenderer(attrs, scope) {
+        function $ViewDirective($view, $animate, $uiViewScroll, $interpolate, $q) {
+            function getRenderer() {
                 return {
                     enter: function (element, target, cb) {
                         if (ng.version.minor > 2) {
@@ -58067,8 +58480,8 @@ if (typeof jQuery === 'undefined') {
                 transclude: 'element',
                 compile: function (tElement, tAttrs, $transclude) {
                     return function (scope, $element, attrs) {
-                        var onloadExp = attrs['onload'] || '', autoScrollExp = attrs['autoscroll'], renderer = getRenderer(attrs, scope), inherited = $element.inheritedData('$uiView') || rootData, name = $interpolate(attrs['uiView'] || attrs['name'] || '')(scope) || '$default';
-                        var previousEl, currentEl, currentScope, viewConfig, unregister;
+                        var onloadExp = attrs['onload'] || '', autoScrollExp = attrs['autoscroll'], renderer = getRenderer(), inherited = $element.inheritedData('$uiView') || rootData, name = $interpolate(attrs['uiView'] || attrs['name'] || '')(scope) || '$default';
+                        var previousEl, currentEl, currentScope, viewConfig;
                         var activeUIView = {
                             $type: 'ng1',
                             id: directive.count++,
@@ -58097,7 +58510,7 @@ if (typeof jQuery === 'undefined') {
                         }
                         $element.data('$uiView', { $uiView: activeUIView });
                         updateView();
-                        unregister = $view.registerUIView(activeUIView);
+                        var unregister = $view.registerUIView(activeUIView);
                         scope.$on('$destroy', function () {
                             trace.traceUIViewEvent('Destroying/Unregistering', activeUIView);
                             unregister();
@@ -58126,7 +58539,7 @@ if (typeof jQuery === 'undefined') {
                         }
                         function updateView(config) {
                             var newScope = scope.$new();
-                            var animEnter = $q$$1.defer(), animLeave = $q$$1.defer();
+                            var animEnter = $q.defer(), animLeave = $q.defer();
                             var $uiViewData = {
                                 $cfg: config,
                                 $uiView: activeUIView,
@@ -58183,9 +58596,9 @@ if (typeof jQuery === 'undefined') {
             return directive;
         },
     ];
-    $ViewDirectiveFill.$inject = ['$compile', '$controller', '$transitions', '$view', '$q', '$timeout'];
+    $ViewDirectiveFill.$inject = ['$compile', '$controller', '$transitions', '$view', '$q'];
     /** @hidden */
-    function $ViewDirectiveFill($compile, $controller, $transitions, $view, $q$$1, $timeout) {
+    function $ViewDirectiveFill($compile, $controller, $transitions, $view, $q) {
         var getControllerAs = parse('viewDecl.controllerAs');
         var getResolveAs = parse('viewDecl.resolveAs');
         return {
@@ -58223,7 +58636,7 @@ if (typeof jQuery === 'undefined') {
                         // scope.$on('$destroy', () => $view.componentUnloaded(controllerInstance, { $scope: scope, $element: $element }));
                         $element.data('$ngControllerController', controllerInstance);
                         $element.children().data('$ngControllerController', controllerInstance);
-                        registerControllerCallbacks($q$$1, $transitions, controllerInstance, scope, cfg);
+                        registerControllerCallbacks($q, $transitions, controllerInstance, scope, cfg);
                     }
                     // Wait for the component to appear in the DOM
                     if (isString(cfg.component)) {
@@ -58238,7 +58651,7 @@ if (typeof jQuery === 'undefined') {
                         var deregisterWatch_1 = scope.$watch(getComponentController, function (ctrlInstance) {
                             if (!ctrlInstance)
                                 return;
-                            registerControllerCallbacks($q$$1, $transitions, ctrlInstance, scope, cfg);
+                            registerControllerCallbacks($q, $transitions, ctrlInstance, scope, cfg);
                             deregisterWatch_1();
                         });
                     }
@@ -58252,9 +58665,10 @@ if (typeof jQuery === 'undefined') {
     /** @hidden incrementing id */
     var _uiCanExitId = 0;
     /** @hidden TODO: move these callbacks to $view and/or `/hooks/components.ts` or something */
-    function registerControllerCallbacks($q$$1, $transitions, controllerInstance, $scope, cfg) {
+    function registerControllerCallbacks($q, $transitions, controllerInstance, $scope, cfg) {
         // Call $onInit() ASAP
-        if (isFunction(controllerInstance.$onInit) && !(cfg.viewDecl.component && hasComponentImpl)) {
+        if (isFunction(controllerInstance.$onInit) &&
+            !((cfg.viewDecl.component || cfg.viewDecl.componentProvider) && hasComponentImpl)) {
             controllerInstance.$onInit();
         }
         var viewState = tail(cfg.path).state.self;
@@ -58272,14 +58686,8 @@ if (typeof jQuery === 'undefined') {
                 var toParams = $transition$.params('to');
                 var fromParams = $transition$.params('from');
                 var getNodeSchema = function (node) { return node.paramSchema; };
-                var toSchema = $transition$
-                    .treeChanges('to')
-                    .map(getNodeSchema)
-                    .reduce(unnestR, []);
-                var fromSchema = $transition$
-                    .treeChanges('from')
-                    .map(getNodeSchema)
-                    .reduce(unnestR, []);
+                var toSchema = $transition$.treeChanges('to').map(getNodeSchema).reduce(unnestR, []);
+                var fromSchema = $transition$.treeChanges('from').map(getNodeSchema).reduce(unnestR, []);
                 // Find the to params that have different values than the from params
                 var changedToParams = toSchema.filter(function (param) {
                     var idx = fromSchema.indexOf(param);
@@ -58289,7 +58697,7 @@ if (typeof jQuery === 'undefined') {
                 if (changedToParams.length) {
                     var changedKeys_1 = changedToParams.map(function (x) { return x.id; });
                     // Filter the params to only changed/new to params.  `$transition$.params()` may be used to get all params.
-                    var newValues = filter(toParams, function (val$$1, key) { return changedKeys_1.indexOf(key) !== -1; });
+                    var newValues = filter(toParams, function (val, key) { return changedKeys_1.indexOf(key) !== -1; });
                     controllerInstance.uiOnParamsChanged(newValues, $transition$);
                 }
             };
@@ -58308,8 +58716,8 @@ if (typeof jQuery === 'undefined') {
                 var promise;
                 var ids = (trans[cacheProp_1] = trans[cacheProp_1] || {});
                 if (!prevTruthyAnswer_1(trans)) {
-                    promise = $q$$1.when(controllerInstance.uiCanExit(trans));
-                    promise.then(function (val$$1) { return (ids[id_1] = val$$1 !== false); });
+                    promise = $q.when(controllerInstance.uiCanExit(trans));
+                    promise.then(function (val) { return (ids[id_1] = val !== false); });
                 }
                 return promise;
             };
@@ -58344,173 +58752,177 @@ if (typeof jQuery === 'undefined') {
     }
     ng.module('ui.router.state').provider('$uiViewScroll', $ViewScrollProvider);
 
+    /**
+     * Main entry point for angular 1.x build
+     * @publicapi @module ng1
+     */ /** */
     var index$1 = 'ui.router';
 
-    exports.default = index$1;
-    exports.core = index;
-    exports.watchDigests = watchDigests;
-    exports.getLocals = getLocals;
-    exports.getNg1ViewConfigFactory = getNg1ViewConfigFactory;
-    exports.ng1ViewsBuilder = ng1ViewsBuilder;
-    exports.Ng1ViewConfig = Ng1ViewConfig;
-    exports.StateProvider = StateProvider;
-    exports.UrlRouterProvider = UrlRouterProvider;
-    exports.root = root;
-    exports.fromJson = fromJson;
-    exports.toJson = toJson;
-    exports.forEach = forEach;
-    exports.extend = extend;
-    exports.equals = equals;
-    exports.identity = identity;
-    exports.noop = noop;
-    exports.createProxyFunctions = createProxyFunctions;
-    exports.inherit = inherit;
-    exports.inArray = inArray;
-    exports._inArray = _inArray;
-    exports.removeFrom = removeFrom;
-    exports._removeFrom = _removeFrom;
-    exports.pushTo = pushTo;
-    exports._pushTo = _pushTo;
-    exports.deregAll = deregAll;
-    exports.defaults = defaults;
-    exports.mergeR = mergeR;
-    exports.ancestors = ancestors;
-    exports.pick = pick;
-    exports.omit = omit;
-    exports.pluck = pluck;
-    exports.filter = filter;
-    exports.find = find;
-    exports.mapObj = mapObj;
-    exports.map = map;
-    exports.values = values;
-    exports.allTrueR = allTrueR;
-    exports.anyTrueR = anyTrueR;
-    exports.unnestR = unnestR;
-    exports.flattenR = flattenR;
-    exports.pushR = pushR;
-    exports.uniqR = uniqR;
-    exports.unnest = unnest;
-    exports.flatten = flatten;
-    exports.assertPredicate = assertPredicate;
-    exports.assertMap = assertMap;
-    exports.assertFn = assertFn;
-    exports.pairs = pairs;
-    exports.arrayTuples = arrayTuples;
-    exports.applyPairs = applyPairs;
-    exports.tail = tail;
-    exports.copy = copy;
-    exports._extend = _extend;
-    exports.silenceUncaughtInPromise = silenceUncaughtInPromise;
-    exports.silentRejection = silentRejection;
-    exports.makeStub = makeStub;
-    exports.services = services;
+    exports.$injector = $injector;
+    exports.$q = $q;
+    exports.BaseLocationServices = BaseLocationServices;
+    exports.BaseUrlRule = BaseUrlRule;
+    exports.BrowserLocationConfig = BrowserLocationConfig;
     exports.Glob = Glob;
-    exports.curry = curry;
-    exports.compose = compose;
-    exports.pipe = pipe;
-    exports.prop = prop;
-    exports.propEq = propEq;
-    exports.parse = parse;
-    exports.not = not;
-    exports.and = and;
-    exports.or = or;
-    exports.all = all;
-    exports.any = any;
-    exports.is = is;
-    exports.eq = eq;
-    exports.val = val;
-    exports.invoke = invoke;
-    exports.pattern = pattern;
-    exports.isUndefined = isUndefined;
-    exports.isDefined = isDefined;
-    exports.isNull = isNull;
-    exports.isNullOrUndefined = isNullOrUndefined;
-    exports.isFunction = isFunction;
-    exports.isNumber = isNumber;
-    exports.isString = isString;
-    exports.isObject = isObject;
-    exports.isArray = isArray;
-    exports.isDate = isDate;
-    exports.isRegExp = isRegExp;
-    exports.isInjectable = isInjectable;
-    exports.isPromise = isPromise;
-    exports.Queue = Queue;
-    exports.maxLength = maxLength;
-    exports.padString = padString;
-    exports.kebobString = kebobString;
-    exports.functionToString = functionToString;
-    exports.fnToString = fnToString;
-    exports.stringify = stringify;
-    exports.beforeAfterSubstr = beforeAfterSubstr;
-    exports.hostRegex = hostRegex;
-    exports.stripLastPathElement = stripLastPathElement;
-    exports.splitHash = splitHash;
-    exports.splitQuery = splitQuery;
-    exports.splitEqual = splitEqual;
-    exports.trimHashVal = trimHashVal;
-    exports.splitOnDelim = splitOnDelim;
-    exports.joinNeighborsR = joinNeighborsR;
-    exports.Trace = Trace;
-    exports.trace = trace;
+    exports.HashLocationService = HashLocationService;
+    exports.HookBuilder = HookBuilder;
+    exports.MemoryLocationConfig = MemoryLocationConfig;
+    exports.MemoryLocationService = MemoryLocationService;
+    exports.NATIVE_INJECTOR_TOKEN = NATIVE_INJECTOR_TOKEN;
+    exports.Ng1ViewConfig = Ng1ViewConfig;
     exports.Param = Param;
-    exports.ParamTypes = ParamTypes;
-    exports.StateParams = StateParams;
+    exports.ParamFactory = ParamFactory;
     exports.ParamType = ParamType;
+    exports.ParamTypes = ParamTypes;
     exports.PathNode = PathNode;
     exports.PathUtils = PathUtils;
-    exports.resolvePolicies = resolvePolicies;
-    exports.defaultResolvePolicy = defaultResolvePolicy;
+    exports.PushStateLocationService = PushStateLocationService;
+    exports.Queue = Queue;
+    exports.RegisteredHook = RegisteredHook;
+    exports.Rejection = Rejection;
     exports.Resolvable = Resolvable;
-    exports.NATIVE_INJECTOR_TOKEN = NATIVE_INJECTOR_TOKEN;
     exports.ResolveContext = ResolveContext;
-    exports.resolvablesBuilder = resolvablesBuilder;
     exports.StateBuilder = StateBuilder;
-    exports.StateObject = StateObject;
     exports.StateMatcher = StateMatcher;
+    exports.StateObject = StateObject;
+    exports.StateParams = StateParams;
+    exports.StateProvider = StateProvider;
     exports.StateQueueManager = StateQueueManager;
     exports.StateRegistry = StateRegistry;
     exports.StateService = StateService;
     exports.TargetState = TargetState;
-    exports.HookBuilder = HookBuilder;
-    exports.matchState = matchState;
-    exports.RegisteredHook = RegisteredHook;
-    exports.makeEvent = makeEvent;
-    exports.Rejection = Rejection;
+    exports.Trace = Trace;
     exports.Transition = Transition;
-    exports.TransitionHook = TransitionHook;
     exports.TransitionEventType = TransitionEventType;
-    exports.defaultTransOpts = defaultTransOpts;
+    exports.TransitionHook = TransitionHook;
     exports.TransitionService = TransitionService;
-    exports.UrlRules = UrlRules;
+    exports.UIRouter = UIRouter;
+    exports.UIRouterGlobals = UIRouterGlobals;
+    exports.UIRouterPluginBase = UIRouterPluginBase;
     exports.UrlConfig = UrlConfig;
     exports.UrlMatcher = UrlMatcher;
-    exports.ParamFactory = ParamFactory;
     exports.UrlMatcherFactory = UrlMatcherFactory;
     exports.UrlRouter = UrlRouter;
+    exports.UrlRouterProvider = UrlRouterProvider;
     exports.UrlRuleFactory = UrlRuleFactory;
-    exports.BaseUrlRule = BaseUrlRule;
+    exports.UrlRules = UrlRules;
     exports.UrlService = UrlService;
     exports.ViewService = ViewService;
-    exports.UIRouterGlobals = UIRouterGlobals;
-    exports.UIRouter = UIRouter;
-    exports.$q = $q;
-    exports.$injector = $injector;
-    exports.BaseLocationServices = BaseLocationServices;
-    exports.HashLocationService = HashLocationService;
-    exports.MemoryLocationService = MemoryLocationService;
-    exports.PushStateLocationService = PushStateLocationService;
-    exports.MemoryLocationConfig = MemoryLocationConfig;
-    exports.BrowserLocationConfig = BrowserLocationConfig;
-    exports.keyValsToObjectR = keyValsToObjectR;
-    exports.getParams = getParams;
-    exports.parseUrl = parseUrl$1;
+    exports._extend = _extend;
+    exports._inArray = _inArray;
+    exports._pushTo = _pushTo;
+    exports._removeFrom = _removeFrom;
+    exports.all = all;
+    exports.allTrueR = allTrueR;
+    exports.ancestors = ancestors;
+    exports.and = and;
+    exports.any = any;
+    exports.anyTrueR = anyTrueR;
+    exports.applyPairs = applyPairs;
+    exports.arrayTuples = arrayTuples;
+    exports.assertFn = assertFn;
+    exports.assertMap = assertMap;
+    exports.assertPredicate = assertPredicate;
+    exports.beforeAfterSubstr = beforeAfterSubstr;
     exports.buildUrl = buildUrl;
-    exports.locationPluginFactory = locationPluginFactory;
-    exports.servicesPlugin = servicesPlugin;
+    exports.compose = compose;
+    exports.copy = copy;
+    exports.core = index;
+    exports.createProxyFunctions = createProxyFunctions;
+    exports.curry = curry;
+    exports.default = index$1;
+    exports.defaultResolvePolicy = defaultResolvePolicy;
+    exports.defaultTransOpts = defaultTransOpts;
+    exports.defaults = defaults;
+    exports.deregAll = deregAll;
+    exports.eq = eq;
+    exports.equals = equals;
+    exports.extend = extend;
+    exports.filter = filter;
+    exports.find = find;
+    exports.flatten = flatten;
+    exports.flattenR = flattenR;
+    exports.fnToString = fnToString;
+    exports.forEach = forEach;
+    exports.fromJson = fromJson;
+    exports.functionToString = functionToString;
+    exports.getLocals = getLocals;
+    exports.getNg1ViewConfigFactory = getNg1ViewConfigFactory;
+    exports.getParams = getParams;
     exports.hashLocationPlugin = hashLocationPlugin;
-    exports.pushStateLocationPlugin = pushStateLocationPlugin;
+    exports.hostRegex = hostRegex;
+    exports.identity = identity;
+    exports.inArray = inArray;
+    exports.inherit = inherit;
+    exports.invoke = invoke;
+    exports.is = is;
+    exports.isArray = isArray;
+    exports.isDate = isDate;
+    exports.isDefined = isDefined;
+    exports.isFunction = isFunction;
+    exports.isInjectable = isInjectable;
+    exports.isNull = isNull;
+    exports.isNullOrUndefined = isNullOrUndefined;
+    exports.isNumber = isNumber;
+    exports.isObject = isObject;
+    exports.isPromise = isPromise;
+    exports.isRegExp = isRegExp;
+    exports.isString = isString;
+    exports.isUndefined = isUndefined;
+    exports.joinNeighborsR = joinNeighborsR;
+    exports.kebobString = kebobString;
+    exports.keyValsToObjectR = keyValsToObjectR;
+    exports.locationPluginFactory = locationPluginFactory;
+    exports.makeEvent = makeEvent;
+    exports.makeStub = makeStub;
+    exports.map = map;
+    exports.mapObj = mapObj;
+    exports.matchState = matchState;
+    exports.maxLength = maxLength;
     exports.memoryLocationPlugin = memoryLocationPlugin;
-    exports.UIRouterPluginBase = UIRouterPluginBase;
+    exports.mergeR = mergeR;
+    exports.ng1ViewsBuilder = ng1ViewsBuilder;
+    exports.noop = noop;
+    exports.not = not;
+    exports.omit = omit;
+    exports.or = or;
+    exports.padString = padString;
+    exports.pairs = pairs;
+    exports.parse = parse;
+    exports.parseUrl = parseUrl$1;
+    exports.pattern = pattern;
+    exports.pick = pick;
+    exports.pipe = pipe;
+    exports.pluck = pluck;
+    exports.prop = prop;
+    exports.propEq = propEq;
+    exports.pushR = pushR;
+    exports.pushStateLocationPlugin = pushStateLocationPlugin;
+    exports.pushTo = pushTo;
+    exports.removeFrom = removeFrom;
+    exports.resolvablesBuilder = resolvablesBuilder;
+    exports.resolvePolicies = resolvePolicies;
+    exports.root = root;
+    exports.services = services;
+    exports.servicesPlugin = servicesPlugin;
+    exports.silenceUncaughtInPromise = silenceUncaughtInPromise;
+    exports.silentRejection = silentRejection;
+    exports.splitEqual = splitEqual;
+    exports.splitHash = splitHash;
+    exports.splitOnDelim = splitOnDelim;
+    exports.splitQuery = splitQuery;
+    exports.stringify = stringify;
+    exports.stripLastPathElement = stripLastPathElement;
+    exports.tail = tail;
+    exports.toJson = toJson;
+    exports.trace = trace;
+    exports.trimHashVal = trimHashVal;
+    exports.uniqR = uniqR;
+    exports.unnest = unnest;
+    exports.unnestR = unnestR;
+    exports.val = val;
+    exports.values = values;
+    exports.watchDigests = watchDigests;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
@@ -62216,12 +62628,12 @@ catch (e) {
 
 /*!
  * jQuery.scrollTo
- * Copyright (c) 2007-2015 Ariel Flesler - aflesler<a>gmail<d>com | http://flesler.blogspot.com
+ * Copyright (c) 2007 Ariel Flesler - aflesler ○ gmail • com | https://github.com/flesler
  * Licensed under MIT
- * http://flesler.blogspot.com/2007/10/jqueryscrollto.html
+ * https://github.com/flesler/jquery.scrollTo
  * @projectDescription Lightweight, cross-browser and highly customizable animated scrolling with jQuery
  * @author Ariel Flesler
- * @version 2.1.2
+ * @version 2.1.3
  */
 ;(function(factory) {
 	'use strict';
@@ -62251,7 +62663,12 @@ catch (e) {
 	function isWin(elem) {
 		return !elem.nodeName ||
 			$.inArray(elem.nodeName.toLowerCase(), ['iframe','#document','html','body']) !== -1;
-	}		
+	}
+
+	function isFunction(obj) {
+		// Brought from jQuery since it's deprecated
+		return typeof obj === 'function'
+	}
 
 	$.fn.scrollTo = function(target, duration, settings) {
 		if (typeof duration === 'object') {
@@ -62284,7 +62701,7 @@ catch (e) {
 			var win = isWin(this),
 				elem = win ? this.contentWindow || window : this,
 				$elem = $(elem),
-				targ = target, 
+				targ = target,
 				attr = {},
 				toff;
 
@@ -62309,7 +62726,7 @@ catch (e) {
 					}
 			}
 
-			var offset = $.isFunction(settings.offset) && settings.offset(elem, targ) || settings.offset;
+			var offset = isFunction(settings.offset) && settings.offset(elem, targ) || settings.offset;
 
 			$.each(settings.axis.split(''), function(i, axis) {
 				var Pos	= axis === 'x' ? 'Left' : 'Top',
@@ -62396,11 +62813,11 @@ catch (e) {
 	};
 
 	function both(val) {
-		return $.isFunction(val) || $.isPlainObject(val) ? val : { top:val, left:val };
+		return isFunction(val) || $.isPlainObject(val) ? val : { top:val, left:val };
 	}
 
 	// Add special hooks so that window scroll properties can be animated
-	$.Tween.propHooks.scrollLeft = 
+	$.Tween.propHooks.scrollLeft =
 	$.Tween.propHooks.scrollTop = {
 		get: function(t) {
 			return $(t.elem)[t.prop]();
